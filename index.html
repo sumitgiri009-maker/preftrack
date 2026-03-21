@@ -3,239 +3,177 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PerfTrack — Team Scorecard Portal</title>
+<title>PerfTrack — Lumelight Operations</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
-<!-- Supabase SDK -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-  :root {
-    --bg: #0d0f14;
-    --surface: #151820;
-    --surface2: #1c2030;
-    --surface3: #242840;
-    --border: #2a2f45;
-    --accent: #5b8af5;
-    --accent2: #7c5cbf;
-    --green: #34d399;
-    --yellow: #fbbf24;
-    --red: #f87171;
-    --text: #e8eaf0;
-    --text2: #8b90a8;
-    --text3: #5a5f78;
-    --radius: 12px;
-    --radius-sm: 8px;
-  }
-  * { margin:0; padding:0; box-sizing:border-box; }
-  body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; font-size:14px; }
+  :root{--bg:#0d0f14;--surface:#151820;--surface2:#1c2030;--surface3:#242840;--border:#2a2f45;--accent:#5b8af5;--accent2:#7c5cbf;--green:#34d399;--yellow:#fbbf24;--red:#f87171;--orange:#fb923c;--purple:#a78bfa;--text:#e8eaf0;--text2:#8b90a8;--text3:#5a5f78;--radius:12px;--radius-sm:8px;}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:14px;}
+  #loading-overlay{position:fixed;inset:0;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;gap:16px;}
+  .spinner{width:40px;height:40px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite;}
+  @keyframes spin{to{transform:rotate(360deg);}}
+  .loading-text{font-size:14px;color:var(--text2);}
 
-  /* ─── LOADING OVERLAY ─── */
-  #loading-overlay {
-    position:fixed; inset:0; background:var(--bg); display:flex; flex-direction:column;
-    align-items:center; justify-content:center; z-index:9999; gap:16px;
-  }
-  .spinner {
-    width:40px; height:40px; border:3px solid var(--border);
-    border-top-color:var(--accent); border-radius:50%; animation:spin 0.8s linear infinite;
-  }
-  @keyframes spin { to { transform:rotate(360deg); } }
-  .loading-text { font-size:14px; color:var(--text2); }
+  /* ── AUTH ── */
+  #auth-screen{min-height:100vh;display:none;align-items:center;justify-content:center;background:radial-gradient(ellipse at 30% 20%,rgba(91,138,245,.12) 0%,transparent 60%),radial-gradient(ellipse at 80% 80%,rgba(124,92,191,.10) 0%,transparent 55%),var(--bg);padding:20px;}
+  .auth-card{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:44px;width:100%;max-width:480px;box-shadow:0 40px 80px rgba(0,0,0,.5);}
+  .auth-logo{display:flex;align-items:center;gap:10px;margin-bottom:32px;}
+  .logo-icon{width:40px;height:40px;background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;}
+  .logo-text{font-size:20px;font-weight:700;letter-spacing:-.5px;}
+  .logo-sub{font-size:11px;color:var(--text2);letter-spacing:1.5px;text-transform:uppercase;margin-top:1px;}
+  .tab-row{display:flex;background:var(--surface2);border-radius:var(--radius-sm);padding:4px;margin-bottom:24px;}
+  .tab-btn{flex:1;padding:9px;border:none;background:none;border-radius:6px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;color:var(--text2);transition:all .2s;}
+  .tab-btn.active{background:var(--surface3);color:var(--text);}
+  .field-group{margin-bottom:14px;}
+  .field-label{font-size:11px;font-weight:600;color:var(--text2);letter-spacing:.5px;text-transform:uppercase;margin-bottom:6px;display:block;}
+  .field-input{width:100%;padding:10px 13px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;outline:none;transition:border-color .2s;}
+  .field-input:focus{border-color:var(--accent);}
+  .field-input::placeholder{color:var(--text3);}
+  select.field-input{appearance:none;cursor:pointer;}
+  .btn-primary{width:100%;padding:12px;background:linear-gradient(135deg,var(--accent),var(--accent2));border:none;border-radius:var(--radius-sm);color:#fff;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:600;cursor:pointer;transition:opacity .2s;margin-top:4px;}
+  .btn-primary:hover{opacity:.9;}
+  .btn-primary:disabled{opacity:.5;cursor:not-allowed;}
+  .hint{font-size:12px;color:var(--text3);margin-top:14px;text-align:center;line-height:1.6;}
+  .hint b{color:var(--text2);}
+  .err-msg{font-size:13px;color:var(--red);margin-top:10px;padding:10px 14px;background:rgba(248,113,113,.08);border-radius:var(--radius-sm);border:1px solid rgba(248,113,113,.2);display:none;}
+  .form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
 
-  /* ─── CONFIG BANNER ─── */
-  #config-banner {
-    display:none; position:fixed; inset:0; background:var(--bg);
-    align-items:center; justify-content:center; z-index:9998; padding:20px;
-  }
-  .config-card {
-    background:var(--surface); border:1px solid var(--border); border-radius:20px;
-    padding:40px; max-width:520px; width:100%;
-  }
-  .config-title { font-size:22px; font-weight:700; margin-bottom:8px; }
-  .config-sub { color:var(--text2); font-size:14px; margin-bottom:28px; line-height:1.6; }
-  .config-step { display:flex; gap:12px; margin-bottom:16px; }
-  .step-num { width:24px; height:24px; border-radius:50%; background:rgba(91,138,245,0.2); color:var(--accent); font-size:12px; font-weight:700; display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-top:2px; }
-  .step-text { font-size:13px; color:var(--text2); line-height:1.6; }
-  .step-text b { color:var(--text); }
-  .step-text code { background:var(--surface2); padding:2px 6px; border-radius:4px; font-family:'DM Mono',monospace; font-size:12px; color:var(--accent); }
+  /* ── APP ── */
+  #app-screen{display:none;min-height:100vh;}
+  .sidebar{position:fixed;top:0;left:0;width:244px;height:100vh;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;z-index:100;}
+  .sidebar-header{padding:22px 20px 18px;border-bottom:1px solid var(--border);}
+  .sidebar-logo{display:flex;align-items:center;gap:10px;}
+  .sidebar-logo .logo-icon{width:30px;height:30px;font-size:13px;}
+  .sidebar-logo .logo-text{font-size:15px;font-weight:700;}
+  .sidebar-nav{flex:1;padding:12px 10px;display:flex;flex-direction:column;gap:2px;overflow-y:auto;}
+  .nav-item{display:flex;align-items:center;gap:10px;padding:9px 11px;border-radius:var(--radius-sm);cursor:pointer;color:var(--text2);font-size:13px;font-weight:500;transition:all .15s;border:none;background:none;width:100%;text-align:left;font-family:'DM Sans',sans-serif;}
+  .nav-item:hover{background:var(--surface2);color:var(--text);}
+  .nav-item.active{background:rgba(91,138,245,.12);color:var(--accent);}
+  .nav-icon{width:16px;text-align:center;font-size:14px;flex-shrink:0;}
+  .nav-section-label{font-size:10px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);padding:12px 11px 4px;}
+  .sidebar-footer{padding:12px;border-top:1px solid var(--border);}
+  .user-card{display:flex;align-items:center;gap:9px;padding:9px 11px;background:var(--surface2);border-radius:var(--radius-sm);margin-bottom:7px;}
+  .user-avatar{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;flex-shrink:0;}
+  .user-name{font-size:13px;font-weight:600;line-height:1.3;}
+  .user-role-txt{font-size:11px;color:var(--text2);}
+  .role-pill{display:inline-block;padding:2px 8px;border-radius:8px;font-size:10px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;margin-top:2px;}
+  .pill-director{background:rgba(251,146,60,.15);color:var(--orange);}
+  .pill-manager{background:rgba(167,139,250,.15);color:var(--purple);}
+  .pill-tl{background:rgba(91,138,245,.15);color:var(--accent);}
+  .pill-sme{background:rgba(251,191,36,.15);color:var(--yellow);}
+  .pill-member{background:rgba(139,144,168,.15);color:var(--text2);}
+  .logout-btn{width:100%;padding:8px;background:none;border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text2);font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;transition:all .15s;}
+  .logout-btn:hover{background:var(--surface2);color:var(--text);}
 
-  /* ─── AUTH ─── */
-  #auth-screen {
-    min-height:100vh; display:none; align-items:center; justify-content:center;
-    background:radial-gradient(ellipse at 30% 20%,rgba(91,138,245,.12) 0%,transparent 60%),
-               radial-gradient(ellipse at 80% 80%,rgba(124,92,191,.10) 0%,transparent 55%),var(--bg);
-    padding:20px;
-  }
-  .auth-card { background:var(--surface); border:1px solid var(--border); border-radius:20px; padding:48px 44px; width:100%; max-width:440px; box-shadow:0 40px 80px rgba(0,0,0,.5); }
-  .auth-logo { display:flex; align-items:center; gap:10px; margin-bottom:36px; }
-  .logo-icon { width:40px; height:40px; background:linear-gradient(135deg,var(--accent),var(--accent2)); border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:18px; }
-  .logo-text { font-size:20px; font-weight:700; letter-spacing:-.5px; }
-  .logo-sub { font-size:11px; color:var(--text2); letter-spacing:1.5px; text-transform:uppercase; margin-top:1px; }
-  .auth-title { font-size:26px; font-weight:700; letter-spacing:-.5px; margin-bottom:6px; }
-  .auth-subtitle { color:var(--text2); font-size:14px; margin-bottom:32px; }
-  .tab-row { display:flex; gap:0; background:var(--surface2); border-radius:var(--radius-sm); padding:4px; margin-bottom:28px; }
-  .tab-btn { flex:1; padding:9px; border:none; background:none; border-radius:6px; cursor:pointer; font-family:'DM Sans',sans-serif; font-size:13px; font-weight:500; color:var(--text2); transition:all .2s; }
-  .tab-btn.active { background:var(--surface3); color:var(--text); }
-  .field-group { margin-bottom:18px; }
-  .field-label { font-size:12px; font-weight:500; color:var(--text2); letter-spacing:.5px; text-transform:uppercase; margin-bottom:8px; }
-  .field-input { width:100%; padding:12px 16px; background:var(--surface2); border:1px solid var(--border); border-radius:var(--radius-sm); color:var(--text); font-family:'DM Sans',sans-serif; font-size:14px; outline:none; transition:border-color .2s; }
-  .field-input:focus { border-color:var(--accent); }
-  .field-input::placeholder { color:var(--text3); }
-  select.field-input { appearance:none; cursor:pointer; }
-  .btn-primary { width:100%; padding:13px; background:linear-gradient(135deg,var(--accent),var(--accent2)); border:none; border-radius:var(--radius-sm); color:#fff; font-family:'DM Sans',sans-serif; font-size:15px; font-weight:600; cursor:pointer; transition:opacity .2s,transform .1s; margin-top:8px; }
-  .btn-primary:hover { opacity:.9; }
-  .btn-primary:active { transform:scale(.99); }
-  .btn-primary:disabled { opacity:.5; cursor:not-allowed; }
-  .hint { font-size:12px; color:var(--text3); margin-top:20px; text-align:center; line-height:1.6; }
-  .hint b { color:var(--text2); }
-  .err-msg { font-size:13px; color:var(--red); margin-top:12px; padding:10px 14px; background:rgba(248,113,113,.08); border-radius:var(--radius-sm); border:1px solid rgba(248,113,113,.2); display:none; }
-  .form-row { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+  .main-content{margin-left:244px;padding:30px;min-height:100vh;}
+  .page{display:none;}
+  .page.active{display:block;}
+  .page-header{margin-bottom:24px;}
+  .page-title{font-size:22px;font-weight:700;letter-spacing:-.5px;}
+  .page-subtitle{color:var(--text2);font-size:13px;margin-top:4px;}
 
-  /* ─── APP ─── */
-  #app-screen { display:none; min-height:100vh; }
-  .sidebar { position:fixed; top:0; left:0; width:240px; height:100vh; background:var(--surface); border-right:1px solid var(--border); display:flex; flex-direction:column; z-index:100; }
-  .sidebar-header { padding:24px 20px 20px; border-bottom:1px solid var(--border); }
-  .sidebar-logo { display:flex; align-items:center; gap:10px; }
-  .sidebar-logo .logo-icon { width:32px; height:32px; font-size:14px; }
-  .sidebar-logo .logo-text { font-size:16px; font-weight:700; }
-  .sidebar-nav { flex:1; padding:16px 12px; display:flex; flex-direction:column; gap:4px; }
-  .nav-item { display:flex; align-items:center; gap:12px; padding:10px 12px; border-radius:var(--radius-sm); cursor:pointer; color:var(--text2); font-size:14px; font-weight:500; transition:all .15s; border:none; background:none; width:100%; text-align:left; font-family:'DM Sans',sans-serif; }
-  .nav-item:hover { background:var(--surface2); color:var(--text); }
-  .nav-item.active { background:rgba(91,138,245,.12); color:var(--accent); }
-  .nav-icon { width:18px; text-align:center; font-size:16px; }
-  .nav-section-label { font-size:10px; font-weight:600; letter-spacing:1.5px; text-transform:uppercase; color:var(--text3); padding:16px 12px 6px; }
-  .sidebar-footer { padding:16px; border-top:1px solid var(--border); }
-  .user-card { display:flex; align-items:center; gap:10px; padding:10px 12px; background:var(--surface2); border-radius:var(--radius-sm); margin-bottom:8px; }
-  .user-avatar { width:32px; height:32px; border-radius:50%; background:linear-gradient(135deg,var(--accent),var(--accent2)); display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:700; color:#fff; flex-shrink:0; }
-  .user-name { font-size:13px; font-weight:600; }
-  .user-role { font-size:11px; color:var(--text2); }
-  .logout-btn { width:100%; padding:9px; background:none; border:1px solid var(--border); border-radius:var(--radius-sm); color:var(--text2); font-family:'DM Sans',sans-serif; font-size:13px; cursor:pointer; transition:all .15s; }
-  .logout-btn:hover { background:var(--surface2); color:var(--text); }
-  .main-content { margin-left:240px; padding:32px; min-height:100vh; }
-  .page { display:none; }
-  .page.active { display:block; }
-  .page-header { margin-bottom:28px; }
-  .page-title { font-size:24px; font-weight:700; letter-spacing:-.5px; }
-  .page-subtitle { color:var(--text2); font-size:14px; margin-top:4px; }
+  /* ── STATS ── */
+  .stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:13px;margin-bottom:20px;}
+  .stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;}
+  .stat-label{font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text3);margin-bottom:7px;}
+  .stat-value{font-size:24px;font-weight:700;letter-spacing:-1px;}
+  .stat-sub{font-size:11px;color:var(--text2);margin-top:2px;}
 
-  /* ─── CARDS & TABLES ─── */
-  .stats-row { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:16px; margin-bottom:24px; }
-  .stat-card { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:20px; }
-  .stat-label { font-size:11px; font-weight:600; letter-spacing:1px; text-transform:uppercase; color:var(--text3); margin-bottom:10px; }
-  .stat-value { font-size:28px; font-weight:700; letter-spacing:-1px; }
-  .stat-sub { font-size:12px; color:var(--text2); margin-top:4px; }
-  .card { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); overflow:hidden; }
-  .card-header { padding:20px 24px; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px; }
-  .card-title { font-size:16px; font-weight:600; }
-  table { width:100%; border-collapse:collapse; }
-  th { text-align:left; font-size:11px; font-weight:600; letter-spacing:1px; text-transform:uppercase; color:var(--text3); padding:12px 24px; border-bottom:1px solid var(--border); }
-  td { padding:14px 24px; border-bottom:1px solid rgba(42,47,69,.5); font-size:13px; }
-  tr:last-child td { border-bottom:none; }
-  tr:hover td { background:rgba(255,255,255,.02); }
+  /* ── ORG CHART ── */
+  .org-row{display:flex;align-items:center;gap:8px;padding:10px 20px;border-bottom:1px solid rgba(42,47,69,.4);transition:background .15s;}
+  .org-row:hover{background:rgba(255,255,255,.02);}
+  .org-indent-1{padding-left:40px;}
+  .org-indent-2{padding-left:72px;}
+  .org-indent-3{padding-left:104px;}
+  .org-tree-line{color:var(--text3);font-family:'DM Mono',monospace;font-size:12px;margin-right:4px;}
+  .org-name{font-size:13px;font-weight:600;flex:1;}
+  .org-email{font-size:11px;color:var(--text3);}
+  .org-desig{font-size:11px;color:var(--text2);}
 
-  /* ─── BADGES ─── */
-  .badge { display:inline-flex; align-items:center; justify-content:center; padding:3px 10px; border-radius:20px; font-size:12px; font-weight:700; font-family:'DM Mono',monospace; }
-  .badge-os { background:rgba(52,211,153,.15); color:var(--green); border:1px solid rgba(52,211,153,.3); }
-  .badge-ee { background:rgba(91,138,245,.15); color:var(--accent); border:1px solid rgba(91,138,245,.3); }
-  .badge-me { background:rgba(251,191,36,.15); color:var(--yellow); border:1px solid rgba(251,191,36,.3); }
-  .badge-be { background:rgba(248,113,113,.15); color:var(--red); border:1px solid rgba(248,113,113,.3); }
-  .badge-de { background:rgba(148,163,184,.15); color:#94a3b8; border:1px solid rgba(148,163,184,.3); }
+  /* ── CARDS & TABLES ── */
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:18px;}
+  .card-header{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;}
+  .card-title{font-size:15px;font-weight:600;}
+  table{width:100%;border-collapse:collapse;}
+  th{text-align:left;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text3);padding:10px 20px;border-bottom:1px solid var(--border);}
+  td{padding:12px 20px;border-bottom:1px solid rgba(42,47,69,.5);font-size:13px;}
+  tr:last-child td{border-bottom:none;}
+  tr:hover td{background:rgba(255,255,255,.015);}
+  .group-header td{background:var(--surface2) !important;font-size:11px;font-weight:700;color:var(--text2);padding:9px 20px;border-top:2px solid var(--border);}
 
-  /* ─── SCORE FORM ─── */
-  .score-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; padding:24px; }
-  .score-row { background:var(--surface2); border:1px solid var(--border); border-radius:var(--radius-sm); padding:16px 18px; display:flex; align-items:center; justify-content:space-between; gap:16px; }
-  .score-info { flex:1; }
-  .score-name { font-size:13px; font-weight:600; }
-  .score-target { font-size:11px; color:var(--text3); margin-top:3px; font-family:'DM Mono',monospace; }
-  .score-input-wrap { display:flex; align-items:center; gap:8px; }
-  .score-input { width:64px; padding:8px 10px; background:var(--surface3); border:1px solid var(--border); border-radius:6px; color:var(--text); font-family:'DM Mono',monospace; font-size:15px; font-weight:500; text-align:center; outline:none; transition:border-color .2s; }
-  .score-input:focus { border-color:var(--accent); }
-  .score-max-label { font-size:11px; color:var(--text3); }
-  .result-box { margin:0 24px 24px; background:var(--surface2); border:1px solid var(--border); border-radius:var(--radius); padding:24px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:16px; }
-  .result-score { font-size:42px; font-weight:700; font-family:'DM Mono',monospace; letter-spacing:-2px; }
-  .result-max { font-size:18px; color:var(--text3); font-family:'DM Mono',monospace; }
-  .result-rating-box { text-align:center; }
-  .rating-label { font-size:11px; font-weight:600; letter-spacing:1px; text-transform:uppercase; color:var(--text3); margin-bottom:8px; }
-  .rating-value { font-size:36px; font-weight:800; font-family:'DM Mono',monospace; }
-  .rating-name { font-size:14px; color:var(--text2); margin-top:4px; font-weight:500; }
-  .result-bar-wrap { flex:1; min-width:200px; }
-  .bar-row { margin-bottom:10px; }
-  .bar-info { display:flex; justify-content:space-between; margin-bottom:5px; font-size:12px; color:var(--text2); }
-  .progress { height:8px; background:var(--surface3); border-radius:4px; overflow:hidden; }
-  .progress-fill { height:100%; border-radius:4px; background:linear-gradient(90deg,var(--accent),var(--accent2)); transition:width .5s ease; }
+  /* ── BADGES ── */
+  .badge{display:inline-flex;align-items:center;padding:2px 9px;border-radius:20px;font-size:11px;font-weight:700;font-family:'DM Mono',monospace;}
+  .badge-os{background:rgba(52,211,153,.15);color:var(--green);border:1px solid rgba(52,211,153,.3);}
+  .badge-ee{background:rgba(91,138,245,.15);color:var(--accent);border:1px solid rgba(91,138,245,.3);}
+  .badge-me{background:rgba(251,191,36,.15);color:var(--yellow);border:1px solid rgba(251,191,36,.3);}
+  .badge-be{background:rgba(248,113,113,.15);color:var(--red);border:1px solid rgba(248,113,113,.3);}
+  .badge-de{background:rgba(148,163,184,.15);color:#94a3b8;border:1px solid rgba(148,163,184,.3);}
 
-  /* ─── BUTTONS ─── */
-  .btn { padding:9px 18px; border-radius:var(--radius-sm); font-family:'DM Sans',sans-serif; font-size:13px; font-weight:600; cursor:pointer; border:none; transition:all .15s; }
-  .btn-blue { background:linear-gradient(135deg,var(--accent),var(--accent2)); color:#fff; }
-  .btn-blue:hover { opacity:.9; }
-  .btn-blue:disabled { opacity:.5; cursor:not-allowed; }
-  .btn-outline { background:none; border:1px solid var(--border); color:var(--text); }
-  .btn-outline:hover { background:var(--surface2); }
+  /* ── SCORE FORM ── */
+  .score-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:18px 20px;}
+  .score-row{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:13px 15px;display:flex;align-items:center;justify-content:space-between;gap:12px;}
+  .score-name{font-size:13px;font-weight:600;}
+  .score-target{font-size:10px;color:var(--text3);margin-top:3px;font-family:'DM Mono',monospace;}
+  .score-input-wrap{display:flex;align-items:center;gap:6px;flex-shrink:0;}
+  .score-input{width:58px;padding:7px 8px;background:var(--surface3);border:1px solid var(--border);border-radius:6px;color:var(--text);font-family:'DM Mono',monospace;font-size:14px;font-weight:500;text-align:center;outline:none;transition:border-color .2s;}
+  .score-input:focus{border-color:var(--accent);}
+  .score-max-label{font-size:11px;color:var(--text3);}
+  .result-box{margin:0 20px 20px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px;}
+  .result-score{font-size:38px;font-weight:700;font-family:'DM Mono',monospace;letter-spacing:-2px;}
+  .result-max{font-size:15px;color:var(--text3);font-family:'DM Mono',monospace;}
+  .rl{font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text3);margin-bottom:5px;}
+  .rv{font-size:32px;font-weight:800;font-family:'DM Mono',monospace;}
+  .rn{font-size:12px;color:var(--text2);margin-top:2px;font-weight:500;}
+  .result-bar-wrap{flex:1;min-width:160px;}
+  .bar-info{display:flex;justify-content:space-between;margin-bottom:5px;font-size:12px;color:var(--text2);}
+  .progress{height:6px;background:var(--surface3);border-radius:3px;overflow:hidden;}
+  .progress-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width .5s ease;}
 
-  /* ─── MISC ─── */
-  .filters { display:flex; gap:10px; flex-wrap:wrap; }
-  .filter-select { padding:8px 14px; background:var(--surface2); border:1px solid var(--border); border-radius:var(--radius-sm); color:var(--text); font-family:'DM Sans',sans-serif; font-size:13px; outline:none; cursor:pointer; }
-  .month-tabs { display:flex; gap:6px; flex-wrap:wrap; padding:16px 24px; border-bottom:1px solid var(--border); }
-  .month-tab { padding:6px 14px; border-radius:20px; font-size:12px; font-weight:600; cursor:pointer; border:1px solid var(--border); background:none; color:var(--text2); font-family:'DM Sans',sans-serif; transition:all .15s; }
-  .month-tab:hover { background:var(--surface2); color:var(--text); }
-  .month-tab.active { background:rgba(91,138,245,.15); color:var(--accent); border-color:rgba(91,138,245,.3); }
-  .section-sep { height:1px; background:var(--border); margin:0 24px 20px; }
-  .section-label-inner { font-size:11px; font-weight:600; letter-spacing:1.2px; text-transform:uppercase; color:var(--text3); padding:20px 24px 12px; }
-  .comments-area { width:100%; padding:12px 14px; background:var(--surface2); border:1px solid var(--border); border-radius:var(--radius-sm); color:var(--text); font-family:'DM Sans',sans-serif; font-size:13px; resize:vertical; min-height:80px; outline:none; }
-  .comments-area:focus { border-color:var(--accent); }
-  .form-footer { padding:16px 24px; border-top:1px solid var(--border); display:flex; justify-content:flex-end; gap:10px; align-items:center; }
-  .saved-indicator { display:none; align-items:center; gap:6px; font-size:13px; color:var(--green); font-weight:500; }
-  .guide-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:12px; padding:20px 24px; }
-  .guide-item { background:var(--surface2); border:1px solid var(--border); border-radius:var(--radius-sm); padding:16px; text-align:center; }
-  .guide-badge { font-size:22px; font-weight:800; font-family:'DM Mono',monospace; margin-bottom:6px; }
-  .guide-num { font-size:24px; font-weight:700; }
-  .guide-desc { font-size:11px; color:var(--text2); margin-top:4px; line-height:1.5; }
-  .empty-state { padding:48px 24px; text-align:center; color:var(--text3); }
-  .empty-state .icon { font-size:36px; margin-bottom:12px; }
-  .inline-form { padding:16px 24px; }
-  .inline-form .field-group { margin-bottom:14px; }
-  .inline-form .field-label { font-size:11px; }
-  .toast { position:fixed; bottom:28px; right:28px; background:var(--surface); border:1px solid var(--green); border-radius:var(--radius-sm); padding:12px 20px; color:var(--green); font-size:13px; font-weight:600; z-index:9999; display:none; box-shadow:0 8px 24px rgba(0,0,0,.4); }
+  .btn{padding:8px 15px;border-radius:var(--radius-sm);font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer;border:none;transition:all .15s;}
+  .btn-blue{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;}
+  .btn-blue:hover{opacity:.9;}
+  .btn-blue:disabled{opacity:.5;cursor:not-allowed;}
+  .btn-outline{background:none;border:1px solid var(--border);color:var(--text);}
+  .btn-outline:hover{background:var(--surface2);}
 
-  @media (max-width:900px) {
-    .sidebar { width:100%; height:auto; position:relative; }
-    .main-content { margin-left:0; }
-    .score-grid { grid-template-columns:1fr; }
-  }
+  .filters{display:flex;gap:7px;flex-wrap:wrap;}
+  .filter-select{padding:7px 11px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-family:'DM Sans',sans-serif;font-size:13px;outline:none;cursor:pointer;}
+  .month-tabs{display:flex;gap:5px;flex-wrap:wrap;padding:13px 20px;border-bottom:1px solid var(--border);}
+  .month-tab{padding:5px 12px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;border:1px solid var(--border);background:none;color:var(--text2);font-family:'DM Sans',sans-serif;transition:all .15s;}
+  .month-tab:hover{background:var(--surface2);color:var(--text);}
+  .month-tab.active{background:rgba(91,138,245,.15);color:var(--accent);border-color:rgba(91,138,245,.3);}
+  .sep{height:1px;background:var(--border);margin:0 20px 16px;}
+  .sec-lbl{font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--text3);padding:16px 20px 9px;}
+  .comments-area{width:100%;padding:10px 13px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-family:'DM Sans',sans-serif;font-size:13px;resize:vertical;min-height:65px;outline:none;}
+  .comments-area:focus{border-color:var(--accent);}
+  .form-footer{padding:13px 20px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:9px;align-items:center;}
+  .saved-ok{display:none;align-items:center;gap:5px;font-size:13px;color:var(--green);font-weight:500;}
+  .guide-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:9px;padding:16px 20px;}
+  .guide-item{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:13px;text-align:center;}
+  .g-badge{font-size:18px;font-weight:800;font-family:'DM Mono',monospace;margin-bottom:4px;}
+  .g-num{font-size:20px;font-weight:700;}
+  .g-desc{font-size:10px;color:var(--text2);margin-top:3px;line-height:1.4;}
+  .empty-state{padding:40px 20px;text-align:center;color:var(--text3);}
+  .empty-state .icon{font-size:28px;margin-bottom:9px;}
+  .toast{position:fixed;bottom:22px;right:22px;background:var(--surface);border:1px solid var(--green);border-radius:var(--radius-sm);padding:10px 17px;color:var(--green);font-size:13px;font-weight:600;z-index:9999;display:none;box-shadow:0 8px 24px rgba(0,0,0,.4);}
+  @media(max-width:900px){.sidebar{width:100%;height:auto;position:relative;}.main-content{margin-left:0;}.score-grid{grid-template-columns:1fr;}}
 </style>
 </head>
 <body>
 
-<!-- ─── LOADING ─── -->
 <div id="loading-overlay">
   <div class="spinner"></div>
-  <div class="loading-text">Connecting to database…</div>
+  <div class="loading-text">Loading PerfTrack…</div>
 </div>
 
-<!-- ─── CONFIG NEEDED ─── -->
-<div id="config-banner" style="display:none;position:fixed;inset:0;background:var(--bg);align-items:center;justify-content:center;z-index:9998;padding:20px;flex-direction:column">
-  <div class="config-card">
-    <div style="font-size:36px;margin-bottom:16px">⚙️</div>
-    <div class="config-title">One-time Setup Required</div>
-    <div class="config-sub">Open this file in a text editor and replace the two placeholders at the top of the &lt;script&gt; section with your Supabase credentials:</div>
-    <div class="config-step"><div class="step-num">1</div><div class="step-text">Find <code>YOUR_SUPABASE_URL</code> and replace it with your Project URL from Supabase → Settings → API</div></div>
-    <div class="config-step"><div class="step-num">2</div><div class="step-text">Find <code>YOUR_SUPABASE_ANON_KEY</code> and replace it with your <b>anon / public</b> key from the same page</div></div>
-    <div class="config-step"><div class="step-num">3</div><div class="step-text">Save the file and refresh this page</div></div>
-    <div style="margin-top:20px;padding:14px 16px;background:var(--surface2);border-radius:var(--radius-sm);font-size:12px;color:var(--text3);line-height:1.7">
-      📖 Full step-by-step instructions are in <b>SETUP_GUIDE.md</b> included in your download package.
-    </div>
-  </div>
-</div>
-
-<!-- ─── AUTH SCREEN ─── -->
+<!-- AUTH -->
 <div id="auth-screen">
   <div class="auth-card">
     <div class="auth-logo">
       <div class="logo-icon">📊</div>
-      <div>
-        <div class="logo-text">PerfTrack</div>
-        <div class="logo-sub">Team Scorecard Portal</div>
-      </div>
+      <div><div class="logo-text">PerfTrack</div><div class="logo-sub">Lumelight Operations</div></div>
     </div>
-
     <div class="tab-row">
       <button class="tab-btn active" onclick="switchTab('login')">Sign In</button>
       <button class="tab-btn" onclick="switchTab('register')">Register</button>
@@ -243,84 +181,90 @@
 
     <!-- LOGIN -->
     <div id="tab-login">
-      <div class="field-group">
-        <div class="field-label">Work Email</div>
-        <input class="field-input" id="login-email" type="email" placeholder="yourname@lumelight.com">
-      </div>
-      <div class="field-group">
-        <div class="field-label">Password</div>
-        <input class="field-input" id="login-pass" type="password" placeholder="••••••••">
-      </div>
+      <div class="field-group"><label class="field-label">Work Email</label><input class="field-input" id="login-email" type="email" placeholder="yourname@lumelight.com"></div>
+      <div class="field-group"><label class="field-label">Password</label><input class="field-input" id="login-pass" type="password" placeholder="••••••••"></div>
       <div class="err-msg" id="login-err"></div>
       <button class="btn-primary" id="login-btn" onclick="doLogin()">Sign In →</button>
-      <p class="hint">Use your <b>@lumelight.com</b> Microsoft 365 email to sign in.</p>
+      <p class="hint">Use your <b>@lumelight.com</b> email.</p>
     </div>
 
     <!-- REGISTER -->
     <div id="tab-register" style="display:none">
       <div class="form-row">
-        <div class="field-group">
-          <div class="field-label">First Name</div>
-          <input class="field-input" id="reg-fname" type="text" placeholder="Sumit">
-        </div>
-        <div class="field-group">
-          <div class="field-label">Last Name</div>
-          <input class="field-input" id="reg-lname" type="text" placeholder="Giri">
-        </div>
+        <div class="field-group"><label class="field-label">First Name</label><input class="field-input" id="reg-fname" placeholder="Sumit"></div>
+        <div class="field-group"><label class="field-label">Last Name</label><input class="field-input" id="reg-lname" placeholder="Giri"></div>
       </div>
-      <div class="field-group">
-        <div class="field-label">Work Email (@lumelight.com)</div>
-        <input class="field-input" id="reg-email" type="email" placeholder="yourname@lumelight.com">
+      <div class="field-group"><label class="field-label">Work Email (@lumelight.com)</label><input class="field-input" id="reg-email" type="email" placeholder="yourname@lumelight.com"></div>
+      <div class="field-group"><label class="field-label">Password</label><input class="field-input" id="reg-pass" type="password" placeholder="Min. 6 characters"></div>
+      <div class="form-row">
+        <div class="field-group"><label class="field-label">Designation</label><input class="field-input" id="reg-designation" placeholder="Process Associate"></div>
+        <div class="field-group"><label class="field-label">Process</label><input class="field-input" id="reg-process" placeholder="ATC"></div>
       </div>
+
+      <!-- Role -->
       <div class="field-group">
-        <div class="field-label">Password</div>
-        <input class="field-input" id="reg-pass" type="password" placeholder="Min. 6 characters">
-      </div>
-      <div class="field-group">
-        <div class="field-label">Designation</div>
-        <input class="field-input" id="reg-designation" type="text" placeholder="Process Associate">
-      </div>
-      <div class="field-group">
-        <div class="field-label">Process</div>
-        <input class="field-input" id="reg-process" type="text" placeholder="ATC">
-      </div>
-      <div class="field-group">
-        <div class="field-label">Role</div>
-        <select class="field-input" id="reg-role">
+        <label class="field-label">My Role</label>
+        <select class="field-input" id="reg-role" onchange="onRoleChange()">
           <option value="member">Team Member</option>
-          <option value="lead">Team Lead / Manager</option>
+          <option value="sme">SME (Subject Matter Expert)</option>
+          <option value="tl">TL (Team Leader)</option>
+          <option value="manager">Manager</option>
+          <option value="director">Director</option>
         </select>
       </div>
+
+      <!-- Supervisor — shown for member, SME — optional -->
+      <div class="field-group" id="supervisor-field" style="display:none">
+        <label class="field-label">My TL / Supervisor <span style="color:var(--text3);font-weight:400;text-transform:none;letter-spacing:0">(optional)</span></label>
+        <select class="field-input" id="reg-supervisor"><option value="">— Skip / No TL assigned —</option></select>
+      </div>
+
+      <!-- Manager — shown for member, SME, TL -->
+      <div class="field-group" id="manager-field">
+        <label class="field-label">My Manager</label>
+        <select class="field-input" id="reg-manager"><option value="">— Select Manager —</option></select>
+      </div>
+
+      <!-- Director — shown for managers -->
+      <div class="field-group" id="director-field" style="display:none">
+        <label class="field-label">My Director</label>
+        <select class="field-input" id="reg-director"><option value="">— Select Director —</option></select>
+      </div>
+
       <div class="err-msg" id="reg-err"></div>
       <button class="btn-primary" id="reg-btn" onclick="doRegister()">Create Account →</button>
-      <p class="hint">Only <b>@lumelight.com</b> emails are accepted.</p>
+      <p class="hint">Only <b>@lumelight.com</b> emails accepted.</p>
     </div>
   </div>
 </div>
 
-<!-- ─── APP SCREEN ─── -->
+<!-- APP -->
 <div id="app-screen">
   <aside class="sidebar">
     <div class="sidebar-header">
-      <div class="sidebar-logo">
-        <div class="logo-icon">📊</div>
-        <div><div class="logo-text">PerfTrack</div></div>
-      </div>
+      <div class="sidebar-logo"><div class="logo-icon">📊</div><div><div class="logo-text">PerfTrack</div></div></div>
     </div>
     <nav class="sidebar-nav">
-      <div class="nav-section-label">Overview</div>
-      <button class="nav-item active" onclick="goPage('dashboard')" id="nav-dashboard"><span class="nav-icon">🏠</span> Dashboard</button>
-      <button class="nav-item" onclick="goPage('scorecard')" id="nav-scorecard"><span class="nav-icon">📋</span> My Scorecard</button>
-      <div class="nav-section-label" id="nav-section-lead" style="display:none">Lead Tools</div>
-      <button class="nav-item" onclick="goPage('enter-scores')" id="nav-enter-scores" style="display:none"><span class="nav-icon">✏️</span> Enter Scores</button>
-      <button class="nav-item" onclick="goPage('team-overview')" id="nav-team-overview" style="display:none"><span class="nav-icon">👥</span> Team Overview</button>
+      <div class="nav-section-label">My Pages</div>
+      <button class="nav-item active" onclick="goPage('dashboard')" id="nav-dashboard"><span class="nav-icon">🏠</span>Dashboard</button>
+      <button class="nav-item" onclick="goPage('scorecard')" id="nav-scorecard"><span class="nav-icon">📋</span>My Scorecard</button>
+
+      <!-- TL & above -->
+      <div id="nav-sec-scoring" class="nav-section-label" style="display:none">Scoring</div>
+      <button class="nav-item" onclick="goPage('enter-scores')" id="nav-enter-scores" style="display:none"><span class="nav-icon">✏️</span>Enter Scores</button>
+      <button class="nav-item" onclick="goPage('my-team')" id="nav-my-team" style="display:none"><span class="nav-icon">👥</span>My Team</button>
+
+      <!-- Director only -->
+      <div id="nav-sec-org" class="nav-section-label" style="display:none">Organisation</div>
+      <button class="nav-item" onclick="goPage('org-view')" id="nav-org-view" style="display:none"><span class="nav-icon">🏢</span>Full Org View</button>
     </nav>
     <div class="sidebar-footer">
       <div class="user-card">
-        <div class="user-avatar" id="sidebar-avatar">A</div>
+        <div class="user-avatar" id="sb-avatar">A</div>
         <div>
-          <div class="user-name" id="sidebar-name">—</div>
-          <div class="user-role" id="sidebar-role">—</div>
+          <div class="user-name" id="sb-name">—</div>
+          <div class="user-role-txt" id="sb-role">—</div>
+          <div class="role-pill" id="sb-pill">—</div>
         </div>
       </div>
       <button class="logout-btn" onclick="doLogout()">Sign Out</button>
@@ -333,635 +277,602 @@
     <div class="page active" id="page-dashboard">
       <div class="page-header">
         <div class="page-title">Welcome back, <span id="dash-name">—</span> 👋</div>
-        <div class="page-subtitle">Here's your performance at a glance</div>
+        <div class="page-subtitle" id="dash-sub">Performance at a glance</div>
       </div>
       <div class="stats-row">
         <div class="stat-card"><div class="stat-label">Current Month</div><div class="stat-value" id="dash-month">—</div><div class="stat-sub">Active period</div></div>
         <div class="stat-card"><div class="stat-label">Latest Score</div><div class="stat-value" id="dash-score">—</div><div class="stat-sub">out of 110</div></div>
-        <div class="stat-card"><div class="stat-label">Rating</div><div class="stat-value" id="dash-rating">—</div><div class="stat-sub" id="dash-rating-name">—</div></div>
+        <div class="stat-card"><div class="stat-label">Rating</div><div class="stat-value" id="dash-rating">—</div><div class="stat-sub" id="dash-rname">—</div></div>
         <div class="stat-card"><div class="stat-label">Avg Score (YTD)</div><div class="stat-value" id="dash-avg">—</div><div class="stat-sub">Year to date</div></div>
       </div>
       <div class="card">
         <div class="card-header"><div class="card-title">Score History</div></div>
-        <table>
-          <thead><tr><th>Month</th><th>Year</th><th>Score</th><th>Max</th><th>%</th><th>Rating</th></tr></thead>
-          <tbody id="dash-history-body"><tr><td colspan="6"><div class="empty-state"><div class="icon">📊</div><p>No score history yet.</p></div></td></tr></tbody>
-        </table>
+        <table><thead><tr><th>Month</th><th>Year</th><th>Score</th><th>Max</th><th>%</th><th>Rating</th><th>Scored by</th></tr></thead>
+        <tbody id="dash-tbody"><tr><td colspan="7"><div class="empty-state"><div class="icon">📊</div><p>No scorecards yet.</p></div></td></tr></tbody></table>
       </div>
     </div>
 
     <!-- MY SCORECARD -->
     <div class="page" id="page-scorecard">
-      <div class="page-header">
-        <div class="page-title">My Scorecard</div>
-        <div class="page-subtitle">Detailed monthly performance breakdown</div>
-      </div>
+      <div class="page-header"><div class="page-title">My Scorecard</div><div class="page-subtitle">Detailed monthly breakdown</div></div>
       <div class="card">
         <div class="card-header"><div class="card-title">Select Month</div></div>
-        <div class="month-tabs" id="scorecard-months"></div>
-        <div id="scorecard-detail"></div>
+        <div class="month-tabs" id="sc-months"></div>
+        <div id="sc-detail"></div>
       </div>
-      <div style="margin-top:20px">
-        <div class="card">
-          <div class="card-header"><div class="card-title">Rating Guidelines</div></div>
-          <div class="guide-grid">
-            <div class="guide-item"><div class="guide-badge" style="color:var(--green)">OS</div><div class="guide-num" style="color:var(--green)">5</div><div class="guide-desc">Outstanding<br>≥105 points</div></div>
-            <div class="guide-item"><div class="guide-badge" style="color:var(--accent)">EE</div><div class="guide-num" style="color:var(--accent)">4</div><div class="guide-desc">Exceeds Expectations<br>90–104 points</div></div>
-            <div class="guide-item"><div class="guide-badge" style="color:var(--yellow)">ME</div><div class="guide-num" style="color:var(--yellow)">3</div><div class="guide-desc">Meets Expectations<br>75–89 points</div></div>
-            <div class="guide-item"><div class="guide-badge" style="color:var(--red)">BE</div><div class="guide-num" style="color:var(--red)">2</div><div class="guide-desc">Below Expectations<br>60–74 points</div></div>
-            <div class="guide-item"><div class="guide-badge" style="color:#94a3b8">DE</div><div class="guide-num" style="color:#94a3b8">1</div><div class="guide-desc">Does Not Meet<br>&lt;60 points</div></div>
-          </div>
+      <div class="card">
+        <div class="card-header"><div class="card-title">Rating Guidelines</div></div>
+        <div class="guide-grid">
+          <div class="guide-item"><div class="g-badge" style="color:var(--green)">OS</div><div class="g-num" style="color:var(--green)">5</div><div class="g-desc">Outstanding<br>≥105 pts</div></div>
+          <div class="guide-item"><div class="g-badge" style="color:var(--accent)">EE</div><div class="g-num" style="color:var(--accent)">4</div><div class="g-desc">Exceeds Expectations<br>90–104 pts</div></div>
+          <div class="guide-item"><div class="g-badge" style="color:var(--yellow)">ME</div><div class="g-num" style="color:var(--yellow)">3</div><div class="g-desc">Meets Expectations<br>75–89 pts</div></div>
+          <div class="guide-item"><div class="g-badge" style="color:var(--red)">BE</div><div class="g-num" style="color:var(--red)">2</div><div class="g-desc">Below Expectations<br>60–74 pts</div></div>
+          <div class="guide-item"><div class="g-badge" style="color:#94a3b8">DE</div><div class="g-num" style="color:#94a3b8">1</div><div class="g-desc">Does Not Meet<br>&lt;60 pts</div></div>
         </div>
       </div>
     </div>
 
-    <!-- ENTER SCORES (LEAD) -->
+    <!-- ENTER SCORES -->
     <div class="page" id="page-enter-scores">
-      <div class="page-header">
-        <div class="page-title">Enter Monthly Scores</div>
-        <div class="page-subtitle">Record performance scores for each team member</div>
-      </div>
+      <div class="page-header"><div class="page-title">Enter Scores</div><div class="page-subtitle" id="enter-scores-sub">Record monthly scores for your reportees</div></div>
       <div class="card">
-        <div class="card-header"><div class="card-title">Select Member & Month</div></div>
-        <div style="padding:20px 24px">
-          <div class="form-row">
-            <div class="field-group">
-              <div class="field-label">Team Member</div>
-              <select class="filter-select" id="lead-member-select" style="width:100%" onchange="loadLeadForm()">
-                <option value="">— Select Member —</option>
-              </select>
-            </div>
-            <div class="field-group">
-              <div class="field-label">Month</div>
-              <select class="filter-select" id="lead-month-select" style="width:100%" onchange="loadLeadForm()">
-                <option value="">— Select Month —</option>
-                <option>January</option><option>February</option><option>March</option>
-                <option>April</option><option>May</option><option>June</option>
-                <option>July</option><option>August</option><option>September</option>
-                <option>October</option><option>November</option><option>December</option>
-              </select>
-            </div>
-            <div class="field-group">
-              <div class="field-label">Year</div>
-              <select class="filter-select" id="lead-year-select" style="width:100%" onchange="loadLeadForm()">
-                <option>2025</option><option>2026</option><option>2027</option>
-              </select>
-            </div>
+        <div class="card-header"><div class="card-title">Select Person & Month</div></div>
+        <div style="padding:16px 20px">
+          <div style="display:grid;grid-template-columns:1fr 1fr 130px;gap:12px">
+            <div class="field-group"><label class="field-label">Person</label><select class="filter-select" id="es-member" style="width:100%" onchange="loadScoreForm()"><option value="">— Select —</option></select></div>
+            <div class="field-group"><label class="field-label">Month</label><select class="filter-select" id="es-month" style="width:100%" onchange="loadScoreForm()"><option value="">— Select —</option><option>January</option><option>February</option><option>March</option><option>April</option><option>May</option><option>June</option><option>July</option><option>August</option><option>September</option><option>October</option><option>November</option><option>December</option></select></div>
+            <div class="field-group"><label class="field-label">Year</label><select class="filter-select" id="es-year" style="width:100%" onchange="loadScoreForm()"><option>2025</option><option selected>2026</option><option>2027</option></select></div>
           </div>
         </div>
 
-        <div id="lead-score-form" style="display:none">
-          <div class="section-sep"></div>
-          <div class="section-label-inner">🔵 Business Operator (75%) — Productivity + Quality + TAT</div>
+        <div id="es-form" style="display:none">
+          <div class="sep"></div>
+          <div class="sec-lbl">🔵 Business Operator (75%)</div>
           <div class="score-grid">
-            <div class="score-row"><div class="score-info"><div class="score-name">Productivity</div><div class="score-target">100%=25 | ≥95%=15 | ≥85%=10 | ≥80%=5</div></div><div class="score-input-wrap"><input class="score-input" type="number" id="s-productivity" min="0" max="25" oninput="recalcLead()"><span class="score-max-label">/ 25</span></div></div>
-            <div class="score-row"><div class="score-info"><div class="score-name">Email Responsiveness</div><div class="score-target">0 miss=5 | 1=4 | 2=3 | 3=2 | 4=1 | ≥5=0</div></div><div class="score-input-wrap"><input class="score-input" type="number" id="s-email" min="0" max="5" oninput="recalcLead()"><span class="score-max-label">/ 5</span></div></div>
-            <div class="score-row"><div class="score-info"><div class="score-name">QA Score / Quality</div><div class="score-target">100%=25 | 99.99–99%=24 | 98.99–98.5%=23 | else=0</div></div><div class="score-input-wrap"><input class="score-input" type="number" id="s-quality" min="0" max="25" oninput="recalcLead()"><span class="score-max-label">/ 25</span></div></div>
-            <div class="score-row"><div class="score-info"><div class="score-name">Task Completion / Status</div><div class="score-target">0 miss=10 | ≥1 miss=0</div></div><div class="score-input-wrap"><input class="score-input" type="number" id="s-task" min="0" max="10" oninput="recalcLead()"><span class="score-max-label">/ 10</span></div></div>
-            <div class="score-row"><div class="score-info"><div class="score-name">PKT Score</div><div class="score-target">≥80%=10 | &lt;80%=0</div></div><div class="score-input-wrap"><input class="score-input" type="number" id="s-pkt" min="0" max="10" oninput="recalcLead()"><span class="score-max-label">/ 10</span></div></div>
+            <div class="score-row"><div><div class="score-name">Productivity</div><div class="score-target">100%=25|≥95%=15|≥85%=10|≥80%=5</div></div><div class="score-input-wrap"><input class="score-input" type="number" id="s-productivity" min="0" max="25" oninput="recalc()"><span class="score-max-label">/25</span></div></div>
+            <div class="score-row"><div><div class="score-name">Email Responsiveness</div><div class="score-target">0 miss=5|1=4|2=3|3=2|4=1|≥5=0</div></div><div class="score-input-wrap"><input class="score-input" type="number" id="s-email" min="0" max="5" oninput="recalc()"><span class="score-max-label">/5</span></div></div>
+            <div class="score-row"><div><div class="score-name">QA / Quality Score</div><div class="score-target">100%=25|99–99.99%=24|98.5–99%=23|else=0</div></div><div class="score-input-wrap"><input class="score-input" type="number" id="s-quality" min="0" max="25" oninput="recalc()"><span class="score-max-label">/25</span></div></div>
+            <div class="score-row"><div><div class="score-name">Task Completion</div><div class="score-target">0 miss=10|≥1=0</div></div><div class="score-input-wrap"><input class="score-input" type="number" id="s-task" min="0" max="10" oninput="recalc()"><span class="score-max-label">/10</span></div></div>
+            <div class="score-row"><div><div class="score-name">PKT Score</div><div class="score-target">≥80%=10|&lt;80%=0</div></div><div class="score-input-wrap"><input class="score-input" type="number" id="s-pkt" min="0" max="10" oninput="recalc()"><span class="score-max-label">/10</span></div></div>
           </div>
-          <div class="section-sep"></div>
-          <div class="section-label-inner">🟢 Professional Hygiene (25%)</div>
+          <div class="sep"></div>
+          <div class="sec-lbl">🟢 Professional Hygiene (25%)</div>
           <div class="score-grid">
-            <div class="score-row"><div class="score-info"><div class="score-name">Org Ethics & Code of Conduct</div><div class="score-target">0 miss=5 | 1=4 | 2=3 | 3=2 | 4=1</div></div><div class="score-input-wrap"><input class="score-input" type="number" id="s-ethics" min="0" max="5" oninput="recalcLead()"><span class="score-max-label">/ 5</span></div></div>
-            <div class="score-row"><div class="score-info"><div class="score-name">FactoHR Time Booking</div><div class="score-target">0 miss=5 | 1=4 | 2=3 | 3=2 | 4=1</div></div><div class="score-input-wrap"><input class="score-input" type="number" id="s-factohr" min="0" max="5" oninput="recalcLead()"><span class="score-max-label">/ 5</span></div></div>
-            <div class="score-row"><div class="score-info"><div class="score-name">Shift Adherence</div><div class="score-target">0 miss=5 | 1=4 | 2=3 | 3=2 | 4=1</div></div><div class="score-input-wrap"><input class="score-input" type="number" id="s-shift" min="0" max="5" oninput="recalcLead()"><span class="score-max-label">/ 5</span></div></div>
-            <div class="score-row"><div class="score-info"><div class="score-name">Unplanned Leaves / LWP</div><div class="score-target">0 leaves=10 | ≥1=0</div></div><div class="score-input-wrap"><input class="score-input" type="number" id="s-leaves" min="0" max="10" oninput="recalcLead()"><span class="score-max-label">/ 10</span></div></div>
+            <div class="score-row"><div><div class="score-name">Org Ethics & Conduct</div><div class="score-target">0 miss=5|1=4|2=3|3=2|4=1</div></div><div class="score-input-wrap"><input class="score-input" type="number" id="s-ethics" min="0" max="5" oninput="recalc()"><span class="score-max-label">/5</span></div></div>
+            <div class="score-row"><div><div class="score-name">FactoHR Time Booking</div><div class="score-target">0 miss=5|1=4|2=3|3=2|4=1</div></div><div class="score-input-wrap"><input class="score-input" type="number" id="s-factohr" min="0" max="5" oninput="recalc()"><span class="score-max-label">/5</span></div></div>
+            <div class="score-row"><div><div class="score-name">Shift Adherence</div><div class="score-target">0 miss=5|1=4|2=3|3=2|4=1</div></div><div class="score-input-wrap"><input class="score-input" type="number" id="s-shift" min="0" max="5" oninput="recalc()"><span class="score-max-label">/5</span></div></div>
+            <div class="score-row"><div><div class="score-name">Unplanned Leaves / LWP</div><div class="score-target">0 leaves=10|≥1=0</div></div><div class="score-input-wrap"><input class="score-input" type="number" id="s-leaves" min="0" max="10" oninput="recalc()"><span class="score-max-label">/10</span></div></div>
           </div>
-          <div class="section-sep"></div>
-          <div class="section-label-inner">⭐ People Development & Value Creator (Bonus)</div>
+          <div class="sep"></div>
+          <div class="sec-lbl">⭐ Bonus — People Development & Value Creator</div>
           <div class="score-grid">
-            <div class="score-row"><div class="score-info"><div class="score-name">Training & Mentoring</div><div class="score-target">Bonus: +4 or +5 points</div></div><div class="score-input-wrap"><input class="score-input" type="number" id="s-training" min="0" max="5" oninput="recalcLead()"><span class="score-max-label">/ 5</span></div></div>
-            <div class="score-row"><div class="score-info"><div class="score-name">Process Initiatives</div><div class="score-target">Bonus: +3 or +5 points</div></div><div class="score-input-wrap"><input class="score-input" type="number" id="s-initiatives" min="0" max="5" oninput="recalcLead()"><span class="score-max-label">/ 5</span></div></div>
-            <div class="score-row"><div class="score-info"><div class="score-name">Communication Skills</div><div class="score-target">Bonus: +3 points</div></div><div class="score-input-wrap"><input class="score-input" type="number" id="s-comms" min="0" max="3" oninput="recalcLead()"><span class="score-max-label">/ 3</span></div></div>
+            <div class="score-row"><div><div class="score-name">Training & Mentoring</div><div class="score-target">Bonus: +4 or +5</div></div><div class="score-input-wrap"><input class="score-input" type="number" id="s-training" min="0" max="5" oninput="recalc()"><span class="score-max-label">/5</span></div></div>
+            <div class="score-row"><div><div class="score-name">Process Initiatives</div><div class="score-target">Bonus: +3 or +5</div></div><div class="score-input-wrap"><input class="score-input" type="number" id="s-initiatives" min="0" max="5" oninput="recalc()"><span class="score-max-label">/5</span></div></div>
+            <div class="score-row"><div><div class="score-name">Communication Skills</div><div class="score-target">Bonus: +3</div></div><div class="score-input-wrap"><input class="score-input" type="number" id="s-comms" min="0" max="3" oninput="recalc()"><span class="score-max-label">/3</span></div></div>
           </div>
 
           <div class="result-box">
-            <div>
-              <div style="font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--text3);margin-bottom:6px">Total Score</div>
-              <div><span class="result-score" id="lead-total-score">0</span><span class="result-max"> / 110</span></div>
-            </div>
-            <div class="result-rating-box">
-              <div class="rating-label">Rating</div>
-              <div class="rating-value" id="lead-rating-value" style="color:var(--text2)">—</div>
-              <div class="rating-name" id="lead-rating-name">Enter scores above</div>
-            </div>
-            <div class="result-bar-wrap">
-              <div class="bar-row">
-                <div class="bar-info"><span>Progress</span><span id="lead-pct">0%</span></div>
-                <div class="progress"><div class="progress-fill" id="lead-bar" style="width:0%"></div></div>
-              </div>
-            </div>
+            <div><div class="rl">Total Score</div><div><span class="result-score" id="r-total">0</span><span class="result-max"> / 110</span></div></div>
+            <div style="text-align:center"><div class="rl">Rating</div><div class="rv" id="r-code" style="color:var(--text2)">—</div><div class="rn" id="r-name">Enter scores</div></div>
+            <div class="result-bar-wrap"><div class="bar-info"><span>Progress</span><span id="r-pct">0%</span></div><div class="progress"><div class="progress-fill" id="r-bar" style="width:0%"></div></div></div>
           </div>
 
-          <div style="padding:0 24px 16px">
-            <div class="field-label" style="font-size:11px;margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px;color:var(--text3)">Comments & Feedback</div>
-            <textarea class="comments-area" id="lead-comments" placeholder="e.g. Productivity 97%, Quality Score 99.49%, PKT Score 80%…"></textarea>
+          <div style="padding:0 20px 13px">
+            <label class="field-label" style="font-size:10px;margin-bottom:6px;display:block">Comments & Feedback</label>
+            <textarea class="comments-area" id="es-comments" placeholder="e.g. Productivity 97%, Quality 99.49%, PKT 80%…"></textarea>
           </div>
-
           <div class="form-footer">
-            <div class="saved-indicator" id="saved-indicator">✅ Saved to database!</div>
-            <button class="btn btn-outline" onclick="resetLeadForm()">Reset</button>
+            <div class="saved-ok" id="saved-ok">✅ Saved!</div>
+            <button class="btn btn-outline" onclick="resetForm()">Reset</button>
             <button class="btn btn-blue" id="save-btn" onclick="saveScores()">Save Scorecard</button>
           </div>
         </div>
-
-        <div id="lead-score-empty" style="padding:48px 24px;text-align:center;color:var(--text3)">
-          <div style="font-size:36px;margin-bottom:12px">✏️</div>
-          <p>Select a team member and month to enter scores.</p>
-        </div>
+        <div id="es-empty" style="padding:40px 20px;text-align:center;color:var(--text3)"><div style="font-size:28px;margin-bottom:9px">✏️</div><p>Select a person and month to enter scores.</p></div>
       </div>
     </div>
 
-    <!-- TEAM OVERVIEW (LEAD) -->
-    <div class="page" id="page-team-overview">
-      <div class="page-header">
-        <div class="page-title">Team Overview</div>
-        <div class="page-subtitle">All team member scorecards at a glance</div>
+    <!-- MY TEAM -->
+    <div class="page" id="page-my-team">
+      <div class="page-header"><div class="page-title" id="my-team-title">My Team</div><div class="page-subtitle" id="my-team-sub">Scorecards for your reportees</div></div>
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Scorecards</div>
+          <div class="filters">
+            <select class="filter-select" id="mt-month" onchange="renderMyTeam()"><option value="">All Months</option><option>January</option><option>February</option><option>March</option><option>April</option><option>May</option><option>June</option><option>July</option><option>August</option><option>September</option><option>October</option><option>November</option><option>December</option></select>
+            <select class="filter-select" id="mt-rating" onchange="renderMyTeam()"><option value="">All Ratings</option><option>OS</option><option>EE</option><option>ME</option><option>BE</option><option>DE</option></select>
+          </div>
+        </div>
+        <table><thead><tr><th>Person</th><th>Role</th><th>Month</th><th>Year</th><th>Score</th><th>%</th><th>Rating</th><th>Scored by</th></tr></thead>
+        <tbody id="mt-tbody"><tr><td colspan="8"><div class="empty-state"><div class="icon">👥</div><p>No scorecards yet.</p></div></td></tr></tbody></table>
       </div>
+    </div>
+
+    <!-- FULL ORG VIEW (DIRECTOR) -->
+    <div class="page" id="page-org-view">
+      <div class="page-header"><div class="page-title">Full Org View</div><div class="page-subtitle">All teams across the organisation</div></div>
+
+      <!-- Org tree -->
+      <div class="card" id="org-tree-card">
+        <div class="card-header"><div class="card-title">Organisation Chart</div></div>
+        <div id="org-tree-body"></div>
+      </div>
+
+      <!-- All scorecards -->
       <div class="card">
         <div class="card-header">
           <div class="card-title">All Scorecards</div>
           <div class="filters">
-            <select class="filter-select" id="team-month-filter" onchange="renderTeamTable()">
-              <option value="">All Months</option>
-              <option>January</option><option>February</option><option>March</option>
-              <option>April</option><option>May</option><option>June</option>
-              <option>July</option><option>August</option><option>September</option>
-              <option>October</option><option>November</option><option>December</option>
-            </select>
-            <select class="filter-select" id="team-rating-filter" onchange="renderTeamTable()">
-              <option value="">All Ratings</option>
-              <option>OS</option><option>EE</option><option>ME</option><option>BE</option><option>DE</option>
-            </select>
+            <select class="filter-select" id="org-manager" onchange="renderOrgTable()"><option value="">All Managers</option></select>
+            <select class="filter-select" id="org-month" onchange="renderOrgTable()"><option value="">All Months</option><option>January</option><option>February</option><option>March</option><option>April</option><option>May</option><option>June</option><option>July</option><option>August</option><option>September</option><option>October</option><option>November</option><option>December</option></select>
+            <select class="filter-select" id="org-rating" onchange="renderOrgTable()"><option value="">All Ratings</option><option>OS</option><option>EE</option><option>ME</option><option>BE</option><option>DE</option></select>
           </div>
         </div>
-        <table>
-          <thead><tr><th>Member</th><th>Month</th><th>Year</th><th>Score</th><th>%</th><th>Rating</th><th>Comments</th></tr></thead>
-          <tbody id="team-table-body"><tr><td colspan="7"><div class="empty-state"><div class="icon">👥</div><p>No scorecards yet.</p></div></td></tr></tbody>
-        </table>
+        <table><thead><tr><th>Person</th><th>Role</th><th>Manager</th><th>Month</th><th>Year</th><th>Score</th><th>%</th><th>Rating</th></tr></thead>
+        <tbody id="org-tbody"><tr><td colspan="8"><div class="empty-state"><div class="icon">🏢</div><p>No scorecards yet.</p></div></td></tr></tbody></table>
       </div>
     </div>
 
   </main>
 </div>
-
 <div class="toast" id="toast"></div>
 
 <script>
 // ════════════════════════════════════════════════════
-//  🔧 CONFIGURATION — Replace these two values
-//     with your Supabase project credentials
+//  🔧 CONFIGURATION
 // ════════════════════════════════════════════════════
 const SUPABASE_URL  = 'https://fjkzdyncfydbjvuxliff.supabase.co';
 const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZqa3pkeW5jZnlkYmp2dXhsaWZmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQwNzMwNTIsImV4cCI6MjA4OTY0OTA1Mn0.qqjHttNThWkwzsFiHzyU79NMtE-xfo9Wdu1Sp2oF5ZU';
 // ════════════════════════════════════════════════════
 
-const ALLOWED_DOMAIN = 'lumelight.com';
+const DOMAIN = 'lumelight.com';
+let sb, ME, PROFILE;
+let myReportees = []; // people I can score
 
-// ─── INIT SUPABASE ───
-let sb;
-let currentUser = null;
-let currentProfile = null;
-let allMembers = [];
-let allScorecards = [];
+// Role metadata
+const ROLE_META = {
+  director: { label:'Director',    pill:'pill-director', icon:'🎯' },
+  manager:  { label:'Manager',     pill:'pill-manager',  icon:'💼' },
+  tl:       { label:'Team Leader', pill:'pill-tl',       icon:'⭐' },
+  sme:      { label:'SME',         pill:'pill-sme',      icon:'🔬' },
+  member:   { label:'Team Member', pill:'pill-member',   icon:'👤' },
+};
 
+// Who can score whom
+const CAN_SCORE = {
+  director: ['manager'],
+  manager:  ['tl','sme','member'],
+  tl:       ['member','sme'],
+};
+
+// ── INIT ──
 function initApp() {
-  const configured = SUPABASE_URL !== 'YOUR_SUPABASE_URL' && SUPABASE_ANON !== 'YOUR_SUPABASE_ANON_KEY';
-  if (!configured) {
-    document.getElementById('loading-overlay').style.display = 'none';
-    document.getElementById('config-banner').style.display = 'flex';
+  if (SUPABASE_URL === 'YOUR_SUPABASE_URL') {
+    document.getElementById('loading-overlay').innerHTML = '<div style="color:var(--red);padding:40px;text-align:center;max-width:400px"><div style="font-size:32px;margin-bottom:12px">⚙️</div><b>Setup Required</b><p style="margin-top:8px;font-size:13px;color:var(--text2)">Open index.html in Notepad and replace YOUR_SUPABASE_URL and YOUR_SUPABASE_ANON_KEY.</p></div>';
     return;
   }
-
   sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
-
-  // Check if already logged in
   sb.auth.getSession().then(({ data: { session } }) => {
     document.getElementById('loading-overlay').style.display = 'none';
-    if (session) {
-      currentUser = session.user;
-      loadProfileAndLaunch();
-    } else {
-      document.getElementById('auth-screen').style.display = 'flex';
-    }
+    if (session) { ME = session.user; launch(); }
+    else { showAuth(); }
   });
-
-  // Listen for auth changes (tab visibility, token refresh etc.)
-  sb.auth.onAuthStateChange((event, session) => {
-    if (event === 'SIGNED_OUT') {
-      currentUser = null; currentProfile = null;
-      document.getElementById('app-screen').style.display = 'none';
-      document.getElementById('auth-screen').style.display = 'flex';
-    }
+  sb.auth.onAuthStateChange((event) => {
+    if (event === 'SIGNED_OUT') { ME = null; PROFILE = null; document.getElementById('app-screen').style.display='none'; showAuth(); }
   });
 }
 
-// ─── AUTH ───
+async function showAuth() {
+  document.getElementById('auth-screen').style.display = 'flex';
+  await prefillRegisterDropdowns();
+}
+
+// ── REGISTER DROPDOWNS ──
+async function prefillRegisterDropdowns() {
+  const { data: profiles } = await sb.from('profiles').select('id,full_name,role').order('full_name');
+  if (!profiles) return;
+
+  const byRole = r => profiles.filter(p => p.role === r);
+  const opts = (arr, placeholder) => `<option value="">${placeholder}</option>` + arr.map(p=>`<option value="${p.id}">${p.full_name}</option>`).join('');
+
+  document.getElementById('reg-supervisor').innerHTML = opts(byRole('tl'), '— Select TL —');
+  document.getElementById('reg-manager').innerHTML    = opts(byRole('manager'), '— Select Manager —');
+  document.getElementById('reg-director').innerHTML   = opts(byRole('director'), '— Select Director —');
+}
+
+function onRoleChange() {
+  const role = document.getElementById('reg-role').value;
+  document.getElementById('supervisor-field').style.display = ['member','sme'].includes(role) ? 'block' : 'none';
+  document.getElementById('manager-field').style.display    = ['member','sme','tl'].includes(role) ? 'block' : 'none';
+  document.getElementById('director-field').style.display   = role === 'manager' ? 'block' : 'none';
+}
+
+// ── AUTH ──
 function switchTab(tab) {
-  document.getElementById('tab-login').style.display    = tab === 'login'    ? 'block' : 'none';
-  document.getElementById('tab-register').style.display = tab === 'register' ? 'block' : 'none';
-  document.querySelectorAll('.tab-btn').forEach((b, i) =>
-    b.classList.toggle('active', (i===0&&tab==='login')||(i===1&&tab==='register')));
+  document.getElementById('tab-login').style.display    = tab==='login'    ? 'block' : 'none';
+  document.getElementById('tab-register').style.display = tab==='register' ? 'block' : 'none';
+  document.querySelectorAll('.tab-btn').forEach((b,i) => b.classList.toggle('active',(i===0&&tab==='login')||(i===1&&tab==='register')));
   document.getElementById('login-err').style.display = 'none';
   document.getElementById('reg-err').style.display   = 'none';
+  if (tab === 'register') prefillRegisterDropdowns();
 }
 
-function validateDomain(email) {
-  return email.toLowerCase().endsWith('@' + ALLOWED_DOMAIN);
-}
-
-function showAuthErr(id, msg) {
-  const el = document.getElementById(id);
-  el.textContent = msg;
-  el.style.display = 'block';
-}
+function ve(id, msg) { const e=document.getElementById(id); e.textContent=msg; e.style.display='block'; }
 
 async function doLogin() {
   const email = document.getElementById('login-email').value.trim().toLowerCase();
   const pass  = document.getElementById('login-pass').value;
   const btn   = document.getElementById('login-btn');
-
-  if (!validateDomain(email)) { showAuthErr('login-err', 'Only @lumelight.com email addresses are allowed.'); return; }
-
-  btn.disabled = true; btn.textContent = 'Signing in…';
+  if (!email.endsWith('@'+DOMAIN)) { ve('login-err','Only @'+DOMAIN+' emails are allowed.'); return; }
+  btn.disabled=true; btn.textContent='Signing in…';
   const { data, error } = await sb.auth.signInWithPassword({ email, password: pass });
-  btn.disabled = false; btn.textContent = 'Sign In →';
-
-  if (error) { showAuthErr('login-err', error.message); return; }
-  currentUser = data.user;
+  btn.disabled=false; btn.textContent='Sign In →';
+  if (error) { ve('login-err', error.message); return; }
+  ME = data.user;
   document.getElementById('auth-screen').style.display = 'none';
-  await loadProfileAndLaunch();
+  await launch();
 }
 
 async function doRegister() {
-  const fname       = document.getElementById('reg-fname').value.trim();
-  const lname       = document.getElementById('reg-lname').value.trim();
-  const email       = document.getElementById('reg-email').value.trim().toLowerCase();
-  const pass        = document.getElementById('reg-pass').value;
-  const designation = document.getElementById('reg-designation').value.trim();
-  const process     = document.getElementById('reg-process').value.trim();
-  const role        = document.getElementById('reg-role').value;
-  const btn         = document.getElementById('reg-btn');
+  const fname  = document.getElementById('reg-fname').value.trim();
+  const lname  = document.getElementById('reg-lname').value.trim();
+  const email  = document.getElementById('reg-email').value.trim().toLowerCase();
+  const pass   = document.getElementById('reg-pass').value;
+  const desig  = document.getElementById('reg-designation').value.trim();
+  const proc   = document.getElementById('reg-process').value.trim();
+  const role   = document.getElementById('reg-role').value;
+  const btn    = document.getElementById('reg-btn');
 
-  if (!fname||!lname||!email||!pass||!designation) { showAuthErr('reg-err','Please fill in all fields.'); return; }
-  if (!validateDomain(email))  { showAuthErr('reg-err','Only @lumelight.com email addresses are allowed.'); return; }
-  if (pass.length < 6)         { showAuthErr('reg-err','Password must be at least 6 characters.'); return; }
+  if (!fname||!lname||!email||!pass||!desig) { ve('reg-err','Please fill in all fields.'); return; }
+  if (!email.endsWith('@'+DOMAIN))            { ve('reg-err','Only @'+DOMAIN+' emails are allowed.'); return; }
+  if (pass.length < 6)                        { ve('reg-err','Password must be at least 6 characters.'); return; }
 
-  btn.disabled = true; btn.textContent = 'Creating account…';
+  // Gather hierarchy IDs
+  const meta = { full_name:`${fname} ${lname}`, role, designation:desig, process:proc };
 
-  const { data, error } = await sb.auth.signUp({
-    email, password: pass,
-    options: {
-      data: { full_name: `${fname} ${lname}`, role, designation, process }
-    }
-  });
+  if (['member','sme'].includes(role)) {
+    const supId = document.getElementById('reg-supervisor').value;
+    const supEl = document.getElementById('reg-supervisor');
+    // TL is optional — only set if selected
+    if (supId) { meta.supervisor_id = supId; meta.supervisor_name = supEl.options[supEl.selectedIndex].text; }
+  }
+  if (['member','sme','tl'].includes(role)) {
+    const mgId = document.getElementById('reg-manager').value;
+    const mgEl = document.getElementById('reg-manager');
+    if (mgId) { meta.manager_id = mgId; meta.manager_name = mgEl.options[mgEl.selectedIndex].text; }
+    else { ve('reg-err','Please select your manager.'); return; }
+  }
+  if (role === 'manager') {
+    const drId = document.getElementById('reg-director').value;
+    const drEl = document.getElementById('reg-director');
+    if (drId) { meta.supervisor_id = drId; meta.supervisor_name = drEl.options[drEl.selectedIndex].text; }
+  }
 
-  btn.disabled = false; btn.textContent = 'Create Account →';
-
-  if (error) { showAuthErr('reg-err', error.message); return; }
-
-  showToast('✅ Account created! Please check your email to confirm, then sign in.', 5000);
+  btn.disabled=true; btn.textContent='Creating account…';
+  const { error } = await sb.auth.signUp({ email, password: pass, options: { data: meta } });
+  btn.disabled=false; btn.textContent='Create Account →';
+  if (error) { ve('reg-err', error.message); return; }
+  toast('✅ Account created! Sign in now.', 4000);
   switchTab('login');
 }
 
-async function doLogout() {
-  await sb.auth.signOut();
-}
+async function doLogout() { await sb.auth.signOut(); }
 
-// ─── PROFILE & LAUNCH ───
-async function loadProfileAndLaunch() {
-  const { data: profile } = await sb.from('profiles').select('*').eq('id', currentUser.id).single();
-  currentProfile = profile;
+// ── LAUNCH ──
+async function launch() {
+  const { data: p } = await sb.from('profiles').select('*').eq('id', ME.id).single();
+  PROFILE = p;
+  const rm = ROLE_META[p.role] || ROLE_META.member;
+  const isDirector = p.role === 'director';
+  const canScore   = !!CAN_SCORE[p.role];
 
-  const isLead = profile.role === 'lead';
-  document.getElementById('sidebar-name').textContent   = profile.full_name;
-  document.getElementById('sidebar-role').textContent   = isLead ? 'Team Lead / Manager' : profile.designation;
-  document.getElementById('sidebar-avatar').textContent = profile.full_name[0].toUpperCase();
-  document.getElementById('dash-name').textContent      = profile.full_name.split(' ')[0];
+  document.getElementById('sb-name').textContent   = p.full_name;
+  document.getElementById('sb-avatar').textContent = p.full_name[0].toUpperCase();
+  document.getElementById('sb-role').textContent   = p.designation || rm.label;
+  document.getElementById('sb-pill').textContent   = rm.label;
+  document.getElementById('sb-pill').className     = 'role-pill ' + rm.pill;
+  document.getElementById('dash-name').textContent = p.full_name.split(' ')[0];
 
-  document.getElementById('nav-section-lead').style.display  = isLead ? '' : 'none';
-  document.getElementById('nav-enter-scores').style.display  = isLead ? '' : 'none';
-  document.getElementById('nav-team-overview').style.display = isLead ? '' : 'none';
+  // Subtitle on dashboard
+  const chain = [];
+  if (p.manager_name)    chain.push('Manager: ' + p.manager_name);
+  if (p.supervisor_name && p.role !== 'manager') chain.push('TL: ' + p.supervisor_name);
+  if (chain.length) document.getElementById('dash-sub').textContent = chain.join('  ·  ');
+
+  // Nav
+  document.getElementById('nav-sec-scoring').style.display  = canScore ? '' : 'none';
+  document.getElementById('nav-enter-scores').style.display = canScore ? '' : 'none';
+  document.getElementById('nav-my-team').style.display      = canScore ? '' : 'none';
+  document.getElementById('nav-sec-org').style.display      = isDirector ? '' : 'none';
+  document.getElementById('nav-org-view').style.display     = isDirector ? '' : 'none';
 
   document.getElementById('auth-screen').style.display = 'none';
   document.getElementById('app-screen').style.display  = 'block';
 
-  if (isLead) await loadAllMembers();
+  if (canScore)    await loadMyReportees();
+  if (isDirector)  await loadOrgFilters();
+
   await renderDashboard();
   goPage('dashboard');
 }
 
-// ─── RATING ───
-function getRating(score) {
-  if (score >= 105) return { code:'OS', name:'Outstanding',            num:5, cls:'badge-os', color:'var(--green)'  };
-  if (score >= 90)  return { code:'EE', name:'Exceeds Expectations',   num:4, cls:'badge-ee', color:'var(--accent)' };
-  if (score >= 75)  return { code:'ME', name:'Meets Expectations',     num:3, cls:'badge-me', color:'var(--yellow)' };
-  if (score >= 60)  return { code:'BE', name:'Below Expectations',     num:2, cls:'badge-be', color:'var(--red)'    };
-  return               { code:'DE', name:'Does Not Meet Expectations', num:1, cls:'badge-de', color:'#94a3b8'       };
+// ── RATING ──
+function getRating(s) {
+  if (s>=105) return {code:'OS',name:'Outstanding',           cls:'badge-os',color:'var(--green)' };
+  if (s>=90)  return {code:'EE',name:'Exceeds Expectations',  cls:'badge-ee',color:'var(--accent)'};
+  if (s>=75)  return {code:'ME',name:'Meets Expectations',    cls:'badge-me',color:'var(--yellow)'};
+  if (s>=60)  return {code:'BE',name:'Below Expectations',    cls:'badge-be',color:'var(--red)'   };
+  return           {code:'DE',name:'Does Not Meet Expectations',cls:'badge-de',color:'#94a3b8'    };
 }
 
-// ─── DASHBOARD ───
+// ── DASHBOARD ──
 async function renderDashboard() {
-  const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
-  document.getElementById('dash-month').textContent = months[new Date().getMonth()];
-
-  const { data: scs } = await sb.from('scorecards')
-    .select('*')
-    .eq('member_id', currentUser.id)
-    .order('year').order('month');
-
-  const tbody = document.getElementById('dash-history-body');
-
-  if (!scs || scs.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="6"><div class="empty-state"><div class="icon">📊</div><p>No scorecards yet.</p></div></td></tr>`;
-    ['dash-score','dash-rating','dash-rating-name','dash-avg'].forEach(id => document.getElementById(id).textContent = '—');
+  const MONTHS=['January','February','March','April','May','June','July','August','September','October','November','December'];
+  document.getElementById('dash-month').textContent = MONTHS[new Date().getMonth()];
+  const { data: scs } = await sb.from('scorecards').select('*').eq('member_id',ME.id).order('year').order('month');
+  const tbody = document.getElementById('dash-tbody');
+  if (!scs||scs.length===0) {
+    tbody.innerHTML=`<tr><td colspan="7"><div class="empty-state"><div class="icon">📊</div><p>No scorecards yet.</p></div></td></tr>`;
+    ['dash-score','dash-rating','dash-rname','dash-avg'].forEach(id=>document.getElementById(id).textContent='—');
     return;
   }
-
-  const latest = scs[scs.length - 1];
-  const r = getRating(latest.total_score);
-  document.getElementById('dash-score').textContent       = latest.total_score;
-  document.getElementById('dash-rating').textContent      = r.code;
-  document.getElementById('dash-rating-name').textContent = r.name;
-  const avg = Math.round(scs.reduce((s,x) => s + x.total_score, 0) / scs.length);
-  document.getElementById('dash-avg').textContent = avg;
-
-  tbody.innerHTML = scs.map(sc => {
-    const r = getRating(sc.total_score);
-    return `<tr>
-      <td>${sc.month}</td><td>${sc.year}</td>
-      <td><span style="font-family:'DM Mono';font-weight:600">${sc.total_score}</span></td>
-      <td>110</td>
-      <td>${Math.round(sc.total_score/110*100)}%</td>
-      <td><span class="badge ${r.cls}">${r.code}</span></td>
-    </tr>`;
+  const latest=scs[scs.length-1]; const r=getRating(latest.total_score);
+  document.getElementById('dash-score').textContent  = latest.total_score;
+  document.getElementById('dash-rating').textContent = r.code;
+  document.getElementById('dash-rname').textContent  = r.name;
+  document.getElementById('dash-avg').textContent    = Math.round(scs.reduce((a,x)=>a+x.total_score,0)/scs.length);
+  tbody.innerHTML = scs.map(sc=>{
+    const r=getRating(sc.total_score);
+    return `<tr><td>${sc.month}</td><td>${sc.year}</td><td><b style="font-family:'DM Mono'">${sc.total_score}</b></td><td>110</td><td>${Math.round(sc.total_score/110*100)}%</td><td><span class="badge ${r.cls}">${r.code}</span></td><td style="font-size:11px;color:var(--text2)">${sc.entered_by_role||'—'}</td></tr>`;
   }).join('');
 }
 
-// ─── SCORECARD PAGE ───
+// ── MY SCORECARD ──
 async function renderScorecardPage() {
-  const { data: scs } = await sb.from('scorecards')
-    .select('*').eq('member_id', currentUser.id)
-    .order('year').order('month');
-
-  const tabsEl = document.getElementById('scorecard-months');
-  tabsEl.innerHTML = '';
-
-  if (!scs || scs.length === 0) {
-    document.getElementById('scorecard-detail').innerHTML =
-      `<div class="empty-state"><div class="icon">📋</div><p>No scorecards available yet. Your team lead will enter your scores.</p></div>`;
-    return;
-  }
-
-  scs.forEach((sc, i) => {
-    const btn = document.createElement('button');
-    btn.className = 'month-tab' + (i === scs.length-1 ? ' active' : '');
-    btn.textContent = `${sc.month} ${sc.year}`;
-    btn.onclick = () => {
-      document.querySelectorAll('.month-tab').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      renderScorecardDetail(sc);
-    };
+  const { data: scs } = await sb.from('scorecards').select('*').eq('member_id',ME.id).order('year').order('month');
+  const tabsEl = document.getElementById('sc-months'); tabsEl.innerHTML='';
+  if (!scs||scs.length===0) { document.getElementById('sc-detail').innerHTML=`<div class="empty-state"><div class="icon">📋</div><p>Your manager or TL will enter your scores.</p></div>`; return; }
+  scs.forEach((sc,i)=>{
+    const btn=document.createElement('button'); btn.className='month-tab'+(i===scs.length-1?' active':'');
+    btn.textContent=`${sc.month} ${sc.year}`;
+    btn.onclick=()=>{ document.querySelectorAll('.month-tab').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); renderSCDetail(sc); };
     tabsEl.appendChild(btn);
   });
-  renderScorecardDetail(scs[scs.length - 1]);
+  renderSCDetail(scs[scs.length-1]);
 }
 
-function renderScorecardDetail(sc) {
-  const r = getRating(sc.total_score);
-  const pct = Math.round(sc.total_score/110*100);
-  const params = [
-    { name:'Productivity',           key:'score_productivity', max:25, section:'BO' },
-    { name:'Email Responsiveness',   key:'score_email',        max:5,  section:'BO' },
-    { name:'QA / Quality Score',     key:'score_quality',      max:25, section:'BO' },
-    { name:'Task Completion',        key:'score_task',         max:10, section:'BO' },
-    { name:'PKT Score',              key:'score_pkt',          max:10, section:'BO' },
-    { name:'Org Ethics & Conduct',   key:'score_ethics',       max:5,  section:'PH' },
-    { name:'FactoHR Time Booking',   key:'score_factohr',      max:5,  section:'PH' },
-    { name:'Shift Adherence',        key:'score_shift',        max:5,  section:'PH' },
-    { name:'Unplanned Leaves / LWP', key:'score_leaves',       max:10, section:'PH' },
-    { name:'Training & Mentoring',   key:'score_training',     max:5,  section:'PD' },
-    { name:'Process Initiatives',    key:'score_initiatives',  max:5,  section:'PD' },
-    { name:'Communication Skills',   key:'score_comms',        max:3,  section:'PD' },
-  ];
-  const sections = { BO:'🔵 Business Operator (75%)', PH:'🟢 Professional Hygiene (25%)', PD:'⭐ Bonus — People Dev & Value Creator' };
-  let currentSection = '';
-  let html = `
-    <div class="result-box">
-      <div>
-        <div style="font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--text3);margin-bottom:6px">${sc.month} ${sc.year}</div>
-        <div><span class="result-score">${sc.total_score}</span><span class="result-max"> / 110</span></div>
-      </div>
-      <div class="result-rating-box">
-        <div class="rating-label">Final Rating</div>
-        <div class="rating-value" style="color:${r.color}">${r.code}</div>
-        <div class="rating-name">${r.name}</div>
-      </div>
-      <div class="result-bar-wrap">
-        <div class="bar-row">
-          <div class="bar-info"><span>Achievement</span><span>${pct}%</span></div>
-          <div class="progress"><div class="progress-fill" style="width:${pct}%"></div></div>
-        </div>
-      </div>
-    </div>
-    <div style="padding:0 24px 24px">
-      <table style="width:100%;border-collapse:collapse">
-        <thead><tr>
-          <th style="text-align:left;font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--text3);padding:10px 0;border-bottom:1px solid var(--border)">Parameter</th>
-          <th style="text-align:center;font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--text3);padding:10px 0;border-bottom:1px solid var(--border)">Score</th>
-          <th style="text-align:center;font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--text3);padding:10px 0;border-bottom:1px solid var(--border)">Max</th>
-          <th style="font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--text3);padding:10px 0;border-bottom:1px solid var(--border)">Progress</th>
-        </tr></thead><tbody>`;
-
-  params.forEach(p => {
-    if (p.section !== currentSection) {
-      currentSection = p.section;
-      html += `<tr><td colspan="4" style="padding:14px 0 6px;font-size:11px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--text3)">${sections[p.section]}</td></tr>`;
-    }
-    const val = sc[p.key] ?? 0;
-    const bp  = Math.round(val/p.max*100);
-    const col = bp===100 ? 'var(--green)' : bp>=60 ? 'var(--accent)' : 'var(--red)';
-    html += `<tr>
-      <td style="padding:10px 0;border-bottom:1px solid rgba(42,47,69,.4);font-size:13px">${p.name}</td>
-      <td style="padding:10px 0;border-bottom:1px solid rgba(42,47,69,.4);text-align:center;font-family:'DM Mono';font-weight:600">${val}</td>
-      <td style="padding:10px 0;border-bottom:1px solid rgba(42,47,69,.4);text-align:center;color:var(--text3);font-family:'DM Mono'">${p.max}</td>
-      <td style="padding:10px 0 10px 16px;border-bottom:1px solid rgba(42,47,69,.4)">
-        <div style="height:6px;background:var(--surface3);border-radius:3px;width:140px">
-          <div style="height:100%;width:${bp}%;background:${col};border-radius:3px"></div>
-        </div>
-      </td>
-    </tr>`;
+function renderSCDetail(sc) {
+  const r=getRating(sc.total_score); const pct=Math.round(sc.total_score/110*100);
+  const params=[{n:'Productivity',k:'score_productivity',m:25,s:'BO'},{n:'Email Responsiveness',k:'score_email',m:5,s:'BO'},{n:'QA / Quality Score',k:'score_quality',m:25,s:'BO'},{n:'Task Completion',k:'score_task',m:10,s:'BO'},{n:'PKT Score',k:'score_pkt',m:10,s:'BO'},{n:'Org Ethics & Conduct',k:'score_ethics',m:5,s:'PH'},{n:'FactoHR Time Booking',k:'score_factohr',m:5,s:'PH'},{n:'Shift Adherence',k:'score_shift',m:5,s:'PH'},{n:'Unplanned Leaves / LWP',k:'score_leaves',m:10,s:'PH'},{n:'Training & Mentoring',k:'score_training',m:5,s:'PD'},{n:'Process Initiatives',k:'score_initiatives',m:5,s:'PD'},{n:'Communication Skills',k:'score_comms',m:3,s:'PD'}];
+  const secs={BO:'🔵 Business Operator (75%)',PH:'🟢 Professional Hygiene (25%)',PD:'⭐ Bonus'};
+  let cur='';
+  let h=`<div class="result-box"><div><div class="rl">${sc.month} ${sc.year}</div><div><span class="result-score">${sc.total_score}</span><span class="result-max"> / 110</span></div></div><div style="text-align:center"><div class="rl">Final Rating</div><div class="rv" style="color:${r.color}">${r.code}</div><div class="rn">${r.name}</div></div><div class="result-bar-wrap"><div class="bar-info"><span>Achievement</span><span>${pct}%</span></div><div class="progress"><div class="progress-fill" style="width:${pct}%"></div></div></div></div><div style="padding:0 20px 20px"><table style="width:100%;border-collapse:collapse"><thead><tr><th style="text-align:left;font-size:10px;font-weight:700;color:var(--text3);padding:8px 0;border-bottom:1px solid var(--border)">Parameter</th><th style="text-align:center;font-size:10px;font-weight:700;color:var(--text3);padding:8px 0;border-bottom:1px solid var(--border)">Score</th><th style="text-align:center;font-size:10px;font-weight:700;color:var(--text3);padding:8px 0;border-bottom:1px solid var(--border)">Max</th><th style="font-size:10px;font-weight:700;color:var(--text3);padding:8px 0;border-bottom:1px solid var(--border)">Progress</th></tr></thead><tbody>`;
+  params.forEach(p=>{
+    if(p.s!==cur){cur=p.s;h+=`<tr><td colspan="4" style="padding:11px 0 4px;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text3)">${secs[p.s]}</td></tr>`;}
+    const v=sc[p.k]??0; const bp=Math.round(v/p.m*100); const c=bp===100?'var(--green)':bp>=60?'var(--accent)':'var(--red)';
+    h+=`<tr><td style="padding:8px 0;border-bottom:1px solid rgba(42,47,69,.4);font-size:13px">${p.n}</td><td style="padding:8px 0;border-bottom:1px solid rgba(42,47,69,.4);text-align:center;font-family:'DM Mono';font-weight:600">${v}</td><td style="padding:8px 0;border-bottom:1px solid rgba(42,47,69,.4);text-align:center;color:var(--text3);font-family:'DM Mono'">${p.m}</td><td style="padding:8px 0 8px 12px;border-bottom:1px solid rgba(42,47,69,.4)"><div style="height:6px;background:var(--surface3);border-radius:3px;width:110px"><div style="height:100%;width:${bp}%;background:${c};border-radius:3px"></div></div></td></tr>`;
   });
-
-  html += `</tbody></table>`;
-  if (sc.comments) html += `<div style="margin-top:20px;padding:14px 16px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm)"><div style="font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--text3);margin-bottom:8px">Comments & Feedback</div><div style="font-size:13px;color:var(--text2);line-height:1.6">${sc.comments}</div></div>`;
-  html += `</div>`;
-  document.getElementById('scorecard-detail').innerHTML = html;
+  h+=`</tbody></table>`;
+  if(sc.comments) h+=`<div style="margin-top:14px;padding:11px 13px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm)"><div style="font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text3);margin-bottom:5px">Comments</div><div style="font-size:13px;color:var(--text2);line-height:1.6">${sc.comments}</div></div>`;
+  if(sc.entered_by_role) h+=`<div style="margin-top:10px;font-size:11px;color:var(--text3)">Scored by: ${sc.supervisor_name||sc.manager_name||'—'} (${sc.entered_by_role})</div>`;
+  h+=`</div>`;
+  document.getElementById('sc-detail').innerHTML=h;
 }
 
-// ─── LEAD: MEMBERS ───
-async function loadAllMembers() {
-  const { data } = await sb.from('profiles').select('*').eq('role', 'member').order('full_name');
-  allMembers = data || [];
-  const sel = document.getElementById('lead-member-select');
-  sel.innerHTML = '<option value="">— Select Member —</option>';
-  allMembers.forEach(m => {
-    const opt = document.createElement('option');
-    opt.value = m.id;
-    opt.textContent = `${m.full_name} (${m.designation || m.email})`;
-    sel.appendChild(opt);
+// ── LOAD REPORTEES FOR SCORING ──
+async function loadMyReportees() {
+  const scorableRoles = CAN_SCORE[PROFILE.role] || [];
+  if (scorableRoles.length === 0) return;
+
+  let query = sb.from('profiles').select('*').in('role', scorableRoles).order('full_name');
+
+  if (PROFILE.role === 'tl') {
+    // TL sees members/SME assigned to them
+    query = query.eq('supervisor_id', ME.id);
+  } else if (PROFILE.role === 'manager') {
+    // Manager sees TL + SME + members under them (includes those with no TL)
+    query = query.eq('manager_id', ME.id);
+  }
+  // director sees all managers
+
+  const { data } = await query;
+  myReportees = data || [];
+
+  const sel = document.getElementById('es-member');
+  sel.innerHTML = '<option value="">— Select person —</option>';
+  myReportees.forEach(p => {
+    const rm = ROLE_META[p.role]||ROLE_META.member;
+    const o = document.createElement('option');
+    o.value = p.id;
+    o.textContent = `${p.full_name} · ${rm.label}`;
+    sel.appendChild(o);
   });
 }
 
-// ─── LEAD: ENTER SCORES ───
-async function loadLeadForm() {
-  const memberId = document.getElementById('lead-member-select').value;
-  const month    = document.getElementById('lead-month-select').value;
-  const year     = parseInt(document.getElementById('lead-year-select').value);
-  const formEl   = document.getElementById('lead-score-form');
-  const emptyEl  = document.getElementById('lead-score-empty');
-
-  if (!memberId || !month) { formEl.style.display='none'; emptyEl.style.display='block'; return; }
-
-  formEl.style.display = 'block';
-  emptyEl.style.display = 'none';
-  document.getElementById('saved-indicator').style.display = 'none';
-
-  const { data: existing } = await sb.from('scorecards')
-    .select('*').eq('member_id', memberId).eq('month', month).eq('year', year).single();
-
-  const fields = ['productivity','email','quality','task','pkt','ethics','factohr','shift','leaves','training','initiatives','comms'];
-  fields.forEach(f => {
-    document.getElementById('s-'+f).value = existing ? (existing['score_'+f] ?? '') : '';
-  });
-  document.getElementById('lead-comments').value = existing?.comments ?? '';
-  recalcLead();
+// ── SCORE FORM ──
+async function loadScoreForm() {
+  const memberId = document.getElementById('es-member').value;
+  const month    = document.getElementById('es-month').value;
+  const year     = parseInt(document.getElementById('es-year').value);
+  const formEl   = document.getElementById('es-form');
+  const emptyEl  = document.getElementById('es-empty');
+  if (!memberId||!month) { formEl.style.display='none'; emptyEl.style.display='block'; return; }
+  formEl.style.display='block'; emptyEl.style.display='none';
+  document.getElementById('saved-ok').style.display='none';
+  const { data: ex } = await sb.from('scorecards').select('*').eq('member_id',memberId).eq('month',month).eq('year',year).single();
+  ['productivity','email','quality','task','pkt','ethics','factohr','shift','leaves','training','initiatives','comms']
+    .forEach(f=>{ document.getElementById('s-'+f).value = ex?(ex['score_'+f]??''):''; });
+  document.getElementById('es-comments').value = ex?.comments??'';
+  recalc();
 }
 
-function recalcLead() {
-  const get = id => +document.getElementById('s-'+id).value || 0;
-  const total = get('productivity')+get('email')+get('quality')+get('task')+get('pkt')
-              + get('ethics')+get('factohr')+get('shift')+get('leaves')
-              + get('training')+get('initiatives')+get('comms');
-  const pct = Math.round(total/110*100);
-  const r = getRating(total);
-  document.getElementById('lead-total-score').textContent = total;
-  document.getElementById('lead-pct').textContent         = pct + '%';
-  document.getElementById('lead-bar').style.width         = pct + '%';
-  document.getElementById('lead-rating-value').textContent= r.code;
-  document.getElementById('lead-rating-value').style.color= r.color;
-  document.getElementById('lead-rating-name').textContent = r.name;
+function recalc() {
+  const g=id=>+document.getElementById('s-'+id).value||0;
+  const t=g('productivity')+g('email')+g('quality')+g('task')+g('pkt')+g('ethics')+g('factohr')+g('shift')+g('leaves')+g('training')+g('initiatives')+g('comms');
+  const pct=Math.round(t/110*100); const r=getRating(t);
+  document.getElementById('r-total').textContent=t;
+  document.getElementById('r-pct').textContent=pct+'%';
+  document.getElementById('r-bar').style.width=pct+'%';
+  document.getElementById('r-code').textContent=r.code;
+  document.getElementById('r-code').style.color=r.color;
+  document.getElementById('r-name').textContent=r.name;
 }
 
 async function saveScores() {
-  const memberId = document.getElementById('lead-member-select').value;
-  const month    = document.getElementById('lead-month-select').value;
-  const year     = parseInt(document.getElementById('lead-year-select').value);
-  if (!memberId || !month) return;
+  const memberId = document.getElementById('es-member').value;
+  const month    = document.getElementById('es-month').value;
+  const year     = parseInt(document.getElementById('es-year').value);
+  if (!memberId||!month) return;
 
-  const member = allMembers.find(m => m.id === memberId);
-  const get = id => +document.getElementById('s-'+id).value || 0;
-
-  const scores = {
-    score_productivity: get('productivity'), score_email:       get('email'),
-    score_quality:      get('quality'),      score_task:        get('task'),
-    score_pkt:          get('pkt'),          score_ethics:      get('ethics'),
-    score_factohr:      get('factohr'),      score_shift:       get('shift'),
-    score_leaves:       get('leaves'),       score_training:    get('training'),
-    score_initiatives:  get('initiatives'),  score_comms:       get('comms'),
-  };
+  const member = myReportees.find(p=>p.id===memberId);
+  const g = id=>+document.getElementById('s-'+id).value||0;
+  const scores = {score_productivity:g('productivity'),score_email:g('email'),score_quality:g('quality'),score_task:g('task'),score_pkt:g('pkt'),score_ethics:g('ethics'),score_factohr:g('factohr'),score_shift:g('shift'),score_leaves:g('leaves'),score_training:g('training'),score_initiatives:g('initiatives'),score_comms:g('comms')};
   const total = Object.values(scores).reduce((a,b)=>a+b,0);
-  const r     = getRating(total);
+  const r = getRating(total);
+  const rm = ROLE_META[PROFILE.role]||ROLE_META.member;
 
   const payload = {
     member_id: memberId, member_email: member.email, member_name: member.full_name,
+    supervisor_id:   PROFILE.role==='tl'      ? ME.id : (member.supervisor_id||null),
+    supervisor_name: PROFILE.role==='tl'      ? PROFILE.full_name : (member.supervisor_name||null),
+    manager_id:      PROFILE.role==='manager' ? ME.id : (member.manager_id||null),
+    manager_name:    PROFILE.role==='manager' ? PROFILE.full_name : (member.manager_name||null),
     month, year, ...scores,
-    total_score: total, rating_code: r.code, rating_name: r.name, rating_num: r.num,
-    comments: document.getElementById('lead-comments').value.trim(),
-    entered_by: currentUser.id,
+    total_score: total, rating_code: r.code, rating_name: r.name,
+    comments: document.getElementById('es-comments').value.trim(),
+    entered_by: ME.id, entered_by_role: rm.label,
   };
 
-  const btn = document.getElementById('save-btn');
-  btn.disabled = true; btn.textContent = 'Saving…';
-
-  const { error } = await sb.from('scorecards').upsert(payload, { onConflict: 'member_id,month,year' });
-
-  btn.disabled = false; btn.textContent = 'Save Scorecard';
-
-  if (error) { showToast('❌ Error: ' + error.message, 4000, true); return; }
-
-  document.getElementById('saved-indicator').style.display = 'flex';
-  showToast('✅ Scorecard saved to database!');
-  allScorecards = []; // Clear cache
+  const btn=document.getElementById('save-btn');
+  btn.disabled=true; btn.textContent='Saving…';
+  const { error } = await sb.from('scorecards').upsert(payload,{onConflict:'member_id,month,year'});
+  btn.disabled=false; btn.textContent='Save Scorecard';
+  if (error) { toast('❌ '+error.message,4000,true); return; }
+  document.getElementById('saved-ok').style.display='flex';
+  toast('✅ Scorecard saved!');
 }
 
-function resetLeadForm() {
-  ['productivity','email','quality','task','pkt','ethics','factohr','shift','leaves','training','initiatives','comms']
-    .forEach(f => { document.getElementById('s-'+f).value = ''; });
-  document.getElementById('lead-comments').value = '';
-  document.getElementById('saved-indicator').style.display = 'none';
-  recalcLead();
+function resetForm() {
+  ['productivity','email','quality','task','pkt','ethics','factohr','shift','leaves','training','initiatives','comms'].forEach(f=>document.getElementById('s-'+f).value='');
+  document.getElementById('es-comments').value='';
+  document.getElementById('saved-ok').style.display='none';
+  recalc();
 }
 
-// ─── TEAM TABLE ───
-async function renderTeamTable() {
-  const monthFilter  = document.getElementById('team-month-filter').value;
-  const ratingFilter = document.getElementById('team-rating-filter').value;
-  const tbody = document.getElementById('team-table-body');
-  tbody.innerHTML = `<tr><td colspan="7"><div class="empty-state"><div class="spinner" style="margin:0 auto"></div></div></td></tr>`;
+// ── MY TEAM TABLE ──
+async function renderMyTeam() {
+  const monthF  = document.getElementById('mt-month').value;
+  const ratingF = document.getElementById('mt-rating').value;
+  const tbody   = document.getElementById('mt-tbody');
+  tbody.innerHTML=`<tr><td colspan="8"><div class="empty-state"><div class="spinner" style="margin:0 auto"></div></div></td></tr>`;
 
   let query = sb.from('scorecards').select('*').order('member_name').order('year').order('month');
-  if (monthFilter)  query = query.eq('month', monthFilter);
-  if (ratingFilter) query = query.eq('rating_code', ratingFilter);
+  if (PROFILE.role==='tl')      query = query.eq('supervisor_id', ME.id);
+  else if (PROFILE.role==='manager') query = query.eq('manager_id', ME.id);
+  if (monthF)  query = query.eq('month',monthF);
+  if (ratingF) query = query.eq('rating_code',ratingF);
 
   const { data: rows } = await query;
-
-  if (!rows || rows.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="7"><div class="empty-state"><div class="icon">👥</div><p>No scorecards found.</p></div></td></tr>`;
-    return;
-  }
-
-  tbody.innerHTML = rows.map(row => {
-    const r = getRating(row.total_score);
-    return `<tr>
-      <td><div style="font-weight:600">${row.member_name}</div><div style="font-size:11px;color:var(--text3)">${row.member_email}</div></td>
-      <td>${row.month}</td><td>${row.year}</td>
-      <td><span style="font-family:'DM Mono';font-weight:600">${row.total_score}</span><span style="color:var(--text3);font-size:12px"> / 110</span></td>
-      <td>${Math.round(row.total_score/110*100)}%</td>
-      <td><span class="badge ${r.cls}">${r.code}</span></td>
-      <td style="font-size:12px;color:var(--text2);max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${row.comments||'—'}</td>
-    </tr>`;
+  if (!rows||rows.length===0) { tbody.innerHTML=`<tr><td colspan="8"><div class="empty-state"><div class="icon">👥</div><p>No scorecards yet.</p></div></td></tr>`; return; }
+  tbody.innerHTML=rows.map(row=>{
+    const r=getRating(row.total_score);
+    const rm=ROLE_META[row.entered_by_role?.toLowerCase()]||{};
+    return `<tr><td><div style="font-weight:600">${row.member_name}</div><div style="font-size:11px;color:var(--text3)">${row.member_email}</div></td><td style="font-size:11px;color:var(--text2)">${row.entered_by_role||'—'}</td><td>${row.month}</td><td>${row.year}</td><td><b style="font-family:'DM Mono'">${row.total_score}</b><span style="color:var(--text3);font-size:11px"> /110</span></td><td>${Math.round(row.total_score/110*100)}%</td><td><span class="badge ${r.cls}">${r.code}</span></td><td style="font-size:11px;color:var(--text2)">${row.entered_by_role||'—'}</td></tr>`;
   }).join('');
 }
 
-// ─── NAV ───
+// ── ORG VIEW (DIRECTOR) ──
+async function loadOrgFilters() {
+  const { data } = await sb.from('profiles').select('id,full_name').eq('role','manager').order('full_name');
+  const sel = document.getElementById('org-manager');
+  sel.innerHTML='<option value="">All Managers</option>';
+  (data||[]).forEach(m=>{ const o=document.createElement('option'); o.value=m.id; o.textContent=m.full_name; sel.appendChild(o);});
+}
+
+async function renderOrgTable() {
+  const manF   = document.getElementById('org-manager').value;
+  const monthF = document.getElementById('org-month').value;
+  const ratingF= document.getElementById('org-rating').value;
+  const tbody  = document.getElementById('org-tbody');
+  tbody.innerHTML=`<tr><td colspan="8"><div class="empty-state"><div class="spinner" style="margin:0 auto"></div></div></td></tr>`;
+
+  let query = sb.from('scorecards').select('*').order('manager_name').order('supervisor_name').order('member_name').order('year').order('month');
+  if (manF)    query = query.eq('manager_id',manF);
+  if (monthF)  query = query.eq('month',monthF);
+  if (ratingF) query = query.eq('rating_code',ratingF);
+  const { data: rows } = await query;
+
+  if (!rows||rows.length===0) { tbody.innerHTML=`<tr><td colspan="8"><div class="empty-state"><div class="icon">🏢</div><p>No scorecards yet.</p></div></td></tr>`; return; }
+
+  // Group by manager → TL
+  const groups = {};
+  rows.forEach(row=>{
+    const mgr = row.manager_name||'Unassigned';
+    if (!groups[mgr]) groups[mgr]={};
+    const tl = row.supervisor_name||'Direct Report';
+    if (!groups[mgr][tl]) groups[mgr][tl]=[];
+    groups[mgr][tl].push(row);
+  });
+
+  let html='';
+  Object.entries(groups).forEach(([mgr,tls])=>{
+    const total = Object.values(tls).reduce((a,b)=>a+b.length,0);
+    html+=`<tr class="group-header"><td colspan="8">💼 ${mgr}'s Team — ${total} record(s)</td></tr>`;
+    Object.entries(tls).forEach(([tl,trows])=>{
+      if (tl!=='Direct Report') html+=`<tr><td colspan="8" style="padding:7px 20px 4px;font-size:11px;font-weight:600;color:var(--text3);background:rgba(255,255,255,.01)">⭐ Under TL: ${tl}</td></tr>`;
+      html+=trows.map(row=>{
+        const r=getRating(row.total_score);
+        return `<tr><td><div style="font-weight:600">${row.member_name}</div><div style="font-size:11px;color:var(--text3)">${row.member_email}</div></td><td style="font-size:11px;color:var(--text2)">${row.entered_by_role||'—'}</td><td style="font-size:12px;color:var(--text2)">${row.manager_name||'—'}</td><td>${row.month}</td><td>${row.year}</td><td><b style="font-family:'DM Mono'">${row.total_score}</b><span style="color:var(--text3);font-size:11px"> /110</span></td><td>${Math.round(row.total_score/110*100)}%</td><td><span class="badge ${r.cls}">${r.code}</span></td></tr>`;
+      }).join('');
+    });
+  });
+  tbody.innerHTML = html;
+}
+
+async function renderOrgTree() {
+  const { data: profiles } = await sb.from('profiles').select('*').order('role').order('full_name');
+  if (!profiles) return;
+  const byRole = r => profiles.filter(p=>p.role===r);
+  let h='';
+  byRole('director').forEach(d=>{
+    const rm=ROLE_META.director;
+    h+=`<div class="org-row"><span class="org-tree-line">${rm.icon}</span><span class="org-name">${d.full_name}</span><span class="role-pill pill-director" style="font-size:10px;padding:1px 7px">${rm.label}</span><span class="org-desig" style="margin-left:8px">${d.designation||''}</span></div>`;
+    byRole('manager').filter(m=>m.supervisor_id===d.id||m.manager_id===d.id).forEach(m=>{
+      h+=`<div class="org-row org-indent-1"><span class="org-tree-line">└─</span><span class="org-name">${m.full_name}</span><span class="role-pill pill-manager" style="font-size:10px;padding:1px 7px">Manager</span><span class="org-desig" style="margin-left:8px">${m.designation||''}</span></div>`;
+      byRole('tl').filter(t=>t.manager_id===m.id).forEach(tl=>{
+        h+=`<div class="org-row org-indent-2"><span class="org-tree-line">└─</span><span class="org-name">${tl.full_name}</span><span class="role-pill pill-tl" style="font-size:10px;padding:1px 7px">TL</span><span class="org-desig" style="margin-left:8px">${tl.designation||''}</span></div>`;
+        byRole('member').filter(mb=>mb.supervisor_id===tl.id).forEach(mb=>{
+          h+=`<div class="org-row org-indent-3"><span class="org-tree-line">└─</span><span class="org-name">${mb.full_name}</span><span class="role-pill pill-member" style="font-size:10px;padding:1px 7px">Member</span></div>`;
+        });
+        byRole('sme').filter(s=>s.supervisor_id===tl.id).forEach(s=>{
+          h+=`<div class="org-row org-indent-3"><span class="org-tree-line">└─</span><span class="org-name">${s.full_name}</span><span class="role-pill pill-sme" style="font-size:10px;padding:1px 7px">SME</span></div>`;
+        });
+      });
+    });
+  });
+  document.getElementById('org-tree-body').innerHTML = h||`<div class="empty-state"><div class="icon">🌳</div><p>Register team members to see the org chart.</p></div>`;
+}
+
+// ── NAV ──
 function goPage(p) {
-  document.querySelectorAll('.page').forEach(el => el.classList.remove('active'));
-  document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-  document.getElementById('page-' + p).classList.add('active');
-  const navEl = document.getElementById('nav-' + p);
-  if (navEl) navEl.classList.add('active');
-  if (p === 'scorecard')     renderScorecardPage();
-  if (p === 'team-overview') renderTeamTable();
-  if (p === 'dashboard')     renderDashboard();
+  document.querySelectorAll('.page').forEach(el=>el.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(el=>el.classList.remove('active'));
+  document.getElementById('page-'+p).classList.add('active');
+  const nav=document.getElementById('nav-'+p); if(nav) nav.classList.add('active');
+  if(p==='scorecard')    renderScorecardPage();
+  if(p==='my-team')      renderMyTeam();
+  if(p==='org-view')     { renderOrgTree(); renderOrgTable(); }
+  if(p==='dashboard')    renderDashboard();
+  if(p==='enter-scores') loadMyReportees();
 }
 
-// ─── TOAST ───
-function showToast(msg, duration=2500, isError=false) {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.style.borderColor = isError ? 'var(--red)' : 'var(--green)';
-  t.style.color       = isError ? 'var(--red)' : 'var(--green)';
-  t.style.display = 'block';
-  setTimeout(() => { t.style.display = 'none'; }, duration);
+function toast(msg,dur=2500,err=false) {
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.style.borderColor=err?'var(--red)':'var(--green)'; t.style.color=err?'var(--red)':'var(--green)';
+  t.style.display='block'; setTimeout(()=>t.style.display='none',dur);
 }
 
-// ─── KEYBOARD ───
-document.getElementById('login-pass').addEventListener('keydown', e => { if(e.key==='Enter') doLogin(); });
-
-// ─── START ───
-window.addEventListener('load', initApp);
+document.getElementById('login-pass').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
+window.addEventListener('load',initApp);
 </script>
 </body>
 </html>
