@@ -1,0 +1,967 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PerfTrack — Team Scorecard Portal</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<!-- Supabase SDK -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+  :root {
+    --bg: #0d0f14;
+    --surface: #151820;
+    --surface2: #1c2030;
+    --surface3: #242840;
+    --border: #2a2f45;
+    --accent: #5b8af5;
+    --accent2: #7c5cbf;
+    --green: #34d399;
+    --yellow: #fbbf24;
+    --red: #f87171;
+    --text: #e8eaf0;
+    --text2: #8b90a8;
+    --text3: #5a5f78;
+    --radius: 12px;
+    --radius-sm: 8px;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; font-size:14px; }
+
+  /* ─── LOADING OVERLAY ─── */
+  #loading-overlay {
+    position:fixed; inset:0; background:var(--bg); display:flex; flex-direction:column;
+    align-items:center; justify-content:center; z-index:9999; gap:16px;
+  }
+  .spinner {
+    width:40px; height:40px; border:3px solid var(--border);
+    border-top-color:var(--accent); border-radius:50%; animation:spin 0.8s linear infinite;
+  }
+  @keyframes spin { to { transform:rotate(360deg); } }
+  .loading-text { font-size:14px; color:var(--text2); }
+
+  /* ─── CONFIG BANNER ─── */
+  #config-banner {
+    display:none; position:fixed; inset:0; background:var(--bg);
+    align-items:center; justify-content:center; z-index:9998; padding:20px;
+  }
+  .config-card {
+    background:var(--surface); border:1px solid var(--border); border-radius:20px;
+    padding:40px; max-width:520px; width:100%;
+  }
+  .config-title { font-size:22px; font-weight:700; margin-bottom:8px; }
+  .config-sub { color:var(--text2); font-size:14px; margin-bottom:28px; line-height:1.6; }
+  .config-step { display:flex; gap:12px; margin-bottom:16px; }
+  .step-num { width:24px; height:24px; border-radius:50%; background:rgba(91,138,245,0.2); color:var(--accent); font-size:12px; font-weight:700; display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-top:2px; }
+  .step-text { font-size:13px; color:var(--text2); line-height:1.6; }
+  .step-text b { color:var(--text); }
+  .step-text code { background:var(--surface2); padding:2px 6px; border-radius:4px; font-family:'DM Mono',monospace; font-size:12px; color:var(--accent); }
+
+  /* ─── AUTH ─── */
+  #auth-screen {
+    min-height:100vh; display:none; align-items:center; justify-content:center;
+    background:radial-gradient(ellipse at 30% 20%,rgba(91,138,245,.12) 0%,transparent 60%),
+               radial-gradient(ellipse at 80% 80%,rgba(124,92,191,.10) 0%,transparent 55%),var(--bg);
+    padding:20px;
+  }
+  .auth-card { background:var(--surface); border:1px solid var(--border); border-radius:20px; padding:48px 44px; width:100%; max-width:440px; box-shadow:0 40px 80px rgba(0,0,0,.5); }
+  .auth-logo { display:flex; align-items:center; gap:10px; margin-bottom:36px; }
+  .logo-icon { width:40px; height:40px; background:linear-gradient(135deg,var(--accent),var(--accent2)); border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:18px; }
+  .logo-text { font-size:20px; font-weight:700; letter-spacing:-.5px; }
+  .logo-sub { font-size:11px; color:var(--text2); letter-spacing:1.5px; text-transform:uppercase; margin-top:1px; }
+  .auth-title { font-size:26px; font-weight:700; letter-spacing:-.5px; margin-bottom:6px; }
+  .auth-subtitle { color:var(--text2); font-size:14px; margin-bottom:32px; }
+  .tab-row { display:flex; gap:0; background:var(--surface2); border-radius:var(--radius-sm); padding:4px; margin-bottom:28px; }
+  .tab-btn { flex:1; padding:9px; border:none; background:none; border-radius:6px; cursor:pointer; font-family:'DM Sans',sans-serif; font-size:13px; font-weight:500; color:var(--text2); transition:all .2s; }
+  .tab-btn.active { background:var(--surface3); color:var(--text); }
+  .field-group { margin-bottom:18px; }
+  .field-label { font-size:12px; font-weight:500; color:var(--text2); letter-spacing:.5px; text-transform:uppercase; margin-bottom:8px; }
+  .field-input { width:100%; padding:12px 16px; background:var(--surface2); border:1px solid var(--border); border-radius:var(--radius-sm); color:var(--text); font-family:'DM Sans',sans-serif; font-size:14px; outline:none; transition:border-color .2s; }
+  .field-input:focus { border-color:var(--accent); }
+  .field-input::placeholder { color:var(--text3); }
+  select.field-input { appearance:none; cursor:pointer; }
+  .btn-primary { width:100%; padding:13px; background:linear-gradient(135deg,var(--accent),var(--accent2)); border:none; border-radius:var(--radius-sm); color:#fff; font-family:'DM Sans',sans-serif; font-size:15px; font-weight:600; cursor:pointer; transition:opacity .2s,transform .1s; margin-top:8px; }
+  .btn-primary:hover { opacity:.9; }
+  .btn-primary:active { transform:scale(.99); }
+  .btn-primary:disabled { opacity:.5; cursor:not-allowed; }
+  .hint { font-size:12px; color:var(--text3); margin-top:20px; text-align:center; line-height:1.6; }
+  .hint b { color:var(--text2); }
+  .err-msg { font-size:13px; color:var(--red); margin-top:12px; padding:10px 14px; background:rgba(248,113,113,.08); border-radius:var(--radius-sm); border:1px solid rgba(248,113,113,.2); display:none; }
+  .form-row { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+
+  /* ─── APP ─── */
+  #app-screen { display:none; min-height:100vh; }
+  .sidebar { position:fixed; top:0; left:0; width:240px; height:100vh; background:var(--surface); border-right:1px solid var(--border); display:flex; flex-direction:column; z-index:100; }
+  .sidebar-header { padding:24px 20px 20px; border-bottom:1px solid var(--border); }
+  .sidebar-logo { display:flex; align-items:center; gap:10px; }
+  .sidebar-logo .logo-icon { width:32px; height:32px; font-size:14px; }
+  .sidebar-logo .logo-text { font-size:16px; font-weight:700; }
+  .sidebar-nav { flex:1; padding:16px 12px; display:flex; flex-direction:column; gap:4px; }
+  .nav-item { display:flex; align-items:center; gap:12px; padding:10px 12px; border-radius:var(--radius-sm); cursor:pointer; color:var(--text2); font-size:14px; font-weight:500; transition:all .15s; border:none; background:none; width:100%; text-align:left; font-family:'DM Sans',sans-serif; }
+  .nav-item:hover { background:var(--surface2); color:var(--text); }
+  .nav-item.active { background:rgba(91,138,245,.12); color:var(--accent); }
+  .nav-icon { width:18px; text-align:center; font-size:16px; }
+  .nav-section-label { font-size:10px; font-weight:600; letter-spacing:1.5px; text-transform:uppercase; color:var(--text3); padding:16px 12px 6px; }
+  .sidebar-footer { padding:16px; border-top:1px solid var(--border); }
+  .user-card { display:flex; align-items:center; gap:10px; padding:10px 12px; background:var(--surface2); border-radius:var(--radius-sm); margin-bottom:8px; }
+  .user-avatar { width:32px; height:32px; border-radius:50%; background:linear-gradient(135deg,var(--accent),var(--accent2)); display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:700; color:#fff; flex-shrink:0; }
+  .user-name { font-size:13px; font-weight:600; }
+  .user-role { font-size:11px; color:var(--text2); }
+  .logout-btn { width:100%; padding:9px; background:none; border:1px solid var(--border); border-radius:var(--radius-sm); color:var(--text2); font-family:'DM Sans',sans-serif; font-size:13px; cursor:pointer; transition:all .15s; }
+  .logout-btn:hover { background:var(--surface2); color:var(--text); }
+  .main-content { margin-left:240px; padding:32px; min-height:100vh; }
+  .page { display:none; }
+  .page.active { display:block; }
+  .page-header { margin-bottom:28px; }
+  .page-title { font-size:24px; font-weight:700; letter-spacing:-.5px; }
+  .page-subtitle { color:var(--text2); font-size:14px; margin-top:4px; }
+
+  /* ─── CARDS & TABLES ─── */
+  .stats-row { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:16px; margin-bottom:24px; }
+  .stat-card { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:20px; }
+  .stat-label { font-size:11px; font-weight:600; letter-spacing:1px; text-transform:uppercase; color:var(--text3); margin-bottom:10px; }
+  .stat-value { font-size:28px; font-weight:700; letter-spacing:-1px; }
+  .stat-sub { font-size:12px; color:var(--text2); margin-top:4px; }
+  .card { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); overflow:hidden; }
+  .card-header { padding:20px 24px; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px; }
+  .card-title { font-size:16px; font-weight:600; }
+  table { width:100%; border-collapse:collapse; }
+  th { text-align:left; font-size:11px; font-weight:600; letter-spacing:1px; text-transform:uppercase; color:var(--text3); padding:12px 24px; border-bottom:1px solid var(--border); }
+  td { padding:14px 24px; border-bottom:1px solid rgba(42,47,69,.5); font-size:13px; }
+  tr:last-child td { border-bottom:none; }
+  tr:hover td { background:rgba(255,255,255,.02); }
+
+  /* ─── BADGES ─── */
+  .badge { display:inline-flex; align-items:center; justify-content:center; padding:3px 10px; border-radius:20px; font-size:12px; font-weight:700; font-family:'DM Mono',monospace; }
+  .badge-os { background:rgba(52,211,153,.15); color:var(--green); border:1px solid rgba(52,211,153,.3); }
+  .badge-ee { background:rgba(91,138,245,.15); color:var(--accent); border:1px solid rgba(91,138,245,.3); }
+  .badge-me { background:rgba(251,191,36,.15); color:var(--yellow); border:1px solid rgba(251,191,36,.3); }
+  .badge-be { background:rgba(248,113,113,.15); color:var(--red); border:1px solid rgba(248,113,113,.3); }
+  .badge-de { background:rgba(148,163,184,.15); color:#94a3b8; border:1px solid rgba(148,163,184,.3); }
+
+  /* ─── SCORE FORM ─── */
+  .score-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; padding:24px; }
+  .score-row { background:var(--surface2); border:1px solid var(--border); border-radius:var(--radius-sm); padding:16px 18px; display:flex; align-items:center; justify-content:space-between; gap:16px; }
+  .score-info { flex:1; }
+  .score-name { font-size:13px; font-weight:600; }
+  .score-target { font-size:11px; color:var(--text3); margin-top:3px; font-family:'DM Mono',monospace; }
+  .score-input-wrap { display:flex; align-items:center; gap:8px; }
+  .score-input { width:64px; padding:8px 10px; background:var(--surface3); border:1px solid var(--border); border-radius:6px; color:var(--text); font-family:'DM Mono',monospace; font-size:15px; font-weight:500; text-align:center; outline:none; transition:border-color .2s; }
+  .score-input:focus { border-color:var(--accent); }
+  .score-max-label { font-size:11px; color:var(--text3); }
+  .result-box { margin:0 24px 24px; background:var(--surface2); border:1px solid var(--border); border-radius:var(--radius); padding:24px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:16px; }
+  .result-score { font-size:42px; font-weight:700; font-family:'DM Mono',monospace; letter-spacing:-2px; }
+  .result-max { font-size:18px; color:var(--text3); font-family:'DM Mono',monospace; }
+  .result-rating-box { text-align:center; }
+  .rating-label { font-size:11px; font-weight:600; letter-spacing:1px; text-transform:uppercase; color:var(--text3); margin-bottom:8px; }
+  .rating-value { font-size:36px; font-weight:800; font-family:'DM Mono',monospace; }
+  .rating-name { font-size:14px; color:var(--text2); margin-top:4px; font-weight:500; }
+  .result-bar-wrap { flex:1; min-width:200px; }
+  .bar-row { margin-bottom:10px; }
+  .bar-info { display:flex; justify-content:space-between; margin-bottom:5px; font-size:12px; color:var(--text2); }
+  .progress { height:8px; background:var(--surface3); border-radius:4px; overflow:hidden; }
+  .progress-fill { height:100%; border-radius:4px; background:linear-gradient(90deg,var(--accent),var(--accent2)); transition:width .5s ease; }
+
+  /* ─── BUTTONS ─── */
+  .btn { padding:9px 18px; border-radius:var(--radius-sm); font-family:'DM Sans',sans-serif; font-size:13px; font-weight:600; cursor:pointer; border:none; transition:all .15s; }
+  .btn-blue { background:linear-gradient(135deg,var(--accent),var(--accent2)); color:#fff; }
+  .btn-blue:hover { opacity:.9; }
+  .btn-blue:disabled { opacity:.5; cursor:not-allowed; }
+  .btn-outline { background:none; border:1px solid var(--border); color:var(--text); }
+  .btn-outline:hover { background:var(--surface2); }
+
+  /* ─── MISC ─── */
+  .filters { display:flex; gap:10px; flex-wrap:wrap; }
+  .filter-select { padding:8px 14px; background:var(--surface2); border:1px solid var(--border); border-radius:var(--radius-sm); color:var(--text); font-family:'DM Sans',sans-serif; font-size:13px; outline:none; cursor:pointer; }
+  .month-tabs { display:flex; gap:6px; flex-wrap:wrap; padding:16px 24px; border-bottom:1px solid var(--border); }
+  .month-tab { padding:6px 14px; border-radius:20px; font-size:12px; font-weight:600; cursor:pointer; border:1px solid var(--border); background:none; color:var(--text2); font-family:'DM Sans',sans-serif; transition:all .15s; }
+  .month-tab:hover { background:var(--surface2); color:var(--text); }
+  .month-tab.active { background:rgba(91,138,245,.15); color:var(--accent); border-color:rgba(91,138,245,.3); }
+  .section-sep { height:1px; background:var(--border); margin:0 24px 20px; }
+  .section-label-inner { font-size:11px; font-weight:600; letter-spacing:1.2px; text-transform:uppercase; color:var(--text3); padding:20px 24px 12px; }
+  .comments-area { width:100%; padding:12px 14px; background:var(--surface2); border:1px solid var(--border); border-radius:var(--radius-sm); color:var(--text); font-family:'DM Sans',sans-serif; font-size:13px; resize:vertical; min-height:80px; outline:none; }
+  .comments-area:focus { border-color:var(--accent); }
+  .form-footer { padding:16px 24px; border-top:1px solid var(--border); display:flex; justify-content:flex-end; gap:10px; align-items:center; }
+  .saved-indicator { display:none; align-items:center; gap:6px; font-size:13px; color:var(--green); font-weight:500; }
+  .guide-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:12px; padding:20px 24px; }
+  .guide-item { background:var(--surface2); border:1px solid var(--border); border-radius:var(--radius-sm); padding:16px; text-align:center; }
+  .guide-badge { font-size:22px; font-weight:800; font-family:'DM Mono',monospace; margin-bottom:6px; }
+  .guide-num { font-size:24px; font-weight:700; }
+  .guide-desc { font-size:11px; color:var(--text2); margin-top:4px; line-height:1.5; }
+  .empty-state { padding:48px 24px; text-align:center; color:var(--text3); }
+  .empty-state .icon { font-size:36px; margin-bottom:12px; }
+  .inline-form { padding:16px 24px; }
+  .inline-form .field-group { margin-bottom:14px; }
+  .inline-form .field-label { font-size:11px; }
+  .toast { position:fixed; bottom:28px; right:28px; background:var(--surface); border:1px solid var(--green); border-radius:var(--radius-sm); padding:12px 20px; color:var(--green); font-size:13px; font-weight:600; z-index:9999; display:none; box-shadow:0 8px 24px rgba(0,0,0,.4); }
+
+  @media (max-width:900px) {
+    .sidebar { width:100%; height:auto; position:relative; }
+    .main-content { margin-left:0; }
+    .score-grid { grid-template-columns:1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ─── LOADING ─── -->
+<div id="loading-overlay">
+  <div class="spinner"></div>
+  <div class="loading-text">Connecting to database…</div>
+</div>
+
+<!-- ─── CONFIG NEEDED ─── -->
+<div id="config-banner" style="display:none;position:fixed;inset:0;background:var(--bg);align-items:center;justify-content:center;z-index:9998;padding:20px;flex-direction:column">
+  <div class="config-card">
+    <div style="font-size:36px;margin-bottom:16px">⚙️</div>
+    <div class="config-title">One-time Setup Required</div>
+    <div class="config-sub">Open this file in a text editor and replace the two placeholders at the top of the &lt;script&gt; section with your Supabase credentials:</div>
+    <div class="config-step"><div class="step-num">1</div><div class="step-text">Find <code>YOUR_SUPABASE_URL</code> and replace it with your Project URL from Supabase → Settings → API</div></div>
+    <div class="config-step"><div class="step-num">2</div><div class="step-text">Find <code>YOUR_SUPABASE_ANON_KEY</code> and replace it with your <b>anon / public</b> key from the same page</div></div>
+    <div class="config-step"><div class="step-num">3</div><div class="step-text">Save the file and refresh this page</div></div>
+    <div style="margin-top:20px;padding:14px 16px;background:var(--surface2);border-radius:var(--radius-sm);font-size:12px;color:var(--text3);line-height:1.7">
+      📖 Full step-by-step instructions are in <b>SETUP_GUIDE.md</b> included in your download package.
+    </div>
+  </div>
+</div>
+
+<!-- ─── AUTH SCREEN ─── -->
+<div id="auth-screen">
+  <div class="auth-card">
+    <div class="auth-logo">
+      <div class="logo-icon">📊</div>
+      <div>
+        <div class="logo-text">PerfTrack</div>
+        <div class="logo-sub">Team Scorecard Portal</div>
+      </div>
+    </div>
+
+    <div class="tab-row">
+      <button class="tab-btn active" onclick="switchTab('login')">Sign In</button>
+      <button class="tab-btn" onclick="switchTab('register')">Register</button>
+    </div>
+
+    <!-- LOGIN -->
+    <div id="tab-login">
+      <div class="field-group">
+        <div class="field-label">Work Email</div>
+        <input class="field-input" id="login-email" type="email" placeholder="yourname@lumelight.com">
+      </div>
+      <div class="field-group">
+        <div class="field-label">Password</div>
+        <input class="field-input" id="login-pass" type="password" placeholder="••••••••">
+      </div>
+      <div class="err-msg" id="login-err"></div>
+      <button class="btn-primary" id="login-btn" onclick="doLogin()">Sign In →</button>
+      <p class="hint">Use your <b>@lumelight.com</b> Microsoft 365 email to sign in.</p>
+    </div>
+
+    <!-- REGISTER -->
+    <div id="tab-register" style="display:none">
+      <div class="form-row">
+        <div class="field-group">
+          <div class="field-label">First Name</div>
+          <input class="field-input" id="reg-fname" type="text" placeholder="Sumit">
+        </div>
+        <div class="field-group">
+          <div class="field-label">Last Name</div>
+          <input class="field-input" id="reg-lname" type="text" placeholder="Giri">
+        </div>
+      </div>
+      <div class="field-group">
+        <div class="field-label">Work Email (@lumelight.com)</div>
+        <input class="field-input" id="reg-email" type="email" placeholder="yourname@lumelight.com">
+      </div>
+      <div class="field-group">
+        <div class="field-label">Password</div>
+        <input class="field-input" id="reg-pass" type="password" placeholder="Min. 6 characters">
+      </div>
+      <div class="field-group">
+        <div class="field-label">Designation</div>
+        <input class="field-input" id="reg-designation" type="text" placeholder="Process Associate">
+      </div>
+      <div class="field-group">
+        <div class="field-label">Process</div>
+        <input class="field-input" id="reg-process" type="text" placeholder="ATC">
+      </div>
+      <div class="field-group">
+        <div class="field-label">Role</div>
+        <select class="field-input" id="reg-role">
+          <option value="member">Team Member</option>
+          <option value="lead">Team Lead / Manager</option>
+        </select>
+      </div>
+      <div class="err-msg" id="reg-err"></div>
+      <button class="btn-primary" id="reg-btn" onclick="doRegister()">Create Account →</button>
+      <p class="hint">Only <b>@lumelight.com</b> emails are accepted.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ─── APP SCREEN ─── -->
+<div id="app-screen">
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-logo">
+        <div class="logo-icon">📊</div>
+        <div><div class="logo-text">PerfTrack</div></div>
+      </div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-section-label">Overview</div>
+      <button class="nav-item active" onclick="goPage('dashboard')" id="nav-dashboard"><span class="nav-icon">🏠</span> Dashboard</button>
+      <button class="nav-item" onclick="goPage('scorecard')" id="nav-scorecard"><span class="nav-icon">📋</span> My Scorecard</button>
+      <div class="nav-section-label" id="nav-section-lead" style="display:none">Lead Tools</div>
+      <button class="nav-item" onclick="goPage('enter-scores')" id="nav-enter-scores" style="display:none"><span class="nav-icon">✏️</span> Enter Scores</button>
+      <button class="nav-item" onclick="goPage('team-overview')" id="nav-team-overview" style="display:none"><span class="nav-icon">👥</span> Team Overview</button>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="user-card">
+        <div class="user-avatar" id="sidebar-avatar">A</div>
+        <div>
+          <div class="user-name" id="sidebar-name">—</div>
+          <div class="user-role" id="sidebar-role">—</div>
+        </div>
+      </div>
+      <button class="logout-btn" onclick="doLogout()">Sign Out</button>
+    </div>
+  </aside>
+
+  <main class="main-content">
+
+    <!-- DASHBOARD -->
+    <div class="page active" id="page-dashboard">
+      <div class="page-header">
+        <div class="page-title">Welcome back, <span id="dash-name">—</span> 👋</div>
+        <div class="page-subtitle">Here's your performance at a glance</div>
+      </div>
+      <div class="stats-row">
+        <div class="stat-card"><div class="stat-label">Current Month</div><div class="stat-value" id="dash-month">—</div><div class="stat-sub">Active period</div></div>
+        <div class="stat-card"><div class="stat-label">Latest Score</div><div class="stat-value" id="dash-score">—</div><div class="stat-sub">out of 110</div></div>
+        <div class="stat-card"><div class="stat-label">Rating</div><div class="stat-value" id="dash-rating">—</div><div class="stat-sub" id="dash-rating-name">—</div></div>
+        <div class="stat-card"><div class="stat-label">Avg Score (YTD)</div><div class="stat-value" id="dash-avg">—</div><div class="stat-sub">Year to date</div></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><div class="card-title">Score History</div></div>
+        <table>
+          <thead><tr><th>Month</th><th>Year</th><th>Score</th><th>Max</th><th>%</th><th>Rating</th></tr></thead>
+          <tbody id="dash-history-body"><tr><td colspan="6"><div class="empty-state"><div class="icon">📊</div><p>No score history yet.</p></div></td></tr></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- MY SCORECARD -->
+    <div class="page" id="page-scorecard">
+      <div class="page-header">
+        <div class="page-title">My Scorecard</div>
+        <div class="page-subtitle">Detailed monthly performance breakdown</div>
+      </div>
+      <div class="card">
+        <div class="card-header"><div class="card-title">Select Month</div></div>
+        <div class="month-tabs" id="scorecard-months"></div>
+        <div id="scorecard-detail"></div>
+      </div>
+      <div style="margin-top:20px">
+        <div class="card">
+          <div class="card-header"><div class="card-title">Rating Guidelines</div></div>
+          <div class="guide-grid">
+            <div class="guide-item"><div class="guide-badge" style="color:var(--green)">OS</div><div class="guide-num" style="color:var(--green)">5</div><div class="guide-desc">Outstanding<br>≥105 points</div></div>
+            <div class="guide-item"><div class="guide-badge" style="color:var(--accent)">EE</div><div class="guide-num" style="color:var(--accent)">4</div><div class="guide-desc">Exceeds Expectations<br>90–104 points</div></div>
+            <div class="guide-item"><div class="guide-badge" style="color:var(--yellow)">ME</div><div class="guide-num" style="color:var(--yellow)">3</div><div class="guide-desc">Meets Expectations<br>75–89 points</div></div>
+            <div class="guide-item"><div class="guide-badge" style="color:var(--red)">BE</div><div class="guide-num" style="color:var(--red)">2</div><div class="guide-desc">Below Expectations<br>60–74 points</div></div>
+            <div class="guide-item"><div class="guide-badge" style="color:#94a3b8">DE</div><div class="guide-num" style="color:#94a3b8">1</div><div class="guide-desc">Does Not Meet<br>&lt;60 points</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ENTER SCORES (LEAD) -->
+    <div class="page" id="page-enter-scores">
+      <div class="page-header">
+        <div class="page-title">Enter Monthly Scores</div>
+        <div class="page-subtitle">Record performance scores for each team member</div>
+      </div>
+      <div class="card">
+        <div class="card-header"><div class="card-title">Select Member & Month</div></div>
+        <div style="padding:20px 24px">
+          <div class="form-row">
+            <div class="field-group">
+              <div class="field-label">Team Member</div>
+              <select class="filter-select" id="lead-member-select" style="width:100%" onchange="loadLeadForm()">
+                <option value="">— Select Member —</option>
+              </select>
+            </div>
+            <div class="field-group">
+              <div class="field-label">Month</div>
+              <select class="filter-select" id="lead-month-select" style="width:100%" onchange="loadLeadForm()">
+                <option value="">— Select Month —</option>
+                <option>January</option><option>February</option><option>March</option>
+                <option>April</option><option>May</option><option>June</option>
+                <option>July</option><option>August</option><option>September</option>
+                <option>October</option><option>November</option><option>December</option>
+              </select>
+            </div>
+            <div class="field-group">
+              <div class="field-label">Year</div>
+              <select class="filter-select" id="lead-year-select" style="width:100%" onchange="loadLeadForm()">
+                <option>2025</option><option>2026</option><option>2027</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div id="lead-score-form" style="display:none">
+          <div class="section-sep"></div>
+          <div class="section-label-inner">🔵 Business Operator (75%) — Productivity + Quality + TAT</div>
+          <div class="score-grid">
+            <div class="score-row"><div class="score-info"><div class="score-name">Productivity</div><div class="score-target">100%=25 | ≥95%=15 | ≥85%=10 | ≥80%=5</div></div><div class="score-input-wrap"><input class="score-input" type="number" id="s-productivity" min="0" max="25" oninput="recalcLead()"><span class="score-max-label">/ 25</span></div></div>
+            <div class="score-row"><div class="score-info"><div class="score-name">Email Responsiveness</div><div class="score-target">0 miss=5 | 1=4 | 2=3 | 3=2 | 4=1 | ≥5=0</div></div><div class="score-input-wrap"><input class="score-input" type="number" id="s-email" min="0" max="5" oninput="recalcLead()"><span class="score-max-label">/ 5</span></div></div>
+            <div class="score-row"><div class="score-info"><div class="score-name">QA Score / Quality</div><div class="score-target">100%=25 | 99.99–99%=24 | 98.99–98.5%=23 | else=0</div></div><div class="score-input-wrap"><input class="score-input" type="number" id="s-quality" min="0" max="25" oninput="recalcLead()"><span class="score-max-label">/ 25</span></div></div>
+            <div class="score-row"><div class="score-info"><div class="score-name">Task Completion / Status</div><div class="score-target">0 miss=10 | ≥1 miss=0</div></div><div class="score-input-wrap"><input class="score-input" type="number" id="s-task" min="0" max="10" oninput="recalcLead()"><span class="score-max-label">/ 10</span></div></div>
+            <div class="score-row"><div class="score-info"><div class="score-name">PKT Score</div><div class="score-target">≥80%=10 | &lt;80%=0</div></div><div class="score-input-wrap"><input class="score-input" type="number" id="s-pkt" min="0" max="10" oninput="recalcLead()"><span class="score-max-label">/ 10</span></div></div>
+          </div>
+          <div class="section-sep"></div>
+          <div class="section-label-inner">🟢 Professional Hygiene (25%)</div>
+          <div class="score-grid">
+            <div class="score-row"><div class="score-info"><div class="score-name">Org Ethics & Code of Conduct</div><div class="score-target">0 miss=5 | 1=4 | 2=3 | 3=2 | 4=1</div></div><div class="score-input-wrap"><input class="score-input" type="number" id="s-ethics" min="0" max="5" oninput="recalcLead()"><span class="score-max-label">/ 5</span></div></div>
+            <div class="score-row"><div class="score-info"><div class="score-name">FactoHR Time Booking</div><div class="score-target">0 miss=5 | 1=4 | 2=3 | 3=2 | 4=1</div></div><div class="score-input-wrap"><input class="score-input" type="number" id="s-factohr" min="0" max="5" oninput="recalcLead()"><span class="score-max-label">/ 5</span></div></div>
+            <div class="score-row"><div class="score-info"><div class="score-name">Shift Adherence</div><div class="score-target">0 miss=5 | 1=4 | 2=3 | 3=2 | 4=1</div></div><div class="score-input-wrap"><input class="score-input" type="number" id="s-shift" min="0" max="5" oninput="recalcLead()"><span class="score-max-label">/ 5</span></div></div>
+            <div class="score-row"><div class="score-info"><div class="score-name">Unplanned Leaves / LWP</div><div class="score-target">0 leaves=10 | ≥1=0</div></div><div class="score-input-wrap"><input class="score-input" type="number" id="s-leaves" min="0" max="10" oninput="recalcLead()"><span class="score-max-label">/ 10</span></div></div>
+          </div>
+          <div class="section-sep"></div>
+          <div class="section-label-inner">⭐ People Development & Value Creator (Bonus)</div>
+          <div class="score-grid">
+            <div class="score-row"><div class="score-info"><div class="score-name">Training & Mentoring</div><div class="score-target">Bonus: +4 or +5 points</div></div><div class="score-input-wrap"><input class="score-input" type="number" id="s-training" min="0" max="5" oninput="recalcLead()"><span class="score-max-label">/ 5</span></div></div>
+            <div class="score-row"><div class="score-info"><div class="score-name">Process Initiatives</div><div class="score-target">Bonus: +3 or +5 points</div></div><div class="score-input-wrap"><input class="score-input" type="number" id="s-initiatives" min="0" max="5" oninput="recalcLead()"><span class="score-max-label">/ 5</span></div></div>
+            <div class="score-row"><div class="score-info"><div class="score-name">Communication Skills</div><div class="score-target">Bonus: +3 points</div></div><div class="score-input-wrap"><input class="score-input" type="number" id="s-comms" min="0" max="3" oninput="recalcLead()"><span class="score-max-label">/ 3</span></div></div>
+          </div>
+
+          <div class="result-box">
+            <div>
+              <div style="font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--text3);margin-bottom:6px">Total Score</div>
+              <div><span class="result-score" id="lead-total-score">0</span><span class="result-max"> / 110</span></div>
+            </div>
+            <div class="result-rating-box">
+              <div class="rating-label">Rating</div>
+              <div class="rating-value" id="lead-rating-value" style="color:var(--text2)">—</div>
+              <div class="rating-name" id="lead-rating-name">Enter scores above</div>
+            </div>
+            <div class="result-bar-wrap">
+              <div class="bar-row">
+                <div class="bar-info"><span>Progress</span><span id="lead-pct">0%</span></div>
+                <div class="progress"><div class="progress-fill" id="lead-bar" style="width:0%"></div></div>
+              </div>
+            </div>
+          </div>
+
+          <div style="padding:0 24px 16px">
+            <div class="field-label" style="font-size:11px;margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px;color:var(--text3)">Comments & Feedback</div>
+            <textarea class="comments-area" id="lead-comments" placeholder="e.g. Productivity 97%, Quality Score 99.49%, PKT Score 80%…"></textarea>
+          </div>
+
+          <div class="form-footer">
+            <div class="saved-indicator" id="saved-indicator">✅ Saved to database!</div>
+            <button class="btn btn-outline" onclick="resetLeadForm()">Reset</button>
+            <button class="btn btn-blue" id="save-btn" onclick="saveScores()">Save Scorecard</button>
+          </div>
+        </div>
+
+        <div id="lead-score-empty" style="padding:48px 24px;text-align:center;color:var(--text3)">
+          <div style="font-size:36px;margin-bottom:12px">✏️</div>
+          <p>Select a team member and month to enter scores.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- TEAM OVERVIEW (LEAD) -->
+    <div class="page" id="page-team-overview">
+      <div class="page-header">
+        <div class="page-title">Team Overview</div>
+        <div class="page-subtitle">All team member scorecards at a glance</div>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">All Scorecards</div>
+          <div class="filters">
+            <select class="filter-select" id="team-month-filter" onchange="renderTeamTable()">
+              <option value="">All Months</option>
+              <option>January</option><option>February</option><option>March</option>
+              <option>April</option><option>May</option><option>June</option>
+              <option>July</option><option>August</option><option>September</option>
+              <option>October</option><option>November</option><option>December</option>
+            </select>
+            <select class="filter-select" id="team-rating-filter" onchange="renderTeamTable()">
+              <option value="">All Ratings</option>
+              <option>OS</option><option>EE</option><option>ME</option><option>BE</option><option>DE</option>
+            </select>
+          </div>
+        </div>
+        <table>
+          <thead><tr><th>Member</th><th>Month</th><th>Year</th><th>Score</th><th>%</th><th>Rating</th><th>Comments</th></tr></thead>
+          <tbody id="team-table-body"><tr><td colspan="7"><div class="empty-state"><div class="icon">👥</div><p>No scorecards yet.</p></div></td></tr></tbody>
+        </table>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ════════════════════════════════════════════════════
+//  🔧 CONFIGURATION — Replace these two values
+//     with your Supabase project credentials
+// ════════════════════════════════════════════════════
+const SUPABASE_URL  = 'YOUR_SUPABASE_URL';
+const SUPABASE_ANON = 'YOUR_SUPABASE_ANON_KEY';
+// ════════════════════════════════════════════════════
+
+const ALLOWED_DOMAIN = 'lumelight.com';
+
+// ─── INIT SUPABASE ───
+let sb;
+let currentUser = null;
+let currentProfile = null;
+let allMembers = [];
+let allScorecards = [];
+
+function initApp() {
+  const configured = SUPABASE_URL !== 'YOUR_SUPABASE_URL' && SUPABASE_ANON !== 'YOUR_SUPABASE_ANON_KEY';
+  if (!configured) {
+    document.getElementById('loading-overlay').style.display = 'none';
+    document.getElementById('config-banner').style.display = 'flex';
+    return;
+  }
+
+  sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+
+  // Check if already logged in
+  sb.auth.getSession().then(({ data: { session } }) => {
+    document.getElementById('loading-overlay').style.display = 'none';
+    if (session) {
+      currentUser = session.user;
+      loadProfileAndLaunch();
+    } else {
+      document.getElementById('auth-screen').style.display = 'flex';
+    }
+  });
+
+  // Listen for auth changes (tab visibility, token refresh etc.)
+  sb.auth.onAuthStateChange((event, session) => {
+    if (event === 'SIGNED_OUT') {
+      currentUser = null; currentProfile = null;
+      document.getElementById('app-screen').style.display = 'none';
+      document.getElementById('auth-screen').style.display = 'flex';
+    }
+  });
+}
+
+// ─── AUTH ───
+function switchTab(tab) {
+  document.getElementById('tab-login').style.display    = tab === 'login'    ? 'block' : 'none';
+  document.getElementById('tab-register').style.display = tab === 'register' ? 'block' : 'none';
+  document.querySelectorAll('.tab-btn').forEach((b, i) =>
+    b.classList.toggle('active', (i===0&&tab==='login')||(i===1&&tab==='register')));
+  document.getElementById('login-err').style.display = 'none';
+  document.getElementById('reg-err').style.display   = 'none';
+}
+
+function validateDomain(email) {
+  return email.toLowerCase().endsWith('@' + ALLOWED_DOMAIN);
+}
+
+function showAuthErr(id, msg) {
+  const el = document.getElementById(id);
+  el.textContent = msg;
+  el.style.display = 'block';
+}
+
+async function doLogin() {
+  const email = document.getElementById('login-email').value.trim().toLowerCase();
+  const pass  = document.getElementById('login-pass').value;
+  const btn   = document.getElementById('login-btn');
+
+  if (!validateDomain(email)) { showAuthErr('login-err', 'Only @lumelight.com email addresses are allowed.'); return; }
+
+  btn.disabled = true; btn.textContent = 'Signing in…';
+  const { data, error } = await sb.auth.signInWithPassword({ email, password: pass });
+  btn.disabled = false; btn.textContent = 'Sign In →';
+
+  if (error) { showAuthErr('login-err', error.message); return; }
+  currentUser = data.user;
+  document.getElementById('auth-screen').style.display = 'none';
+  await loadProfileAndLaunch();
+}
+
+async function doRegister() {
+  const fname       = document.getElementById('reg-fname').value.trim();
+  const lname       = document.getElementById('reg-lname').value.trim();
+  const email       = document.getElementById('reg-email').value.trim().toLowerCase();
+  const pass        = document.getElementById('reg-pass').value;
+  const designation = document.getElementById('reg-designation').value.trim();
+  const process     = document.getElementById('reg-process').value.trim();
+  const role        = document.getElementById('reg-role').value;
+  const btn         = document.getElementById('reg-btn');
+
+  if (!fname||!lname||!email||!pass||!designation) { showAuthErr('reg-err','Please fill in all fields.'); return; }
+  if (!validateDomain(email))  { showAuthErr('reg-err','Only @lumelight.com email addresses are allowed.'); return; }
+  if (pass.length < 6)         { showAuthErr('reg-err','Password must be at least 6 characters.'); return; }
+
+  btn.disabled = true; btn.textContent = 'Creating account…';
+
+  const { data, error } = await sb.auth.signUp({
+    email, password: pass,
+    options: {
+      data: { full_name: `${fname} ${lname}`, role, designation, process }
+    }
+  });
+
+  btn.disabled = false; btn.textContent = 'Create Account →';
+
+  if (error) { showAuthErr('reg-err', error.message); return; }
+
+  showToast('✅ Account created! Please check your email to confirm, then sign in.', 5000);
+  switchTab('login');
+}
+
+async function doLogout() {
+  await sb.auth.signOut();
+}
+
+// ─── PROFILE & LAUNCH ───
+async function loadProfileAndLaunch() {
+  const { data: profile } = await sb.from('profiles').select('*').eq('id', currentUser.id).single();
+  currentProfile = profile;
+
+  const isLead = profile.role === 'lead';
+  document.getElementById('sidebar-name').textContent   = profile.full_name;
+  document.getElementById('sidebar-role').textContent   = isLead ? 'Team Lead / Manager' : profile.designation;
+  document.getElementById('sidebar-avatar').textContent = profile.full_name[0].toUpperCase();
+  document.getElementById('dash-name').textContent      = profile.full_name.split(' ')[0];
+
+  document.getElementById('nav-section-lead').style.display  = isLead ? '' : 'none';
+  document.getElementById('nav-enter-scores').style.display  = isLead ? '' : 'none';
+  document.getElementById('nav-team-overview').style.display = isLead ? '' : 'none';
+
+  document.getElementById('auth-screen').style.display = 'none';
+  document.getElementById('app-screen').style.display  = 'block';
+
+  if (isLead) await loadAllMembers();
+  await renderDashboard();
+  goPage('dashboard');
+}
+
+// ─── RATING ───
+function getRating(score) {
+  if (score >= 105) return { code:'OS', name:'Outstanding',            num:5, cls:'badge-os', color:'var(--green)'  };
+  if (score >= 90)  return { code:'EE', name:'Exceeds Expectations',   num:4, cls:'badge-ee', color:'var(--accent)' };
+  if (score >= 75)  return { code:'ME', name:'Meets Expectations',     num:3, cls:'badge-me', color:'var(--yellow)' };
+  if (score >= 60)  return { code:'BE', name:'Below Expectations',     num:2, cls:'badge-be', color:'var(--red)'    };
+  return               { code:'DE', name:'Does Not Meet Expectations', num:1, cls:'badge-de', color:'#94a3b8'       };
+}
+
+// ─── DASHBOARD ───
+async function renderDashboard() {
+  const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  document.getElementById('dash-month').textContent = months[new Date().getMonth()];
+
+  const { data: scs } = await sb.from('scorecards')
+    .select('*')
+    .eq('member_id', currentUser.id)
+    .order('year').order('month');
+
+  const tbody = document.getElementById('dash-history-body');
+
+  if (!scs || scs.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="6"><div class="empty-state"><div class="icon">📊</div><p>No scorecards yet.</p></div></td></tr>`;
+    ['dash-score','dash-rating','dash-rating-name','dash-avg'].forEach(id => document.getElementById(id).textContent = '—');
+    return;
+  }
+
+  const latest = scs[scs.length - 1];
+  const r = getRating(latest.total_score);
+  document.getElementById('dash-score').textContent       = latest.total_score;
+  document.getElementById('dash-rating').textContent      = r.code;
+  document.getElementById('dash-rating-name').textContent = r.name;
+  const avg = Math.round(scs.reduce((s,x) => s + x.total_score, 0) / scs.length);
+  document.getElementById('dash-avg').textContent = avg;
+
+  tbody.innerHTML = scs.map(sc => {
+    const r = getRating(sc.total_score);
+    return `<tr>
+      <td>${sc.month}</td><td>${sc.year}</td>
+      <td><span style="font-family:'DM Mono';font-weight:600">${sc.total_score}</span></td>
+      <td>110</td>
+      <td>${Math.round(sc.total_score/110*100)}%</td>
+      <td><span class="badge ${r.cls}">${r.code}</span></td>
+    </tr>`;
+  }).join('');
+}
+
+// ─── SCORECARD PAGE ───
+async function renderScorecardPage() {
+  const { data: scs } = await sb.from('scorecards')
+    .select('*').eq('member_id', currentUser.id)
+    .order('year').order('month');
+
+  const tabsEl = document.getElementById('scorecard-months');
+  tabsEl.innerHTML = '';
+
+  if (!scs || scs.length === 0) {
+    document.getElementById('scorecard-detail').innerHTML =
+      `<div class="empty-state"><div class="icon">📋</div><p>No scorecards available yet. Your team lead will enter your scores.</p></div>`;
+    return;
+  }
+
+  scs.forEach((sc, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'month-tab' + (i === scs.length-1 ? ' active' : '');
+    btn.textContent = `${sc.month} ${sc.year}`;
+    btn.onclick = () => {
+      document.querySelectorAll('.month-tab').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      renderScorecardDetail(sc);
+    };
+    tabsEl.appendChild(btn);
+  });
+  renderScorecardDetail(scs[scs.length - 1]);
+}
+
+function renderScorecardDetail(sc) {
+  const r = getRating(sc.total_score);
+  const pct = Math.round(sc.total_score/110*100);
+  const params = [
+    { name:'Productivity',           key:'score_productivity', max:25, section:'BO' },
+    { name:'Email Responsiveness',   key:'score_email',        max:5,  section:'BO' },
+    { name:'QA / Quality Score',     key:'score_quality',      max:25, section:'BO' },
+    { name:'Task Completion',        key:'score_task',         max:10, section:'BO' },
+    { name:'PKT Score',              key:'score_pkt',          max:10, section:'BO' },
+    { name:'Org Ethics & Conduct',   key:'score_ethics',       max:5,  section:'PH' },
+    { name:'FactoHR Time Booking',   key:'score_factohr',      max:5,  section:'PH' },
+    { name:'Shift Adherence',        key:'score_shift',        max:5,  section:'PH' },
+    { name:'Unplanned Leaves / LWP', key:'score_leaves',       max:10, section:'PH' },
+    { name:'Training & Mentoring',   key:'score_training',     max:5,  section:'PD' },
+    { name:'Process Initiatives',    key:'score_initiatives',  max:5,  section:'PD' },
+    { name:'Communication Skills',   key:'score_comms',        max:3,  section:'PD' },
+  ];
+  const sections = { BO:'🔵 Business Operator (75%)', PH:'🟢 Professional Hygiene (25%)', PD:'⭐ Bonus — People Dev & Value Creator' };
+  let currentSection = '';
+  let html = `
+    <div class="result-box">
+      <div>
+        <div style="font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--text3);margin-bottom:6px">${sc.month} ${sc.year}</div>
+        <div><span class="result-score">${sc.total_score}</span><span class="result-max"> / 110</span></div>
+      </div>
+      <div class="result-rating-box">
+        <div class="rating-label">Final Rating</div>
+        <div class="rating-value" style="color:${r.color}">${r.code}</div>
+        <div class="rating-name">${r.name}</div>
+      </div>
+      <div class="result-bar-wrap">
+        <div class="bar-row">
+          <div class="bar-info"><span>Achievement</span><span>${pct}%</span></div>
+          <div class="progress"><div class="progress-fill" style="width:${pct}%"></div></div>
+        </div>
+      </div>
+    </div>
+    <div style="padding:0 24px 24px">
+      <table style="width:100%;border-collapse:collapse">
+        <thead><tr>
+          <th style="text-align:left;font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--text3);padding:10px 0;border-bottom:1px solid var(--border)">Parameter</th>
+          <th style="text-align:center;font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--text3);padding:10px 0;border-bottom:1px solid var(--border)">Score</th>
+          <th style="text-align:center;font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--text3);padding:10px 0;border-bottom:1px solid var(--border)">Max</th>
+          <th style="font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--text3);padding:10px 0;border-bottom:1px solid var(--border)">Progress</th>
+        </tr></thead><tbody>`;
+
+  params.forEach(p => {
+    if (p.section !== currentSection) {
+      currentSection = p.section;
+      html += `<tr><td colspan="4" style="padding:14px 0 6px;font-size:11px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--text3)">${sections[p.section]}</td></tr>`;
+    }
+    const val = sc[p.key] ?? 0;
+    const bp  = Math.round(val/p.max*100);
+    const col = bp===100 ? 'var(--green)' : bp>=60 ? 'var(--accent)' : 'var(--red)';
+    html += `<tr>
+      <td style="padding:10px 0;border-bottom:1px solid rgba(42,47,69,.4);font-size:13px">${p.name}</td>
+      <td style="padding:10px 0;border-bottom:1px solid rgba(42,47,69,.4);text-align:center;font-family:'DM Mono';font-weight:600">${val}</td>
+      <td style="padding:10px 0;border-bottom:1px solid rgba(42,47,69,.4);text-align:center;color:var(--text3);font-family:'DM Mono'">${p.max}</td>
+      <td style="padding:10px 0 10px 16px;border-bottom:1px solid rgba(42,47,69,.4)">
+        <div style="height:6px;background:var(--surface3);border-radius:3px;width:140px">
+          <div style="height:100%;width:${bp}%;background:${col};border-radius:3px"></div>
+        </div>
+      </td>
+    </tr>`;
+  });
+
+  html += `</tbody></table>`;
+  if (sc.comments) html += `<div style="margin-top:20px;padding:14px 16px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm)"><div style="font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--text3);margin-bottom:8px">Comments & Feedback</div><div style="font-size:13px;color:var(--text2);line-height:1.6">${sc.comments}</div></div>`;
+  html += `</div>`;
+  document.getElementById('scorecard-detail').innerHTML = html;
+}
+
+// ─── LEAD: MEMBERS ───
+async function loadAllMembers() {
+  const { data } = await sb.from('profiles').select('*').eq('role', 'member').order('full_name');
+  allMembers = data || [];
+  const sel = document.getElementById('lead-member-select');
+  sel.innerHTML = '<option value="">— Select Member —</option>';
+  allMembers.forEach(m => {
+    const opt = document.createElement('option');
+    opt.value = m.id;
+    opt.textContent = `${m.full_name} (${m.designation || m.email})`;
+    sel.appendChild(opt);
+  });
+}
+
+// ─── LEAD: ENTER SCORES ───
+async function loadLeadForm() {
+  const memberId = document.getElementById('lead-member-select').value;
+  const month    = document.getElementById('lead-month-select').value;
+  const year     = parseInt(document.getElementById('lead-year-select').value);
+  const formEl   = document.getElementById('lead-score-form');
+  const emptyEl  = document.getElementById('lead-score-empty');
+
+  if (!memberId || !month) { formEl.style.display='none'; emptyEl.style.display='block'; return; }
+
+  formEl.style.display = 'block';
+  emptyEl.style.display = 'none';
+  document.getElementById('saved-indicator').style.display = 'none';
+
+  const { data: existing } = await sb.from('scorecards')
+    .select('*').eq('member_id', memberId).eq('month', month).eq('year', year).single();
+
+  const fields = ['productivity','email','quality','task','pkt','ethics','factohr','shift','leaves','training','initiatives','comms'];
+  fields.forEach(f => {
+    document.getElementById('s-'+f).value = existing ? (existing['score_'+f] ?? '') : '';
+  });
+  document.getElementById('lead-comments').value = existing?.comments ?? '';
+  recalcLead();
+}
+
+function recalcLead() {
+  const get = id => +document.getElementById('s-'+id).value || 0;
+  const total = get('productivity')+get('email')+get('quality')+get('task')+get('pkt')
+              + get('ethics')+get('factohr')+get('shift')+get('leaves')
+              + get('training')+get('initiatives')+get('comms');
+  const pct = Math.round(total/110*100);
+  const r = getRating(total);
+  document.getElementById('lead-total-score').textContent = total;
+  document.getElementById('lead-pct').textContent         = pct + '%';
+  document.getElementById('lead-bar').style.width         = pct + '%';
+  document.getElementById('lead-rating-value').textContent= r.code;
+  document.getElementById('lead-rating-value').style.color= r.color;
+  document.getElementById('lead-rating-name').textContent = r.name;
+}
+
+async function saveScores() {
+  const memberId = document.getElementById('lead-member-select').value;
+  const month    = document.getElementById('lead-month-select').value;
+  const year     = parseInt(document.getElementById('lead-year-select').value);
+  if (!memberId || !month) return;
+
+  const member = allMembers.find(m => m.id === memberId);
+  const get = id => +document.getElementById('s-'+id).value || 0;
+
+  const scores = {
+    score_productivity: get('productivity'), score_email:       get('email'),
+    score_quality:      get('quality'),      score_task:        get('task'),
+    score_pkt:          get('pkt'),          score_ethics:      get('ethics'),
+    score_factohr:      get('factohr'),      score_shift:       get('shift'),
+    score_leaves:       get('leaves'),       score_training:    get('training'),
+    score_initiatives:  get('initiatives'),  score_comms:       get('comms'),
+  };
+  const total = Object.values(scores).reduce((a,b)=>a+b,0);
+  const r     = getRating(total);
+
+  const payload = {
+    member_id: memberId, member_email: member.email, member_name: member.full_name,
+    month, year, ...scores,
+    total_score: total, rating_code: r.code, rating_name: r.name, rating_num: r.num,
+    comments: document.getElementById('lead-comments').value.trim(),
+    entered_by: currentUser.id,
+  };
+
+  const btn = document.getElementById('save-btn');
+  btn.disabled = true; btn.textContent = 'Saving…';
+
+  const { error } = await sb.from('scorecards').upsert(payload, { onConflict: 'member_id,month,year' });
+
+  btn.disabled = false; btn.textContent = 'Save Scorecard';
+
+  if (error) { showToast('❌ Error: ' + error.message, 4000, true); return; }
+
+  document.getElementById('saved-indicator').style.display = 'flex';
+  showToast('✅ Scorecard saved to database!');
+  allScorecards = []; // Clear cache
+}
+
+function resetLeadForm() {
+  ['productivity','email','quality','task','pkt','ethics','factohr','shift','leaves','training','initiatives','comms']
+    .forEach(f => { document.getElementById('s-'+f).value = ''; });
+  document.getElementById('lead-comments').value = '';
+  document.getElementById('saved-indicator').style.display = 'none';
+  recalcLead();
+}
+
+// ─── TEAM TABLE ───
+async function renderTeamTable() {
+  const monthFilter  = document.getElementById('team-month-filter').value;
+  const ratingFilter = document.getElementById('team-rating-filter').value;
+  const tbody = document.getElementById('team-table-body');
+  tbody.innerHTML = `<tr><td colspan="7"><div class="empty-state"><div class="spinner" style="margin:0 auto"></div></div></td></tr>`;
+
+  let query = sb.from('scorecards').select('*').order('member_name').order('year').order('month');
+  if (monthFilter)  query = query.eq('month', monthFilter);
+  if (ratingFilter) query = query.eq('rating_code', ratingFilter);
+
+  const { data: rows } = await query;
+
+  if (!rows || rows.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="7"><div class="empty-state"><div class="icon">👥</div><p>No scorecards found.</p></div></td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = rows.map(row => {
+    const r = getRating(row.total_score);
+    return `<tr>
+      <td><div style="font-weight:600">${row.member_name}</div><div style="font-size:11px;color:var(--text3)">${row.member_email}</div></td>
+      <td>${row.month}</td><td>${row.year}</td>
+      <td><span style="font-family:'DM Mono';font-weight:600">${row.total_score}</span><span style="color:var(--text3);font-size:12px"> / 110</span></td>
+      <td>${Math.round(row.total_score/110*100)}%</td>
+      <td><span class="badge ${r.cls}">${r.code}</span></td>
+      <td style="font-size:12px;color:var(--text2);max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${row.comments||'—'}</td>
+    </tr>`;
+  }).join('');
+}
+
+// ─── NAV ───
+function goPage(p) {
+  document.querySelectorAll('.page').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+  document.getElementById('page-' + p).classList.add('active');
+  const navEl = document.getElementById('nav-' + p);
+  if (navEl) navEl.classList.add('active');
+  if (p === 'scorecard')     renderScorecardPage();
+  if (p === 'team-overview') renderTeamTable();
+  if (p === 'dashboard')     renderDashboard();
+}
+
+// ─── TOAST ───
+function showToast(msg, duration=2500, isError=false) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.style.borderColor = isError ? 'var(--red)' : 'var(--green)';
+  t.style.color       = isError ? 'var(--red)' : 'var(--green)';
+  t.style.display = 'block';
+  setTimeout(() => { t.style.display = 'none'; }, duration);
+}
+
+// ─── KEYBOARD ───
+document.getElementById('login-pass').addEventListener('keydown', e => { if(e.key==='Enter') doLogin(); });
+
+// ─── START ───
+window.addEventListener('load', initApp);
+</script>
+</body>
+</html>
