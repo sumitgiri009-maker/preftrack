@@ -6,6 +6,7 @@
 <title>PerfTrack — Lumelight Operations</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <style>
   :root{--bg:#0d0f14;--surface:#151820;--surface2:#1c2030;--surface3:#242840;--border:#2a2f45;--accent:#5b8af5;--accent2:#7c5cbf;--green:#34d399;--yellow:#fbbf24;--red:#f87171;--orange:#fb923c;--purple:#a78bfa;--text:#e8eaf0;--text2:#8b90a8;--text3:#5a5f78;--radius:12px;--radius-sm:8px;}
   *{margin:0;padding:0;box-sizing:border-box;}
@@ -157,6 +158,15 @@
   .empty-state{padding:40px 20px;text-align:center;color:var(--text3);}
   .empty-state .icon{font-size:28px;margin-bottom:9px;}
   .toast{position:fixed;bottom:22px;right:22px;background:var(--surface);border:1px solid var(--green);border-radius:var(--radius-sm);padding:10px 17px;color:var(--green);font-size:13px;font-weight:600;z-index:9999;display:none;box-shadow:0 8px 24px rgba(0,0,0,.4);}
+  /* ── MODAL ── */
+  .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:10000;display:none;align-items:center;justify-content:center;padding:20px;}
+  .modal-overlay.open{display:flex;}
+  .modal{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:32px;max-width:440px;width:100%;box-shadow:0 40px 80px rgba(0,0,0,.5);}
+  .modal-title{font-size:18px;font-weight:700;margin-bottom:8px;}
+  .modal-sub{font-size:13px;color:var(--text2);margin-bottom:24px;line-height:1.6;}
+  .modal-footer{display:flex;justify-content:flex-end;gap:10px;margin-top:24px;}
+  .btn-red{background:rgba(248,113,113,.15);color:var(--red);border:1px solid rgba(248,113,113,.3);}
+  .btn-red:hover{background:rgba(248,113,113,.25);}
   @media(max-width:900px){.sidebar{width:100%;height:auto;position:relative;}.main-content{margin-left:0;}.score-grid{grid-template-columns:1fr;}}
 </style>
 </head>
@@ -185,6 +195,7 @@
       <div class="field-group"><label class="field-label">Password</label><input class="field-input" id="login-pass" type="password" placeholder="••••••••"></div>
       <div class="err-msg" id="login-err"></div>
       <button class="btn-primary" id="login-btn" onclick="doLogin()">Sign In →</button>
+      <p style="text-align:center;margin-top:14px"><button onclick="doForgotPassword()" style="background:none;border:none;color:var(--accent);font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;text-decoration:underline">Forgot password?</button></p>
       <p class="hint">Use your <b>@lumelight.com</b> email.</p>
     </div>
 
@@ -257,6 +268,7 @@
       <!-- Director only -->
       <div id="nav-sec-org" class="nav-section-label" style="display:none">Organisation</div>
       <button class="nav-item" onclick="goPage('org-view')" id="nav-org-view" style="display:none"><span class="nav-icon">🏢</span>Full Org View</button>
+      <button class="nav-item" onclick="goPage('reassign')" id="nav-reassign" style="display:none"><span class="nav-icon">🔄</span>Reassign Member</button>
     </nav>
     <div class="sidebar-footer">
       <div class="user-card">
@@ -380,10 +392,11 @@
           <div class="filters">
             <select class="filter-select" id="mt-month" onchange="renderMyTeam()"><option value="">All Months</option><option>January</option><option>February</option><option>March</option><option>April</option><option>May</option><option>June</option><option>July</option><option>August</option><option>September</option><option>October</option><option>November</option><option>December</option></select>
             <select class="filter-select" id="mt-rating" onchange="renderMyTeam()"><option value="">All Ratings</option><option>OS</option><option>EE</option><option>ME</option><option>BE</option><option>DE</option></select>
+            <button class="btn btn-outline" onclick="exportToExcel('my-team')" style="padding:7px 13px">⬇ Export Excel</button>
           </div>
         </div>
-        <table><thead><tr><th>Person</th><th>Role</th><th>Month</th><th>Year</th><th>Score</th><th>%</th><th>Rating</th><th>Scored by</th></tr></thead>
-        <tbody id="mt-tbody"><tr><td colspan="8"><div class="empty-state"><div class="icon">👥</div><p>No scorecards yet.</p></div></td></tr></tbody></table>
+        <table><thead><tr><th>Person</th><th>Role</th><th>Month</th><th>Year</th><th>Score</th><th>%</th><th>Rating</th><th>Scored by</th><th></th></tr></thead>
+        <tbody id="mt-tbody"><tr><td colspan="9"><div class="empty-state"><div class="icon">👥</div><p>No scorecards yet.</p></div></td></tr></tbody></table>
       </div>
     </div>
 
@@ -412,8 +425,66 @@
       </div>
     </div>
 
+    <!-- REASSIGN MEMBER -->
+    <div class="page" id="page-reassign">
+      <div class="page-header"><div class="page-title">Reassign Member</div><div class="page-subtitle">Move a team member to a different manager or TL</div></div>
+      <div class="card">
+        <div class="card-header"><div class="card-title">Select Member to Reassign</div></div>
+        <div style="padding:18px 20px">
+          <div class="field-group">
+            <label class="field-label">Team Member</label>
+            <select class="filter-select" id="reassign-member" style="width:320px;max-width:100%" onchange="loadReassignForm()"><option value="">— Select Member —</option></select>
+          </div>
+          <div id="reassign-form" style="display:none">
+            <div id="reassign-current" style="padding:11px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);font-size:13px;color:var(--text2);margin-bottom:16px"></div>
+            <div class="form-row" style="gap:14px;margin-bottom:16px">
+              <div class="field-group">
+                <label class="field-label">New Manager</label>
+                <select class="filter-select" id="reassign-manager" style="width:100%"><option value="">— Keep current —</option></select>
+              </div>
+              <div class="field-group">
+                <label class="field-label">New TL <span style="color:var(--text3);font-weight:400;text-transform:none;letter-spacing:0">(optional)</span></label>
+                <select class="filter-select" id="reassign-tl" style="width:100%"><option value="">— Keep current / None —</option></select>
+              </div>
+            </div>
+            <button class="btn btn-blue" onclick="doReassign()">✅ Save Reassignment</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
   </main>
 </div>
+
+<!-- DELETE CONFIRM MODAL -->
+<div class="modal-overlay" id="delete-modal">
+  <div class="modal">
+    <div class="modal-title">🗑️ Delete Scorecard?</div>
+    <div class="modal-sub" id="delete-modal-sub">This will permanently delete this scorecard.</div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('delete-modal')">Cancel</button>
+      <button class="btn btn-red" id="delete-confirm-btn" onclick="confirmDelete()">Yes, Delete</button>
+    </div>
+  </div>
+</div>
+
+<!-- FORGOT PASSWORD MODAL -->
+<div class="modal-overlay" id="forgot-modal">
+  <div class="modal">
+    <div class="modal-title">🔑 Reset Password</div>
+    <div class="modal-sub">Enter your @lumelight.com email — we'll send a reset link to your inbox.</div>
+    <div class="field-group">
+      <label class="field-label">Work Email</label>
+      <input class="field-input" id="forgot-email" type="email" placeholder="yourname@lumelight.com">
+    </div>
+    <div class="err-msg" id="forgot-err"></div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('forgot-modal')">Cancel</button>
+      <button class="btn btn-blue" id="forgot-btn" onclick="sendResetEmail()">Send Reset Link →</button>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
@@ -584,6 +655,7 @@ async function launch() {
   document.getElementById('nav-my-team').style.display      = canScore ? '' : 'none';
   document.getElementById('nav-sec-org').style.display      = isDirector ? '' : 'none';
   document.getElementById('nav-org-view').style.display     = isDirector ? '' : 'none';
+  document.getElementById('nav-reassign').style.display     = (isDirector || p.role==='manager') ? '' : 'none';
 
   document.getElementById('auth-screen').style.display = 'none';
   document.getElementById('app-screen').style.display  = 'block';
@@ -749,6 +821,7 @@ async function saveScores() {
   if (error) { toast('❌ '+error.message,4000,true); return; }
   document.getElementById('saved-ok').style.display='flex';
   toast('✅ Scorecard saved!');
+  sendScorecardNotification(member.email, member.full_name, month, year, total, r.code);
 }
 
 function resetForm() {
@@ -772,11 +845,19 @@ async function renderMyTeam() {
   if (ratingF) query = query.eq('rating_code',ratingF);
 
   const { data: rows } = await query;
-  if (!rows||rows.length===0) { tbody.innerHTML=`<tr><td colspan="8"><div class="empty-state"><div class="icon">👥</div><p>No scorecards yet.</p></div></td></tr>`; return; }
+  if (!rows||rows.length===0) { tbody.innerHTML=`<tr><td colspan="9"><div class="empty-state"><div class="icon">👥</div><p>No scorecards yet.</p></div></td></tr>`; return; }
   tbody.innerHTML=rows.map(row=>{
     const r=getRating(row.total_score);
-    const rm=ROLE_META[row.entered_by_role?.toLowerCase()]||{};
-    return `<tr><td><div style="font-weight:600">${row.member_name}</div><div style="font-size:11px;color:var(--text3)">${row.member_email}</div></td><td style="font-size:11px;color:var(--text2)">${row.entered_by_role||'—'}</td><td>${row.month}</td><td>${row.year}</td><td><b style="font-family:'DM Mono'">${row.total_score}</b><span style="color:var(--text3);font-size:11px"> /110</span></td><td>${Math.round(row.total_score/110*100)}%</td><td><span class="badge ${r.cls}">${r.code}</span></td><td style="font-size:11px;color:var(--text2)">${row.entered_by_role||'—'}</td></tr>`;
+    return `<tr>
+      <td><div style="font-weight:600">${row.member_name}</div><div style="font-size:11px;color:var(--text3)">${row.member_email}</div></td>
+      <td style="font-size:11px;color:var(--text2)">${row.entered_by_role||'—'}</td>
+      <td>${row.month}</td><td>${row.year}</td>
+      <td><b style="font-family:'DM Mono'">${row.total_score}</b><span style="color:var(--text3);font-size:11px"> /110</span></td>
+      <td>${Math.round(row.total_score/110*100)}%</td>
+      <td><span class="badge ${r.cls}">${r.code}</span></td>
+      <td style="font-size:11px;color:var(--text2)">${row.entered_by_role||'—'}</td>
+      <td><button class="btn btn-red" style="padding:4px 10px;font-size:11px" onclick="promptDelete('${row.id}','${row.member_name}','${row.month} ${row.year}')">🗑</button></td>
+    </tr>`;
   }).join('');
 }
 
@@ -863,6 +944,175 @@ function goPage(p) {
   if(p==='org-view')     { renderOrgTree(); renderOrgTable(); }
   if(p==='dashboard')    renderDashboard();
   if(p==='enter-scores') loadMyReportees();
+  if(p==='reassign')     loadReassignPage();
+}
+
+// ── 1. FORGOT PASSWORD ──
+function doForgotPassword() {
+  document.getElementById('forgot-email').value = document.getElementById('login-email').value || '';
+  document.getElementById('forgot-err').style.display = 'none';
+  document.getElementById('forgot-modal').classList.add('open');
+}
+
+async function sendResetEmail() {
+  const email = document.getElementById('forgot-email').value.trim().toLowerCase();
+  const btn   = document.getElementById('forgot-btn');
+  if (!email.endsWith('@'+DOMAIN)) { const e=document.getElementById('forgot-err'); e.textContent='Only @'+DOMAIN+' emails allowed.'; e.style.display='block'; return; }
+  btn.disabled=true; btn.textContent='Sending…';
+  const { error } = await sb.auth.resetPasswordForEmail(email, {
+    redirectTo: window.location.href
+  });
+  btn.disabled=false; btn.textContent='Send Reset Link';
+  if (error) { const e=document.getElementById('forgot-err'); e.textContent=error.message; e.style.display='block'; return; }
+  closeModal('forgot-modal');
+  toast('✅ Reset link sent! Check your @lumelight.com inbox.', 5000);
+}
+
+// ── 2. EXPORT TO EXCEL ──
+async function exportToExcel(source) {
+  toast('⏳ Preparing Excel file…', 3000);
+  let query = sb.from('scorecards').select('*').order('manager_name').order('member_name').order('year').order('month');
+  if (source==='my-team') {
+    if (PROFILE.role==='tl')      query = query.eq('supervisor_id', ME.id);
+    else if (PROFILE.role==='manager') query = query.eq('manager_id', ME.id);
+  }
+  const { data: rows } = await query;
+  if (!rows||rows.length===0) { toast('No data to export.', 2500, true); return; }
+
+  const exportData = rows.map(r => ({
+    'Member Name':      r.member_name,
+    'Member Email':     r.member_email,
+    'Manager':          r.manager_name||'—',
+    'TL/Supervisor':    r.supervisor_name||'—',
+    'Month':            r.month,
+    'Year':             r.year,
+    'Productivity':     r.score_productivity,
+    'Email':            r.score_email,
+    'Quality':          r.score_quality,
+    'Task Completion':  r.score_task,
+    'PKT Score':        r.score_pkt,
+    'Ethics':           r.score_ethics,
+    'FactoHR':          r.score_factohr,
+    'Shift':            r.score_shift,
+    'Leaves/LWP':       r.score_leaves,
+    'Training':         r.score_training,
+    'Initiatives':      r.score_initiatives,
+    'Communication':    r.score_comms,
+    'Total Score':      r.total_score,
+    'Rating':           r.rating_code,
+    'Rating Name':      r.rating_name,
+    'Comments':         r.comments||'',
+    'Scored By':        r.entered_by_role||'',
+  }));
+
+  const ws   = XLSX.utils.json_to_sheet(exportData);
+  const wb   = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'Scorecards');
+  const month = new Date().toLocaleString('default',{month:'short'});
+  XLSX.writeFile(wb, `PerfTrack_Scorecards_${month}_${new Date().getFullYear()}.xlsx`);
+  toast('✅ Excel file downloaded!');
+}
+
+// ── 3. DELETE SCORECARD ──
+let pendingDeleteId = null;
+
+function promptDelete(id, name, period) {
+  pendingDeleteId = id;
+  document.getElementById('delete-modal-sub').textContent = `Delete scorecard for ${name} — ${period}? This cannot be undone.`;
+  document.getElementById('delete-modal').classList.add('open');
+}
+
+async function confirmDelete() {
+  if (!pendingDeleteId) return;
+  const btn = document.getElementById('delete-confirm-btn');
+  btn.disabled=true; btn.textContent='Deleting…';
+  const { error } = await sb.from('scorecards').delete().eq('id', pendingDeleteId);
+  btn.disabled=false; btn.textContent='Delete';
+  closeModal('delete-modal');
+  pendingDeleteId = null;
+  if (error) { toast('❌ '+error.message, 4000, true); return; }
+  toast('✅ Scorecard deleted.');
+  renderMyTeam();
+}
+
+function closeModal(id) {
+  document.getElementById(id).classList.remove('open');
+}
+
+// ── 4. REASSIGN MEMBER ──
+async function loadReassignPage() {
+  const { data: members } = await sb.from('profiles')
+    .select('*').in('role',['member','sme','tl']).order('full_name');
+  const { data: managers } = await sb.from('profiles')
+    .select('id,full_name').eq('role','manager').order('full_name');
+  const { data: tls } = await sb.from('profiles')
+    .select('id,full_name').eq('role','tl').order('full_name');
+
+  const mSel = document.getElementById('reassign-member');
+  mSel.innerHTML = '<option value="">— Select Member —</option>';
+  (members||[]).forEach(m=>{ const o=document.createElement('option'); o.value=m.id; o.textContent=`${m.full_name} (${ROLE_META[m.role]?.label||m.role})`; o.dataset.profile=JSON.stringify(m); mSel.appendChild(o);});
+
+  const mgSel = document.getElementById('reassign-manager');
+  mgSel.innerHTML = '<option value="">— Keep current —</option>';
+  (managers||[]).forEach(m=>{ const o=document.createElement('option'); o.value=m.id; o.textContent=m.full_name; mgSel.appendChild(o);});
+
+  const tlSel = document.getElementById('reassign-tl');
+  tlSel.innerHTML = '<option value="">— Keep current / None —</option>';
+  (tls||[]).forEach(t=>{ const o=document.createElement('option'); o.value=t.id; o.textContent=t.full_name; tlSel.appendChild(o);});
+}
+
+function loadReassignForm() {
+  const sel = document.getElementById('reassign-member');
+  const opt = sel.options[sel.selectedIndex];
+  if (!opt||!opt.dataset.profile) { document.getElementById('reassign-form').style.display='none'; return; }
+  const p = JSON.parse(opt.dataset.profile);
+  document.getElementById('reassign-form').style.display = 'block';
+  document.getElementById('reassign-current').innerHTML =
+    `<b>Current assignment:</b> Manager: <b>${p.manager_name||'None'}</b> &nbsp;·&nbsp; TL: <b>${p.supervisor_name||'None'}</b>`;
+}
+
+async function doReassign() {
+  const memberId  = document.getElementById('reassign-member').value;
+  const mgSel     = document.getElementById('reassign-manager');
+  const tlSel     = document.getElementById('reassign-tl');
+  const newMgId   = mgSel.value;
+  const newMgName = newMgId ? mgSel.options[mgSel.selectedIndex].text : null;
+  const newTlId   = tlSel.value;
+  const newTlName = newTlId ? tlSel.options[tlSel.selectedIndex].text : null;
+
+  if (!memberId) { toast('Please select a member first.', 2500, true); return; }
+
+  const updates = {};
+  if (newMgId)   { updates.manager_id = newMgId;   updates.manager_name = newMgName; }
+  if (newTlId)   { updates.supervisor_id = newTlId; updates.supervisor_name = newTlName; }
+  if (tlSel.value === '' && tlSel.selectedIndex === 0) {
+    // "Keep current" selected — don't change TL
+  }
+
+  if (Object.keys(updates).length === 0) { toast('No changes selected.', 2500, true); return; }
+
+  const { error } = await sb.from('profiles').update(updates).eq('id', memberId);
+  if (error) { toast('❌ '+error.message, 4000, true); return; }
+  toast('✅ Member reassigned successfully!');
+  loadReassignPage();
+  document.getElementById('reassign-member').value = '';
+  document.getElementById('reassign-form').style.display = 'none';
+}
+
+// ── 5. EMAIL NOTIFICATION (via Supabase Edge Function) ──
+// Called automatically after saveScores()
+async function sendScorecardNotification(memberEmail, memberName, month, year, total, ratingCode) {
+  // Uses Supabase's built-in email — no extra setup needed
+  // This is a best-effort notification; failures are silent to not disrupt saving
+  try {
+    await sb.functions.invoke('scorecard-notify', {
+      body: { memberEmail, memberName, month, year, total, ratingCode,
+              enteredBy: PROFILE.full_name, enteredByRole: ROLE_META[PROFILE.role]?.label }
+    });
+  } catch(e) {
+    // Silent fail — notification is non-critical
+    console.log('Notification skipped:', e.message);
+  }
 }
 
 function toast(msg,dur=2500,err=false) {
@@ -870,6 +1120,11 @@ function toast(msg,dur=2500,err=false) {
   t.textContent=msg; t.style.borderColor=err?'var(--red)':'var(--green)'; t.style.color=err?'var(--red)':'var(--green)';
   t.style.display='block'; setTimeout(()=>t.style.display='none',dur);
 }
+
+// Close modals on overlay click
+document.querySelectorAll('.modal-overlay').forEach(el=>{
+  el.addEventListener('click', e=>{ if(e.target===el) el.classList.remove('open'); });
+});
 
 document.getElementById('login-pass').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
 window.addEventListener('load',initApp);
