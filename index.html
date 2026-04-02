@@ -15,18 +15,16 @@
   .spinner{width:40px;height:40px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite;}
   @keyframes spin{to{transform:rotate(360deg);}}
   .loading-text{font-size:14px;color:var(--text2);}
-
-  /* ── AUTH ── */
   #auth-screen{min-height:100vh;display:none;align-items:center;justify-content:center;background:radial-gradient(ellipse at 30% 20%,rgba(91,138,245,.12) 0%,transparent 60%),radial-gradient(ellipse at 80% 80%,rgba(124,92,191,.10) 0%,transparent 55%),var(--bg);padding:20px;}
-  .auth-card{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:44px;width:100%;max-width:480px;box-shadow:0 40px 80px rgba(0,0,0,.5);}
-  .auth-logo{display:flex;align-items:center;gap:10px;margin-bottom:32px;}
+  .auth-card{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:40px;width:100%;max-width:480px;box-shadow:0 40px 80px rgba(0,0,0,.5);}
+  .auth-logo{display:flex;align-items:center;gap:10px;margin-bottom:28px;}
   .logo-icon{width:40px;height:40px;background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;}
   .logo-text{font-size:20px;font-weight:700;letter-spacing:-.5px;}
   .logo-sub{font-size:11px;color:var(--text2);letter-spacing:1.5px;text-transform:uppercase;margin-top:1px;}
-  .tab-row{display:flex;background:var(--surface2);border-radius:var(--radius-sm);padding:4px;margin-bottom:24px;}
+  .tab-row{display:flex;background:var(--surface2);border-radius:var(--radius-sm);padding:4px;margin-bottom:22px;}
   .tab-btn{flex:1;padding:9px;border:none;background:none;border-radius:6px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;color:var(--text2);transition:all .2s;}
   .tab-btn.active{background:var(--surface3);color:var(--text);}
-  .field-group{margin-bottom:14px;}
+  .field-group{margin-bottom:13px;}
   .field-label{font-size:11px;font-weight:600;color:var(--text2);letter-spacing:.5px;text-transform:uppercase;margin-bottom:6px;display:block;}
   .field-input{width:100%;padding:10px 13px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;outline:none;transition:border-color .2s;}
   .field-input:focus{border-color:var(--accent);}
@@ -39,11 +37,9 @@
   .hint b{color:var(--text2);}
   .err-msg{font-size:13px;color:var(--red);margin-top:10px;padding:10px 14px;background:rgba(248,113,113,.08);border-radius:var(--radius-sm);border:1px solid rgba(248,113,113,.2);display:none;}
   .form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
-
-  /* ── APP ── */
   #app-screen{display:none;min-height:100vh;}
   .sidebar{position:fixed;top:0;left:0;width:244px;height:100vh;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;z-index:100;}
-  .sidebar-header{padding:22px 20px 18px;border-bottom:1px solid var(--border);}
+  .sidebar-header{padding:20px 18px 16px;border-bottom:1px solid var(--border);}
   .sidebar-logo{display:flex;align-items:center;gap:10px;}
   .sidebar-logo .logo-icon{width:30px;height:30px;font-size:13px;}
   .sidebar-logo .logo-text{font-size:15px;font-weight:700;}
@@ -57,63 +53,38 @@
   .user-card{display:flex;align-items:center;gap:9px;padding:9px 11px;background:var(--surface2);border-radius:var(--radius-sm);margin-bottom:7px;}
   .user-avatar{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;flex-shrink:0;}
   .user-name{font-size:13px;font-weight:600;line-height:1.3;}
-  .user-role-txt{font-size:11px;color:var(--text2);}
-  .role-pill{display:inline-block;padding:2px 8px;border-radius:8px;font-size:10px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;margin-top:2px;}
-  .pill-director{background:rgba(251,146,60,.15);color:var(--orange);}
-  .pill-manager{background:rgba(167,139,250,.15);color:var(--purple);}
-  .pill-tl{background:rgba(91,138,245,.15);color:var(--accent);}
-  .pill-sme{background:rgba(251,191,36,.15);color:var(--yellow);}
-  .pill-member{background:rgba(139,144,168,.15);color:var(--text2);}
+  .user-desig{font-size:11px;color:var(--text2);}
+  .desig-pill{display:inline-block;padding:2px 8px;border-radius:8px;font-size:10px;font-weight:700;letter-spacing:.3px;text-transform:uppercase;margin-top:2px;background:rgba(91,138,245,.15);color:var(--accent);}
   .logout-btn{width:100%;padding:8px;background:none;border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text2);font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;transition:all .15s;}
   .logout-btn:hover{background:var(--surface2);color:var(--text);}
-
-  .main-content{margin-left:244px;padding:30px;min-height:100vh;}
+  .main-content{margin-left:244px;padding:28px;min-height:100vh;}
   .page{display:none;}
   .page.active{display:block;}
-  .page-header{margin-bottom:24px;}
+  .page-header{margin-bottom:22px;}
   .page-title{font-size:22px;font-weight:700;letter-spacing:-.5px;}
   .page-subtitle{color:var(--text2);font-size:13px;margin-top:4px;}
-
-  /* ── STATS ── */
-  .stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:13px;margin-bottom:20px;}
+  .stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:12px;margin-bottom:20px;}
   .stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;}
   .stat-label{font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text3);margin-bottom:7px;}
   .stat-value{font-size:24px;font-weight:700;letter-spacing:-1px;}
   .stat-sub{font-size:11px;color:var(--text2);margin-top:2px;}
-
-  /* ── ORG CHART ── */
-  .org-row{display:flex;align-items:center;gap:8px;padding:10px 20px;border-bottom:1px solid rgba(42,47,69,.4);transition:background .15s;}
-  .org-row:hover{background:rgba(255,255,255,.02);}
-  .org-indent-1{padding-left:40px;}
-  .org-indent-2{padding-left:72px;}
-  .org-indent-3{padding-left:104px;}
-  .org-tree-line{color:var(--text3);font-family:'DM Mono',monospace;font-size:12px;margin-right:4px;}
-  .org-name{font-size:13px;font-weight:600;flex:1;}
-  .org-email{font-size:11px;color:var(--text3);}
-  .org-desig{font-size:11px;color:var(--text2);}
-
-  /* ── CARDS & TABLES ── */
-  .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:18px;}
-  .card-header{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;}
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:16px;}
+  .card-header{padding:15px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;}
   .card-title{font-size:15px;font-weight:600;}
   table{width:100%;border-collapse:collapse;}
   th{text-align:left;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text3);padding:10px 20px;border-bottom:1px solid var(--border);}
   td{padding:12px 20px;border-bottom:1px solid rgba(42,47,69,.5);font-size:13px;}
   tr:last-child td{border-bottom:none;}
   tr:hover td{background:rgba(255,255,255,.015);}
-  .group-header td{background:var(--surface2) !important;font-size:11px;font-weight:700;color:var(--text2);padding:9px 20px;border-top:2px solid var(--border);}
-
-  /* ── BADGES ── */
+  .group-header td{background:var(--surface2)!important;font-size:11px;font-weight:700;color:var(--text2);padding:9px 20px;border-top:2px solid var(--border);}
   .badge{display:inline-flex;align-items:center;padding:2px 9px;border-radius:20px;font-size:11px;font-weight:700;font-family:'DM Mono',monospace;}
   .badge-os{background:rgba(52,211,153,.15);color:var(--green);border:1px solid rgba(52,211,153,.3);}
   .badge-ee{background:rgba(91,138,245,.15);color:var(--accent);border:1px solid rgba(91,138,245,.3);}
   .badge-me{background:rgba(251,191,36,.15);color:var(--yellow);border:1px solid rgba(251,191,36,.3);}
   .badge-be{background:rgba(248,113,113,.15);color:var(--red);border:1px solid rgba(248,113,113,.3);}
-  .badge-de{background:rgba(148,163,184,.15);color:#94a3b8;border:1px solid rgba(148,163,184,.3);}
-
-  /* ── SCORE FORM ── */
-  .score-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:18px 20px;}
-  .score-row{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:13px 15px;display:flex;align-items:center;justify-content:space-between;gap:12px;}
+  .badge-ni{background:rgba(148,163,184,.15);color:#94a3b8;border:1px solid rgba(148,163,184,.3);}
+  .score-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:16px 20px;}
+  .score-row{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px 14px;display:flex;align-items:center;justify-content:space-between;gap:12px;}
   .score-name{font-size:13px;font-weight:600;}
   .score-target{font-size:10px;color:var(--text3);margin-top:3px;font-family:'DM Mono',monospace;}
   .score-input-wrap{display:flex;align-items:center;gap:6px;flex-shrink:0;}
@@ -130,52 +101,46 @@
   .bar-info{display:flex;justify-content:space-between;margin-bottom:5px;font-size:12px;color:var(--text2);}
   .progress{height:6px;background:var(--surface3);border-radius:3px;overflow:hidden;}
   .progress-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width .5s ease;}
-
   .btn{padding:8px 15px;border-radius:var(--radius-sm);font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer;border:none;transition:all .15s;}
   .btn-blue{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;}
   .btn-blue:hover{opacity:.9;}
   .btn-blue:disabled{opacity:.5;cursor:not-allowed;}
   .btn-outline{background:none;border:1px solid var(--border);color:var(--text);}
   .btn-outline:hover{background:var(--surface2);}
-
+  .btn-red{background:rgba(248,113,113,.15);color:var(--red);border:1px solid rgba(248,113,113,.3);}
+  .btn-red:hover{background:rgba(248,113,113,.25);}
   .filters{display:flex;gap:7px;flex-wrap:wrap;}
   .filter-select{padding:7px 11px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-family:'DM Sans',sans-serif;font-size:13px;outline:none;cursor:pointer;}
   .month-tabs{display:flex;gap:5px;flex-wrap:wrap;padding:13px 20px;border-bottom:1px solid var(--border);}
   .month-tab{padding:5px 12px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;border:1px solid var(--border);background:none;color:var(--text2);font-family:'DM Sans',sans-serif;transition:all .15s;}
   .month-tab:hover{background:var(--surface2);color:var(--text);}
   .month-tab.active{background:rgba(91,138,245,.15);color:var(--accent);border-color:rgba(91,138,245,.3);}
-  .sep{height:1px;background:var(--border);margin:0 20px 16px;}
-  .sec-lbl{font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--text3);padding:16px 20px 9px;}
+  .sep{height:1px;background:var(--border);margin:0 20px 14px;}
+  .sec-lbl{font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--text3);padding:14px 20px 8px;}
   .comments-area{width:100%;padding:10px 13px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-family:'DM Sans',sans-serif;font-size:13px;resize:vertical;min-height:65px;outline:none;}
   .comments-area:focus{border-color:var(--accent);}
   .form-footer{padding:13px 20px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:9px;align-items:center;}
   .saved-ok{display:none;align-items:center;gap:5px;font-size:13px;color:var(--green);font-weight:500;}
-  .guide-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:9px;padding:16px 20px;}
-  .guide-item{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:13px;text-align:center;}
+  .guide-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:9px;padding:14px 20px;}
+  .guide-item{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px;text-align:center;}
   .g-badge{font-size:18px;font-weight:800;font-family:'DM Mono',monospace;margin-bottom:4px;}
   .g-num{font-size:20px;font-weight:700;}
   .g-desc{font-size:10px;color:var(--text2);margin-top:3px;line-height:1.4;}
   .empty-state{padding:40px 20px;text-align:center;color:var(--text3);}
   .empty-state .icon{font-size:28px;margin-bottom:9px;}
-  .toast{position:fixed;bottom:22px;right:22px;background:var(--surface);border:1px solid var(--green);border-radius:var(--radius-sm);padding:10px 17px;color:var(--green);font-size:13px;font-weight:600;z-index:9999;display:none;box-shadow:0 8px 24px rgba(0,0,0,.4);}
-  /* ── MODAL ── */
   .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:10000;display:none;align-items:center;justify-content:center;padding:20px;}
   .modal-overlay.open{display:flex;}
-  .modal{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:32px;max-width:440px;width:100%;box-shadow:0 40px 80px rgba(0,0,0,.5);}
-  .modal-title{font-size:18px;font-weight:700;margin-bottom:8px;}
-  .modal-sub{font-size:13px;color:var(--text2);margin-bottom:24px;line-height:1.6;}
-  .modal-footer{display:flex;justify-content:flex-end;gap:10px;margin-top:24px;}
-  .btn-red{background:rgba(248,113,113,.15);color:var(--red);border:1px solid rgba(248,113,113,.3);}
-  .btn-red:hover{background:rgba(248,113,113,.25);}
+  .modal{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:28px;max-width:420px;width:100%;box-shadow:0 40px 80px rgba(0,0,0,.5);}
+  .modal-title{font-size:17px;font-weight:700;margin-bottom:7px;}
+  .modal-sub{font-size:13px;color:var(--text2);margin-bottom:20px;line-height:1.6;}
+  .modal-footer{display:flex;justify-content:flex-end;gap:9px;margin-top:20px;}
+  .toast{position:fixed;bottom:22px;right:22px;background:var(--surface);border:1px solid var(--green);border-radius:var(--radius-sm);padding:10px 17px;color:var(--green);font-size:13px;font-weight:600;z-index:9999;display:none;box-shadow:0 8px 24px rgba(0,0,0,.4);}
   @media(max-width:900px){.sidebar{width:100%;height:auto;position:relative;}.main-content{margin-left:0;}.score-grid{grid-template-columns:1fr;}}
 </style>
 </head>
 <body>
 
-<div id="loading-overlay">
-  <div class="spinner"></div>
-  <div class="loading-text">Loading PerfTrack…</div>
-</div>
+<div id="loading-overlay"><div class="spinner"></div><div class="loading-text">Loading PerfTrack…</div></div>
 
 <!-- AUTH -->
 <div id="auth-screen">
@@ -195,7 +160,7 @@
       <div class="field-group"><label class="field-label">Password</label><input class="field-input" id="login-pass" type="password" placeholder="••••••••"></div>
       <div class="err-msg" id="login-err"></div>
       <button class="btn-primary" id="login-btn" onclick="doLogin()">Sign In →</button>
-      <p style="text-align:center;margin-top:14px"><button onclick="doForgotPassword()" style="background:none;border:none;color:var(--accent);font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;text-decoration:underline">Forgot password?</button></p>
+      <p style="text-align:center;margin-top:12px"><button onclick="doForgotPassword()" style="background:none;border:none;color:var(--accent);font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;text-decoration:underline">Forgot password?</button></p>
       <p class="hint">Use your <b>@lumelight.com</b> email.</p>
     </div>
 
@@ -207,39 +172,31 @@
       </div>
       <div class="field-group"><label class="field-label">Work Email (@lumelight.com)</label><input class="field-input" id="reg-email" type="email" placeholder="yourname@lumelight.com"></div>
       <div class="field-group"><label class="field-label">Password</label><input class="field-input" id="reg-pass" type="password" placeholder="Min. 6 characters"></div>
-      <div class="form-row">
-        <div class="field-group"><label class="field-label">Designation</label><input class="field-input" id="reg-designation" placeholder="Process Associate"></div>
-        <div class="field-group"><label class="field-label">Process</label><input class="field-input" id="reg-process" placeholder="ATC"></div>
-      </div>
+      <div class="field-group"><label class="field-label">Process</label><input class="field-input" id="reg-process" placeholder="ATC"></div>
 
-      <!-- Role -->
+      <!-- Designation (replaces Role) -->
       <div class="field-group">
-        <label class="field-label">My Role</label>
-        <select class="field-input" id="reg-role" onchange="onRoleChange()">
-          <option value="member">Team Member</option>
-          <option value="sme">SME (Subject Matter Expert)</option>
-          <option value="tl">TL (Team Leader)</option>
-          <option value="manager">Manager</option>
-          <option value="director">Director</option>
+        <label class="field-label">Designation</label>
+        <select class="field-input" id="reg-designation" onchange="onDesignationChange()">
+          <option value="">— Select Designation —</option>
+          <option value="General Manager">General Manager</option>
+          <option value="Admin Manager">Admin Manager</option>
+          <option value="Assistant Admin Manager">Assistant Admin Manager</option>
+          <option value="HR">HR</option>
+          <option value="Director">Director</option>
+          <option value="Ops Manager">Ops Manager</option>
+          <option value="Assistant Ops Manager">Assistant Ops Manager</option>
+          <option value="Team Lead">Team Lead</option>
+          <option value="SME">SME</option>
+          <option value="QA">QA</option>
+          <option value="Process Associate">Process Associate</option>
         </select>
       </div>
 
-      <!-- Supervisor — shown for member, SME — optional -->
+      <!-- Rated by / Supervisor — shown based on designation -->
       <div class="field-group" id="supervisor-field" style="display:none">
-        <label class="field-label">My TL / Supervisor <span style="color:var(--text3);font-weight:400;text-transform:none;letter-spacing:0">(optional)</span></label>
-        <select class="field-input" id="reg-supervisor"><option value="">— Skip / No TL assigned —</option></select>
-      </div>
-
-      <!-- Manager — shown for member, SME, TL -->
-      <div class="field-group" id="manager-field">
-        <label class="field-label">My Manager</label>
-        <select class="field-input" id="reg-manager"><option value="">— Select Manager —</option></select>
-      </div>
-
-      <!-- Director — shown for managers -->
-      <div class="field-group" id="director-field" style="display:none">
-        <label class="field-label">My Director</label>
-        <select class="field-input" id="reg-director"><option value="">— Select Director —</option></select>
+        <label class="field-label">Rated By <span style="color:var(--text3);font-weight:400;text-transform:none;letter-spacing:0">(select your manager)</span></label>
+        <select class="field-input" id="reg-supervisor"><option value="">— Loading… —</option></select>
       </div>
 
       <div class="err-msg" id="reg-err"></div>
@@ -259,13 +216,9 @@
       <div class="nav-section-label">My Pages</div>
       <button class="nav-item active" onclick="goPage('dashboard')" id="nav-dashboard"><span class="nav-icon">🏠</span>Dashboard</button>
       <button class="nav-item" onclick="goPage('scorecard')" id="nav-scorecard"><span class="nav-icon">📋</span>My Scorecard</button>
-
-      <!-- TL & above -->
-      <div id="nav-sec-scoring" class="nav-section-label" style="display:none">Scoring</div>
+      <div id="nav-sec-scoring" class="nav-section-label" style="display:none">My Team</div>
       <button class="nav-item" onclick="goPage('enter-scores')" id="nav-enter-scores" style="display:none"><span class="nav-icon">✏️</span>Enter Scores</button>
       <button class="nav-item" onclick="goPage('my-team')" id="nav-my-team" style="display:none"><span class="nav-icon">👥</span>My Team</button>
-
-      <!-- Director only -->
       <div id="nav-sec-org" class="nav-section-label" style="display:none">Organisation</div>
       <button class="nav-item" onclick="goPage('org-view')" id="nav-org-view" style="display:none"><span class="nav-icon">🏢</span>Full Org View</button>
       <button class="nav-item" onclick="goPage('reassign')" id="nav-reassign" style="display:none"><span class="nav-icon">🔄</span>Reassign Member</button>
@@ -275,8 +228,8 @@
         <div class="user-avatar" id="sb-avatar">A</div>
         <div>
           <div class="user-name" id="sb-name">—</div>
-          <div class="user-role-txt" id="sb-role">—</div>
-          <div class="role-pill" id="sb-pill">—</div>
+          <div class="user-desig" id="sb-desig">—</div>
+          <div class="desig-pill" id="sb-pill">—</div>
         </div>
       </div>
       <button class="logout-btn" onclick="doLogout()">Sign Out</button>
@@ -293,13 +246,13 @@
       </div>
       <div class="stats-row">
         <div class="stat-card"><div class="stat-label">Current Month</div><div class="stat-value" id="dash-month">—</div><div class="stat-sub">Active period</div></div>
-        <div class="stat-card"><div class="stat-label">Latest Score</div><div class="stat-value" id="dash-score">—</div><div class="stat-sub">out of 110</div></div>
+        <div class="stat-card"><div class="stat-label">Latest Score</div><div class="stat-value" id="dash-score">—</div><div class="stat-sub" id="dash-score-max">—</div></div>
         <div class="stat-card"><div class="stat-label">Rating</div><div class="stat-value" id="dash-rating">—</div><div class="stat-sub" id="dash-rname">—</div></div>
         <div class="stat-card"><div class="stat-label">Avg Score (YTD)</div><div class="stat-value" id="dash-avg">—</div><div class="stat-sub">Year to date</div></div>
       </div>
       <div class="card">
         <div class="card-header"><div class="card-title">Score History</div></div>
-        <table><thead><tr><th>Month</th><th>Year</th><th>Score</th><th>Max</th><th>%</th><th>Rating</th><th>Scored by</th></tr></thead>
+        <table><thead><tr><th>Month</th><th>Year</th><th>Score</th><th>Max</th><th>%</th><th>Rating</th><th>Scored By</th></tr></thead>
         <tbody id="dash-tbody"><tr><td colspan="7"><div class="empty-state"><div class="icon">📊</div><p>No scorecards yet.</p></div></td></tr></tbody></table>
       </div>
     </div>
@@ -312,21 +265,15 @@
         <div class="month-tabs" id="sc-months"></div>
         <div id="sc-detail"></div>
       </div>
-      <div class="card">
+      <div class="card" id="rating-guide-card">
         <div class="card-header"><div class="card-title">Rating Guidelines</div></div>
-        <div class="guide-grid">
-          <div class="guide-item"><div class="g-badge" style="color:var(--green)">OS</div><div class="g-num" style="color:var(--green)">5</div><div class="g-desc">Outstanding<br>≥105 pts</div></div>
-          <div class="guide-item"><div class="g-badge" style="color:var(--accent)">EE</div><div class="g-num" style="color:var(--accent)">4</div><div class="g-desc">Exceeds Expectations<br>90–104 pts</div></div>
-          <div class="guide-item"><div class="g-badge" style="color:var(--yellow)">ME</div><div class="g-num" style="color:var(--yellow)">3</div><div class="g-desc">Meets Expectations<br>75–89 pts</div></div>
-          <div class="guide-item"><div class="g-badge" style="color:var(--red)">BE</div><div class="g-num" style="color:var(--red)">2</div><div class="g-desc">Below Expectations<br>60–74 pts</div></div>
-          <div class="guide-item"><div class="g-badge" style="color:#94a3b8">DE</div><div class="g-num" style="color:#94a3b8">1</div><div class="g-desc">Does Not Meet<br>&lt;60 pts</div></div>
-        </div>
+        <div class="guide-grid" id="rating-guide-content"></div>
       </div>
     </div>
 
     <!-- ENTER SCORES -->
     <div class="page" id="page-enter-scores">
-      <div class="page-header"><div class="page-title">Enter Scores</div><div class="page-subtitle" id="enter-scores-sub">Record monthly scores for your reportees</div></div>
+      <div class="page-header"><div class="page-title">Enter Scores</div><div class="page-subtitle">Record monthly scores for your reportees</div></div>
       <div class="card">
         <div class="card-header"><div class="card-title">Select Person & Month</div></div>
         <div style="padding:16px 20px">
@@ -336,118 +283,60 @@
             <div class="field-group"><label class="field-label">Year</label><select class="filter-select" id="es-year" style="width:100%" onchange="loadScoreForm()"><option>2025</option><option selected>2026</option><option>2027</option></select></div>
           </div>
         </div>
-
-        <div id="es-form" style="display:none">
-          <div class="sep"></div>
-          <div class="sec-lbl">🔵 Business Operator (75%)</div>
-          <div class="score-grid">
-            <div class="score-row"><div><div class="score-name">Productivity</div><div class="score-target">100%=25|≥95%=15|≥85%=10|≥80%=5</div></div><div class="score-input-wrap"><input class="score-input" type="number" id="s-productivity" min="0" max="25" oninput="recalc()"><span class="score-max-label">/25</span></div></div>
-            <div class="score-row"><div><div class="score-name">Email Responsiveness</div><div class="score-target">0 miss=5|1=4|2=3|3=2|4=1|≥5=0</div></div><div class="score-input-wrap"><input class="score-input" type="number" id="s-email" min="0" max="5" oninput="recalc()"><span class="score-max-label">/5</span></div></div>
-            <div class="score-row"><div><div class="score-name">QA / Quality Score</div><div class="score-target">100%=25|99–99.99%=24|98.5–99%=23|else=0</div></div><div class="score-input-wrap"><input class="score-input" type="number" id="s-quality" min="0" max="25" oninput="recalc()"><span class="score-max-label">/25</span></div></div>
-            <div class="score-row"><div><div class="score-name">Task Completion</div><div class="score-target">0 miss=10|≥1=0</div></div><div class="score-input-wrap"><input class="score-input" type="number" id="s-task" min="0" max="10" oninput="recalc()"><span class="score-max-label">/10</span></div></div>
-            <div class="score-row"><div><div class="score-name">PKT Score</div><div class="score-target">≥80%=10|&lt;80%=0</div></div><div class="score-input-wrap"><input class="score-input" type="number" id="s-pkt" min="0" max="10" oninput="recalc()"><span class="score-max-label">/10</span></div></div>
-          </div>
-          <div class="sep"></div>
-          <div class="sec-lbl">🟢 Professional Hygiene (25%)</div>
-          <div class="score-grid">
-            <div class="score-row"><div><div class="score-name">Org Ethics & Conduct</div><div class="score-target">0 miss=5|1=4|2=3|3=2|4=1</div></div><div class="score-input-wrap"><input class="score-input" type="number" id="s-ethics" min="0" max="5" oninput="recalc()"><span class="score-max-label">/5</span></div></div>
-            <div class="score-row"><div><div class="score-name">FactoHR Time Booking</div><div class="score-target">0 miss=5|1=4|2=3|3=2|4=1</div></div><div class="score-input-wrap"><input class="score-input" type="number" id="s-factohr" min="0" max="5" oninput="recalc()"><span class="score-max-label">/5</span></div></div>
-            <div class="score-row"><div><div class="score-name">Shift Adherence</div><div class="score-target">0 miss=5|1=4|2=3|3=2|4=1</div></div><div class="score-input-wrap"><input class="score-input" type="number" id="s-shift" min="0" max="5" oninput="recalc()"><span class="score-max-label">/5</span></div></div>
-            <div class="score-row"><div><div class="score-name">Unplanned Leaves / LWP</div><div class="score-target">0 leaves=10|≥1=0</div></div><div class="score-input-wrap"><input class="score-input" type="number" id="s-leaves" min="0" max="10" oninput="recalc()"><span class="score-max-label">/10</span></div></div>
-          </div>
-          <div class="sep"></div>
-          <div class="sec-lbl">⭐ Bonus — People Development & Value Creator</div>
-          <div class="score-grid">
-            <div class="score-row"><div><div class="score-name">Training & Mentoring</div><div class="score-target">Bonus: +4 or +5</div></div><div class="score-input-wrap"><input class="score-input" type="number" id="s-training" min="0" max="5" oninput="recalc()"><span class="score-max-label">/5</span></div></div>
-            <div class="score-row"><div><div class="score-name">Process Initiatives</div><div class="score-target">Bonus: +3 or +5</div></div><div class="score-input-wrap"><input class="score-input" type="number" id="s-initiatives" min="0" max="5" oninput="recalc()"><span class="score-max-label">/5</span></div></div>
-            <div class="score-row"><div><div class="score-name">Communication Skills</div><div class="score-target">Bonus: +3</div></div><div class="score-input-wrap"><input class="score-input" type="number" id="s-comms" min="0" max="3" oninput="recalc()"><span class="score-max-label">/3</span></div></div>
-          </div>
-
-          <div class="result-box">
-            <div><div class="rl">Total Score</div><div><span class="result-score" id="r-total">0</span><span class="result-max"> / 110</span></div></div>
-            <div style="text-align:center"><div class="rl">Rating</div><div class="rv" id="r-code" style="color:var(--text2)">—</div><div class="rn" id="r-name">Enter scores</div></div>
-            <div class="result-bar-wrap"><div class="bar-info"><span>Progress</span><span id="r-pct">0%</span></div><div class="progress"><div class="progress-fill" id="r-bar" style="width:0%"></div></div></div>
-          </div>
-
-          <div style="padding:0 20px 13px">
-            <label class="field-label" style="font-size:10px;margin-bottom:6px;display:block">Comments & Feedback</label>
-            <textarea class="comments-area" id="es-comments" placeholder="e.g. Productivity 97%, Quality 99.49%, PKT 80%…"></textarea>
-          </div>
-          <div class="form-footer">
-            <div class="saved-ok" id="saved-ok">✅ Saved!</div>
-            <button class="btn btn-outline" onclick="resetForm()">Reset</button>
-            <button class="btn btn-blue" id="save-btn" onclick="saveScores()">Save Scorecard</button>
-          </div>
-        </div>
+        <div id="es-form" style="display:none"></div>
         <div id="es-empty" style="padding:40px 20px;text-align:center;color:var(--text3)"><div style="font-size:28px;margin-bottom:9px">✏️</div><p>Select a person and month to enter scores.</p></div>
       </div>
     </div>
 
     <!-- MY TEAM -->
     <div class="page" id="page-my-team">
-      <div class="page-header"><div class="page-title" id="my-team-title">My Team</div><div class="page-subtitle" id="my-team-sub">Scorecards for your reportees</div></div>
+      <div class="page-header"><div class="page-title">My Team</div><div class="page-subtitle">Scorecards for your reportees</div></div>
       <div class="card">
         <div class="card-header">
           <div class="card-title">Scorecards</div>
           <div class="filters">
             <select class="filter-select" id="mt-month" onchange="renderMyTeam()"><option value="">All Months</option><option>January</option><option>February</option><option>March</option><option>April</option><option>May</option><option>June</option><option>July</option><option>August</option><option>September</option><option>October</option><option>November</option><option>December</option></select>
-            <select class="filter-select" id="mt-rating" onchange="renderMyTeam()"><option value="">All Ratings</option><option>OS</option><option>EE</option><option>ME</option><option>BE</option><option>DE</option></select>
-            <button class="btn btn-outline" onclick="exportToExcel('my-team')" style="padding:7px 13px">⬇ Export Excel</button>
+            <select class="filter-select" id="mt-rating" onchange="renderMyTeam()"><option value="">All Ratings</option><option>OS</option><option>EE</option><option>ME</option><option>BE</option><option>NI</option></select>
+            <button class="btn btn-outline" onclick="exportToExcel()" style="padding:6px 12px;font-size:12px">⬇ Export Excel</button>
           </div>
         </div>
-        <table><thead><tr><th>Person</th><th>Role</th><th>Month</th><th>Year</th><th>Score</th><th>%</th><th>Rating</th><th>Scored by</th><th></th></tr></thead>
+        <table><thead><tr><th>Person</th><th>Designation</th><th>Month</th><th>Year</th><th>Score</th><th>%</th><th>Rating</th><th>Scored By</th><th></th></tr></thead>
         <tbody id="mt-tbody"><tr><td colspan="9"><div class="empty-state"><div class="icon">👥</div><p>No scorecards yet.</p></div></td></tr></tbody></table>
       </div>
     </div>
 
-    <!-- FULL ORG VIEW (DIRECTOR) -->
+    <!-- FULL ORG VIEW -->
     <div class="page" id="page-org-view">
       <div class="page-header"><div class="page-title">Full Org View</div><div class="page-subtitle">All teams across the organisation</div></div>
-
-      <!-- Org tree -->
-      <div class="card" id="org-tree-card">
+      <div class="card">
         <div class="card-header"><div class="card-title">Organisation Chart</div></div>
         <div id="org-tree-body"></div>
       </div>
-
-      <!-- All scorecards -->
       <div class="card">
         <div class="card-header">
           <div class="card-title">All Scorecards</div>
           <div class="filters">
-            <select class="filter-select" id="org-manager" onchange="renderOrgTable()"><option value="">All Managers</option></select>
+            <select class="filter-select" id="org-supervisor" onchange="renderOrgTable()"><option value="">All Supervisors</option></select>
             <select class="filter-select" id="org-month" onchange="renderOrgTable()"><option value="">All Months</option><option>January</option><option>February</option><option>March</option><option>April</option><option>May</option><option>June</option><option>July</option><option>August</option><option>September</option><option>October</option><option>November</option><option>December</option></select>
-            <select class="filter-select" id="org-rating" onchange="renderOrgTable()"><option value="">All Ratings</option><option>OS</option><option>EE</option><option>ME</option><option>BE</option><option>DE</option></select>
+            <select class="filter-select" id="org-rating" onchange="renderOrgTable()"><option value="">All Ratings</option><option>OS</option><option>EE</option><option>ME</option><option>BE</option><option>NI</option></select>
           </div>
         </div>
-        <table><thead><tr><th>Person</th><th>Role</th><th>Manager</th><th>Month</th><th>Year</th><th>Score</th><th>%</th><th>Rating</th></tr></thead>
-        <tbody id="org-tbody"><tr><td colspan="8"><div class="empty-state"><div class="icon">🏢</div><p>No scorecards yet.</p></div></td></tr></tbody></table>
+        <table><thead><tr><th>Person</th><th>Designation</th><th>Supervisor</th><th>Month</th><th>Year</th><th>Score</th><th>%</th><th>Rating</th></tr></thead>
+        <tbody id="org-tbody"></tbody></table>
       </div>
     </div>
 
-    <!-- REASSIGN MEMBER -->
+    <!-- REASSIGN -->
     <div class="page" id="page-reassign">
-      <div class="page-header"><div class="page-title">Reassign Member</div><div class="page-subtitle">Move a team member to a different manager or TL</div></div>
+      <div class="page-header"><div class="page-title">Reassign Member</div><div class="page-subtitle">Move a person to a different supervisor</div></div>
       <div class="card">
-        <div class="card-header"><div class="card-title">Select Member to Reassign</div></div>
-        <div style="padding:18px 20px">
-          <div class="field-group">
-            <label class="field-label">Team Member</label>
-            <select class="filter-select" id="reassign-member" style="width:320px;max-width:100%" onchange="loadReassignForm()"><option value="">— Select Member —</option></select>
-          </div>
+        <div class="card-header"><div class="card-title">Select Person to Reassign</div></div>
+        <div style="padding:16px 20px">
+          <div class="field-group"><label class="field-label">Person</label><select class="filter-select" id="reassign-member" style="width:320px;max-width:100%" onchange="loadReassignForm()"><option value="">— Select —</option></select></div>
           <div id="reassign-form" style="display:none">
-            <div id="reassign-current" style="padding:11px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);font-size:13px;color:var(--text2);margin-bottom:16px"></div>
-            <div class="form-row" style="gap:14px;margin-bottom:16px">
-              <div class="field-group">
-                <label class="field-label">New Manager</label>
-                <select class="filter-select" id="reassign-manager" style="width:100%"><option value="">— Keep current —</option></select>
-              </div>
-              <div class="field-group">
-                <label class="field-label">New TL <span style="color:var(--text3);font-weight:400;text-transform:none;letter-spacing:0">(optional)</span></label>
-                <select class="filter-select" id="reassign-tl" style="width:100%"><option value="">— Keep current / None —</option></select>
-              </div>
-            </div>
-            <button class="btn btn-blue" onclick="doReassign()">✅ Save Reassignment</button>
+            <div id="reassign-current" style="padding:10px 13px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);font-size:13px;color:var(--text2);margin-bottom:14px"></div>
+            <div class="field-group"><label class="field-label">New Supervisor</label><select class="filter-select" id="reassign-supervisor" style="width:320px;max-width:100%"><option value="">— Select new supervisor —</option></select></div>
+            <button class="btn btn-blue" onclick="doReassign()" style="margin-top:4px">✅ Save Reassignment</button>
           </div>
         </div>
       </div>
@@ -456,7 +345,7 @@
   </main>
 </div>
 
-<!-- DELETE CONFIRM MODAL -->
+<!-- MODALS -->
 <div class="modal-overlay" id="delete-modal">
   <div class="modal">
     <div class="modal-title">🗑️ Delete Scorecard?</div>
@@ -467,16 +356,11 @@
     </div>
   </div>
 </div>
-
-<!-- FORGOT PASSWORD MODAL -->
 <div class="modal-overlay" id="forgot-modal">
   <div class="modal">
     <div class="modal-title">🔑 Reset Password</div>
-    <div class="modal-sub">Enter your @lumelight.com email — we'll send a reset link to your inbox.</div>
-    <div class="field-group">
-      <label class="field-label">Work Email</label>
-      <input class="field-input" id="forgot-email" type="email" placeholder="yourname@lumelight.com">
-    </div>
+    <div class="modal-sub">Enter your @lumelight.com email — we'll send a reset link.</div>
+    <div class="field-group"><label class="field-label">Work Email</label><input class="field-input" id="forgot-email" type="email" placeholder="yourname@lumelight.com"></div>
     <div class="err-msg" id="forgot-err"></div>
     <div class="modal-footer">
       <button class="btn btn-outline" onclick="closeModal('forgot-modal')">Cancel</button>
@@ -484,41 +368,190 @@
     </div>
   </div>
 </div>
-
 <div class="toast" id="toast"></div>
 
 <script>
 // ════════════════════════════════════════════════════
 //  🔧 CONFIGURATION
 // ════════════════════════════════════════════════════
-const SUPABASE_URL  = 'https://fjkzdyncfydbjvuxliff.supabase.co';
-const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZqa3pkeW5jZnlkYmp2dXhsaWZmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQwNzMwNTIsImV4cCI6MjA4OTY0OTA1Mn0.qqjHttNThWkwzsFiHzyU79NMtE-xfo9Wdu1Sp2oF5ZU';
+const SUPABASE_URL  = 'YOUR_SUPABASE_URL';
+const SUPABASE_ANON = 'YOUR_SUPABASE_ANON_KEY';
 // ════════════════════════════════════════════════════
 
 const DOMAIN = 'lumelight.com';
+
+// ── DESIGNATION CONFIG ──
+// who rates whom
+const RATED_BY = {
+  'Admin Manager':           ['General Manager'],
+  'Assistant Admin Manager': ['General Manager'],
+  'HR':                      ['General Manager'],
+  'Director':                ['General Manager'],
+  'Ops Manager':             ['Director'],
+  'Assistant Ops Manager':   ['Director'],
+  'Team Lead':               ['Ops Manager','Assistant Ops Manager'],
+  'SME':                     ['Ops Manager','Assistant Ops Manager','Team Lead'],
+  'QA':                      ['Ops Manager','Assistant Ops Manager','Team Lead'],
+  'Process Associate':       ['Ops Manager','Assistant Ops Manager','Team Lead'],
+};
+
+// who can score (enter scorecards for others)
+const CAN_SCORE_DESIG = [
+  'General Manager','Director','Ops Manager','Assistant Ops Manager','Team Lead'
+];
+
+// who can see all teams
+const CAN_SEE_ALL = ['General Manager'];
+
+// which template each designation uses
+const TEMPLATE_MAP = {
+  'Process Associate': 'pa',
+  'QA':                'qa',
+  'SME':               'sme',
+  'Team Lead':         'tl',
+  'Ops Manager':       'tl',
+  'Assistant Ops Manager': 'tl',
+  'Admin Manager':     'tl',
+  'Assistant Admin Manager': 'tl',
+  'HR':                'tl',
+  'Director':          'tl',
+};
+
+// ── SCORECARD TEMPLATES ──
+const TEMPLATES = {
+
+  pa: {
+    name: 'Process Associate',
+    maxScore: 110,
+    getRating(s){ if(s>=105.01)return{code:'OS',name:'Outstanding',cls:'badge-os',color:'var(--green)'}; if(s>=100.01)return{code:'EE',name:'Exceeds Expectations',cls:'badge-ee',color:'var(--accent)'}; if(s>=95.01)return{code:'ME',name:'Meets Expectations',cls:'badge-me',color:'var(--yellow)'}; if(s>=90.1)return{code:'BE',name:'Below Expectations',cls:'badge-be',color:'var(--red)'}; return{code:'NI',name:'Needs Improvement',cls:'badge-ni',color:'#94a3b8'}; },
+    ratingGuide:[{code:'OS',num:5,color:'var(--green)',desc:'Outstanding<br>≥105.01 pts'},{code:'EE',num:4,color:'var(--accent)',desc:'Exceeds Expectations<br>≥100.01 pts'},{code:'ME',num:3,color:'var(--yellow)',desc:'Meets Expectations<br>≥95.01 pts'},{code:'BE',num:2,color:'var(--red)',desc:'Below Expectations<br>≥90.1 pts'},{code:'NI',num:1,color:'#94a3b8',desc:'Needs Improvement<br>≤90 pts'}],
+    sections:[
+      { label:'🔵 Business Operator (75%)', params:[
+        {id:'productivity',name:'Productivity',max:25,target:'100%=25|≥95%=15|≥85%=10|≥80%=5'},
+        {id:'email',name:'Email Responsiveness',max:5,target:'0 miss=5|1=4|2=3|3=2|4=1|≥5=0'},
+        {id:'quality',name:'QA Score / Quality',max:25,target:'100%=25|99.99–99%=24|98.99–98.5%=23|else=0'},
+        {id:'task',name:'Task Completion / Status',max:10,target:'0 miss=10|≥1=0'},
+        {id:'pkt',name:'PKT Score',max:10,target:'≥80%=10|<80%=0'},
+      ]},
+      { label:'🟢 Professional Hygiene (25%)', params:[
+        {id:'ethics',name:'Org Ethics & Code of Conduct',max:5,target:'0 miss=5|1=4|2=3|3=2|4=1'},
+        {id:'factohr',name:'FactoHR Time Booking',max:5,target:'0 miss=5|1=4|2=3|3=2|4=1'},
+        {id:'shift',name:'Shift Adherence',max:5,target:'0 miss=5|1=4|2=3|3=2|4=1'},
+        {id:'leaves',name:'Unplanned Leaves / LWP',max:10,target:'0 leaves=10|≥1=0'},
+      ]},
+      { label:'⭐ Bonus — People Development & Value Creator', params:[
+        {id:'training',name:'Training & Mentoring',max:5,target:'Bonus: +5'},
+        {id:'initiatives',name:'Process Initiatives',max:5,target:'Bonus: +5'},
+      ]},
+    ]
+  },
+
+  qa: {
+    name: 'QA',
+    maxScore: 110,
+    getRating(s){ if(s>=105.01)return{code:'OS',name:'Outstanding',cls:'badge-os',color:'var(--green)'}; if(s>=100.01)return{code:'EE',name:'Exceeds Expectations',cls:'badge-ee',color:'var(--accent)'}; if(s>=95.01)return{code:'ME',name:'Meets Expectations',cls:'badge-me',color:'var(--yellow)'}; if(s>=90.1)return{code:'BE',name:'Below Expectations',cls:'badge-be',color:'var(--red)'}; return{code:'NI',name:'Needs Improvement',cls:'badge-ni',color:'#94a3b8'}; },
+    ratingGuide:[{code:'OS',num:5,color:'var(--green)',desc:'Outstanding<br>≥105.01 pts'},{code:'EE',num:4,color:'var(--accent)',desc:'Exceeds Expectations<br>≥100.01 pts'},{code:'ME',num:3,color:'var(--yellow)',desc:'Meets Expectations<br>≥95.01 pts'},{code:'BE',num:2,color:'var(--red)',desc:'Below Expectations<br>≥90.1 pts'},{code:'NI',num:1,color:'#94a3b8',desc:'Needs Improvement<br>≤90 pts'}],
+    sections:[
+      { label:'🔵 Audit Quality & Accuracy (25%)', params:[
+        {id:'rebuttals',name:'Rebuttals on Errors',max:10,target:'No miss=10|1=8|2=6|3=5|4=2|5=0'},
+        {id:'sampling',name:'Audit Sampling Effectiveness',max:5,target:'No miss=5|1=4|2=3|3=2|≥5=0'},
+        {id:'error_accuracy',name:'Error Accuracy',max:10,target:'Full accuracy=10|Minor gaps=8|Partial=6|Major lapses=5|Missing=0'},
+      ]},
+      { label:'🟡 Process Governance & Continuous Improvement (20%)', params:[
+        {id:'sop',name:'SOP Adherence / Client Call',max:5,target:'No miss=5|1=4|2=3|3=2|4=1|5=0'},
+        {id:'rca',name:'Root Cause Analysis Quality',max:5,target:'No miss=5|1=4|2=3|3=2|4=1|5=0'},
+        {id:'preventive',name:'Preventive Action & Trend Analysis',max:10,target:'No miss=10|1=8|2=6|3=4|4=2|5=0'},
+      ]},
+      { label:'🟢 Professional Hygiene (45%)', params:[
+        {id:'timebooking',name:'Time Booking Accuracy + No AR',max:10,target:'No miss=10|1=8|2=6|3=5|4=3|5+=0'},
+        {id:'ppt',name:'PPT Session Quality',max:10,target:'No issue=10|1=8|2=6|3=5|4=3|5+=0'},
+        {id:'report',name:'Report Submission',max:10,target:'No miss=10|1=8|2=6|3=5|4=0'},
+        {id:'communication',name:'Communication Effectiveness',max:5,target:'No miss=5|1=4|2=3|3=2|4=1|5=0'},
+        {id:'compliance',name:'Compliance, Ethics & Conduct',max:5,target:'Fully compliant=5|Minor=4|Some deviation=3|Major=2|Complete=0'},
+        {id:'email',name:'Email Responsiveness',max:5,target:'No miss=5|1=4|2=3|3=2|4=1|5=0'},
+      ]},
+      { label:'🔴 Stakeholder & Business Impact (10%)', params:[
+        {id:'ops_feedback',name:'Operations Feedback',max:10,target:'Excellent=10|Very Good=8|Good=6|Fair=5|Poor=2|Unsat=0'},
+      ]},
+      { label:'⭐ Bonus — Value Creation (10%)', params:[
+        {id:'crossskill',name:'Cross-skill Support',max:5,target:'Bonus: +5'},
+        {id:'mentoring',name:'Training & Mentoring',max:5,target:'Bonus: +5'},
+      ]},
+    ]
+  },
+
+  sme: {
+    name: 'SME',
+    maxScore: 100,
+    getRating(s){ if(s>=98)return{code:'OS',name:'Outstanding',cls:'badge-os',color:'var(--green)'}; if(s>=95.01)return{code:'EE',name:'Exceeds Expectations',cls:'badge-ee',color:'var(--accent)'}; if(s>=90.01)return{code:'ME',name:'Meets Expectations',cls:'badge-me',color:'var(--yellow)'}; if(s>=87.01)return{code:'BE',name:'Below Expectations',cls:'badge-be',color:'var(--red)'}; return{code:'NI',name:'Needs Improvement',cls:'badge-ni',color:'#94a3b8'}; },
+    ratingGuide:[{code:'OS',num:5,color:'var(--green)',desc:'Outstanding<br>≥98 pts'},{code:'EE',num:4,color:'var(--accent)',desc:'Exceeds Expectations<br>≥95.01 pts'},{code:'ME',num:3,color:'var(--yellow)',desc:'Meets Expectations<br>≥90.01 pts'},{code:'BE',num:2,color:'var(--red)',desc:'Below Expectations<br>≥87.01 pts'},{code:'NI',num:1,color:'#94a3b8',desc:'Needs Improvement<br>&lt;87 pts'}],
+    sections:[
+      { label:'🔵 Business Operator (50%)', params:[
+        {id:'team_productivity',name:'Teams Productivity',max:10,target:'>=100%=10|>=95%=9|>=90%=8|>=85%=6|>=80%=5'},
+        {id:'self_production',name:'Self Production',max:5,target:'>=40%=10|>=35%=9|>=30%=8|>=25%=6|>=20%=5'},
+        {id:'internal_audit',name:'Internal Audit',max:5,target:'>=40%=5|>=35%=4|>=30%=3|>=25%=2|>=20%=1'},
+        {id:'process_tat',name:'Process TAT',max:5,target:'0 miss=5|>=1=0'},
+        {id:'email',name:'Email Responsiveness',max:5,target:'0 miss=5|1=4|2=3|3=2|4=1'},
+        {id:'quality',name:'Teams Quality / QA Score',max:15,target:'100%=15|99.75–99.99%=14|99.25–99.75%=13|99–99.25%=12|98.5–99%=10'},
+        {id:'hipaa',name:'HIPAA Violation',max:5,target:'0 miss=5|>=1=0'},
+      ]},
+      { label:'📋 Reporting (19%)', params:[
+        {id:'work_allocation',name:'Work Allocation',max:5,target:'0 miss=5|>=1=0'},
+        {id:'reporting',name:'Daily/Weekly/Monthly Reporting',max:5,target:'0 miss=5|>=1=0'},
+        {id:'rock_sheet',name:'Rock Sheet Tracker Update',max:7,target:'0 miss=7|>=1=0'},
+        {id:'capa',name:'CAPA Sheet',max:2,target:'0 miss=2|>=1=0'},
+      ]},
+      { label:'🟢 Professional Hygiene (16%)', params:[
+        {id:'ethics',name:'Org Ethics & Code of Conduct',max:2,target:'0 miss=2|1=1'},
+        {id:'factohr',name:'FactoHR Time Booking',max:2,target:'0 miss=2|1=1'},
+        {id:'shift',name:'Shift Adherence',max:2,target:'0 miss=2|1=1'},
+        {id:'leaves',name:'Unplanned Leaves / LWP',max:10,target:'0 leaves=10|>=1=0'},
+      ]},
+      { label:'⭐ People Development & Value Creator (15%)', params:[
+        {id:'training',name:'Training & Mentoring',max:3,target:'Bonus: +3'},
+        {id:'initiatives',name:'Process Initiatives / Monthly Teams PKT',max:3,target:'Bonus: +3'},
+        {id:'sop_update',name:'SOP Update / Process Update Sheet',max:4,target:'Bonus: +4'},
+        {id:'comms',name:'Communication Skills',max:5,target:'Bonus: +5'},
+      ]},
+    ]
+  },
+
+  tl: {
+    name: 'TL / Ops Manager',
+    maxScore: 110,
+    getRating(s){ if(s>=105.01)return{code:'OS',name:'Outstanding',cls:'badge-os',color:'var(--green)'}; if(s>=100.01)return{code:'EE',name:'Exceeds Expectations',cls:'badge-ee',color:'var(--accent)'}; if(s>=95.01)return{code:'ME',name:'Meets Expectations',cls:'badge-me',color:'var(--yellow)'}; if(s>=90.1)return{code:'BE',name:'Below Expectations',cls:'badge-be',color:'var(--red)'}; return{code:'NI',name:'Needs Improvement',cls:'badge-ni',color:'#94a3b8'}; },
+    ratingGuide:[{code:'OS',num:5,color:'var(--green)',desc:'Outstanding<br>≥105.01 pts'},{code:'EE',num:4,color:'var(--accent)',desc:'Exceeds Expectations<br>≥100.01 pts'},{code:'ME',num:3,color:'var(--yellow)',desc:'Meets Expectations<br>≥95.01 pts'},{code:'BE',num:2,color:'var(--red)',desc:'Below Expectations<br>≥90.1 pts'},{code:'NI',num:1,color:'#94a3b8',desc:'Needs Improvement<br>≤90 pts'}],
+    sections:[
+      { label:'🔵 Business Operator (75%)', params:[
+        {id:'team_productivity',name:"Team's Productivity",max:15,target:'100%=+15|>100%=0'},
+        {id:'tat',name:'TAT — All process within TAT',max:20,target:'0 miss=+20|>=1=0'},
+        {id:'accuracy',name:'Accuracy / HIPAA Violation',max:20,target:'0 miss=+20|>=1=0'},
+        {id:'pkt',name:'Process Knowledge Test',max:5,target:'0 miss=+5|>=1=0'},
+        {id:'attrition',name:'Attrition',max:10,target:'<=20%=+10|>20%=0'},
+        {id:'reporting',name:'Meeting Reporting / Client Emails',max:5,target:'0 miss=+5|>=1=0'},
+      ]},
+      { label:'🟢 Professional Hygiene (15%)', params:[
+        {id:'factohr',name:'FactoHR Time Booking',max:5,target:'0 miss=5|>=1=0'},
+        {id:'shift',name:'Shift Adherence',max:5,target:'0 miss=5|>=1=0'},
+        {id:'leaves',name:'Unplanned Leaves / LWP',max:5,target:'0 miss=5|>=1=0'},
+      ]},
+      { label:'⭐ People Developer & Value Creator (10%)', params:[
+        {id:'documents',name:'Process Documents / SOPs / CAPA Tracker',max:5,target:'0 miss=+5|>=1=0'},
+        {id:'initiatives',name:'Process Initiatives',max:5,target:'Bonus: +5'},
+        {id:'succession',name:'Succession Planning',max:5,target:'0 miss=+5|>=1=0'},
+        {id:'growth',name:'Identify Growth Opportunities',max:5,target:'Bonus: +5'},
+      ]},
+    ]
+  },
+};
+
 let sb, ME, PROFILE;
-let myReportees = []; // people I can score
-
-// Role metadata
-const ROLE_META = {
-  director: { label:'Director',    pill:'pill-director', icon:'🎯' },
-  manager:  { label:'Manager',     pill:'pill-manager',  icon:'💼' },
-  tl:       { label:'Team Leader', pill:'pill-tl',       icon:'⭐' },
-  sme:      { label:'SME',         pill:'pill-sme',      icon:'🔬' },
-  member:   { label:'Team Member', pill:'pill-member',   icon:'👤' },
-};
-
-// Who can score whom
-const CAN_SCORE = {
-  director: ['manager'],
-  manager:  ['tl','sme','member'],
-  tl:       ['member','sme'],
-};
+let myReportees = [];
 
 // ── INIT ──
 function initApp() {
   if (SUPABASE_URL === 'YOUR_SUPABASE_URL') {
-    document.getElementById('loading-overlay').innerHTML = '<div style="color:var(--red);padding:40px;text-align:center;max-width:400px"><div style="font-size:32px;margin-bottom:12px">⚙️</div><b>Setup Required</b><p style="margin-top:8px;font-size:13px;color:var(--text2)">Open index.html in Notepad and replace YOUR_SUPABASE_URL and YOUR_SUPABASE_ANON_KEY.</p></div>';
+    document.getElementById('loading-overlay').innerHTML = '<div style="color:var(--red);padding:40px;text-align:center;max-width:400px"><div style="font-size:32px;margin-bottom:12px">⚙️</div><b style="font-size:16px">Setup Required</b><p style="margin-top:8px;font-size:13px;color:var(--text2)">Open index.html in Notepad and replace YOUR_SUPABASE_URL and YOUR_SUPABASE_ANON_KEY.</p></div>';
     return;
   }
   sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
@@ -534,46 +567,42 @@ function initApp() {
 
 async function showAuth() {
   document.getElementById('auth-screen').style.display = 'flex';
-  await prefillRegisterDropdowns();
+  await prefillSupervisorDropdown('');
 }
 
-// ── REGISTER DROPDOWNS ──
-async function prefillRegisterDropdowns() {
-  const { data: profiles } = await sb.from('profiles').select('id,full_name,role').order('full_name');
-  if (!profiles) return;
-
-  const byRole = r => profiles.filter(p => p.role === r);
-  const opts = (arr, placeholder) => `<option value="">${placeholder}</option>` + arr.map(p=>`<option value="${p.id}">${p.full_name}</option>`).join('');
-
-  document.getElementById('reg-supervisor').innerHTML = opts(byRole('tl'), '— Select TL —');
-  document.getElementById('reg-manager').innerHTML    = opts(byRole('manager'), '— Select Manager —');
-  document.getElementById('reg-director').innerHTML   = opts(byRole('director'), '— Select Director —');
+// ── REGISTER HELPERS ──
+async function prefillSupervisorDropdown(desig) {
+  const allowedRaters = RATED_BY[desig] || [];
+  const sel = document.getElementById('reg-supervisor');
+  if (allowedRaters.length === 0) { sel.innerHTML = '<option value="">— N/A —</option>'; return; }
+  const { data } = await sb.from('profiles').select('id,full_name,designation').in('designation', allowedRaters).order('full_name');
+  sel.innerHTML = '<option value="">— Select supervisor —</option>';
+  (data||[]).forEach(p => { const o=document.createElement('option'); o.value=p.id; o.textContent=`${p.full_name} (${p.designation})`; sel.appendChild(o); });
 }
 
-function onRoleChange() {
-  const role = document.getElementById('reg-role').value;
-  document.getElementById('supervisor-field').style.display = ['member','sme'].includes(role) ? 'block' : 'none';
-  document.getElementById('manager-field').style.display    = ['member','sme','tl'].includes(role) ? 'block' : 'none';
-  document.getElementById('director-field').style.display   = role === 'manager' ? 'block' : 'none';
+async function onDesignationChange() {
+  const desig = document.getElementById('reg-designation').value;
+  const needsSupervisor = !!RATED_BY[desig];
+  document.getElementById('supervisor-field').style.display = needsSupervisor ? 'block' : 'none';
+  if (needsSupervisor) await prefillSupervisorDropdown(desig);
 }
 
 // ── AUTH ──
 function switchTab(tab) {
-  document.getElementById('tab-login').style.display    = tab==='login'    ? 'block' : 'none';
-  document.getElementById('tab-register').style.display = tab==='register' ? 'block' : 'none';
+  document.getElementById('tab-login').style.display    = tab==='login'    ? 'block':'none';
+  document.getElementById('tab-register').style.display = tab==='register' ? 'block':'none';
   document.querySelectorAll('.tab-btn').forEach((b,i) => b.classList.toggle('active',(i===0&&tab==='login')||(i===1&&tab==='register')));
   document.getElementById('login-err').style.display = 'none';
   document.getElementById('reg-err').style.display   = 'none';
-  if (tab === 'register') prefillRegisterDropdowns();
 }
 
 function ve(id, msg) { const e=document.getElementById(id); e.textContent=msg; e.style.display='block'; }
 
 async function doLogin() {
-  const email = document.getElementById('login-email').value.trim().toLowerCase();
-  const pass  = document.getElementById('login-pass').value;
-  const btn   = document.getElementById('login-btn');
-  if (!email.endsWith('@'+DOMAIN)) { ve('login-err','Only @'+DOMAIN+' emails are allowed.'); return; }
+  const email=document.getElementById('login-email').value.trim().toLowerCase();
+  const pass=document.getElementById('login-pass').value;
+  const btn=document.getElementById('login-btn');
+  if (!email.endsWith('@'+DOMAIN)) { ve('login-err','Only @'+DOMAIN+' emails allowed.'); return; }
   btn.disabled=true; btn.textContent='Signing in…';
   const { data, error } = await sb.auth.signInWithPassword({ email, password: pass });
   btn.disabled=false; btn.textContent='Sign In →';
@@ -588,38 +617,23 @@ async function doRegister() {
   const lname  = document.getElementById('reg-lname').value.trim();
   const email  = document.getElementById('reg-email').value.trim().toLowerCase();
   const pass   = document.getElementById('reg-pass').value;
-  const desig  = document.getElementById('reg-designation').value.trim();
   const proc   = document.getElementById('reg-process').value.trim();
-  const role   = document.getElementById('reg-role').value;
+  const desig  = document.getElementById('reg-designation').value;
   const btn    = document.getElementById('reg-btn');
+  const supSel = document.getElementById('reg-supervisor');
+  const supId  = supSel.value;
+  const supName= supId ? supSel.options[supSel.selectedIndex].text : '';
 
   if (!fname||!lname||!email||!pass||!desig) { ve('reg-err','Please fill in all fields.'); return; }
-  if (!email.endsWith('@'+DOMAIN))            { ve('reg-err','Only @'+DOMAIN+' emails are allowed.'); return; }
+  if (!email.endsWith('@'+DOMAIN))            { ve('reg-err','Only @'+DOMAIN+' emails allowed.'); return; }
   if (pass.length < 6)                        { ve('reg-err','Password must be at least 6 characters.'); return; }
-
-  // Gather hierarchy IDs
-  const meta = { full_name:`${fname} ${lname}`, role, designation:desig, process:proc };
-
-  if (['member','sme'].includes(role)) {
-    const supId = document.getElementById('reg-supervisor').value;
-    const supEl = document.getElementById('reg-supervisor');
-    // TL is optional — only set if selected
-    if (supId) { meta.supervisor_id = supId; meta.supervisor_name = supEl.options[supEl.selectedIndex].text; }
-  }
-  if (['member','sme','tl'].includes(role)) {
-    const mgId = document.getElementById('reg-manager').value;
-    const mgEl = document.getElementById('reg-manager');
-    if (mgId) { meta.manager_id = mgId; meta.manager_name = mgEl.options[mgEl.selectedIndex].text; }
-    else { ve('reg-err','Please select your manager.'); return; }
-  }
-  if (role === 'manager') {
-    const drId = document.getElementById('reg-director').value;
-    const drEl = document.getElementById('reg-director');
-    if (drId) { meta.supervisor_id = drId; meta.supervisor_name = drEl.options[drEl.selectedIndex].text; }
-  }
+  if (RATED_BY[desig] && !supId)              { ve('reg-err','Please select your supervisor.'); return; }
 
   btn.disabled=true; btn.textContent='Creating account…';
-  const { error } = await sb.auth.signUp({ email, password: pass, options: { data: meta } });
+  const { error } = await sb.auth.signUp({ email, password: pass, options: { data: {
+    full_name:`${fname} ${lname}`, designation: desig, process: proc,
+    supervisor_id: supId||null, supervisor_name: supName||null,
+  }}});
   btn.disabled=false; btn.textContent='Create Account →';
   if (error) { ve('reg-err', error.message); return; }
   toast('✅ Account created! Sign in now.', 4000);
@@ -632,48 +646,51 @@ async function doLogout() { await sb.auth.signOut(); }
 async function launch() {
   const { data: p } = await sb.from('profiles').select('*').eq('id', ME.id).single();
   PROFILE = p;
-  const rm = ROLE_META[p.role] || ROLE_META.member;
-  const isDirector = p.role === 'director';
-  const canScore   = !!CAN_SCORE[p.role];
+  const canScore  = CAN_SCORE_DESIG.includes(p.designation);
+  const canSeeAll = CAN_SEE_ALL.includes(p.designation);
 
   document.getElementById('sb-name').textContent   = p.full_name;
   document.getElementById('sb-avatar').textContent = p.full_name[0].toUpperCase();
-  document.getElementById('sb-role').textContent   = p.designation || rm.label;
-  document.getElementById('sb-pill').textContent   = rm.label;
-  document.getElementById('sb-pill').className     = 'role-pill ' + rm.pill;
+  document.getElementById('sb-desig').textContent  = p.process ? `${p.designation} · ${p.process}` : p.designation;
+  document.getElementById('sb-pill').textContent   = p.designation;
   document.getElementById('dash-name').textContent = p.full_name.split(' ')[0];
 
-  // Subtitle on dashboard
-  const chain = [];
-  if (p.manager_name)    chain.push('Manager: ' + p.manager_name);
-  if (p.supervisor_name && p.role !== 'manager') chain.push('TL: ' + p.supervisor_name);
-  if (chain.length) document.getElementById('dash-sub').textContent = chain.join('  ·  ');
+  if (p.supervisor_name) document.getElementById('dash-sub').textContent = `Supervisor: ${p.supervisor_name}`;
 
-  // Nav
-  document.getElementById('nav-sec-scoring').style.display  = canScore ? '' : 'none';
-  document.getElementById('nav-enter-scores').style.display = canScore ? '' : 'none';
-  document.getElementById('nav-my-team').style.display      = canScore ? '' : 'none';
-  document.getElementById('nav-sec-org').style.display      = isDirector ? '' : 'none';
-  document.getElementById('nav-org-view').style.display     = isDirector ? '' : 'none';
-  document.getElementById('nav-reassign').style.display     = (isDirector || p.role==='manager') ? '' : 'none';
+  document.getElementById('nav-sec-scoring').style.display  = canScore   ? '' : 'none';
+  document.getElementById('nav-enter-scores').style.display = canScore   ? '' : 'none';
+  document.getElementById('nav-my-team').style.display      = canScore   ? '' : 'none';
+  document.getElementById('nav-sec-org').style.display      = canSeeAll  ? '' : 'none';
+  document.getElementById('nav-org-view').style.display     = canSeeAll  ? '' : 'none';
+  document.getElementById('nav-reassign').style.display     = canSeeAll  ? '' : 'none';
 
   document.getElementById('auth-screen').style.display = 'none';
   document.getElementById('app-screen').style.display  = 'block';
 
-  if (canScore)    await loadMyReportees();
-  if (isDirector)  await loadOrgFilters();
+  if (canScore)  await loadMyReportees();
+  if (canSeeAll) await loadOrgFilters();
 
+  renderRatingGuide();
   await renderDashboard();
   goPage('dashboard');
 }
 
-// ── RATING ──
-function getRating(s) {
-  if (s>=105) return {code:'OS',name:'Outstanding',           cls:'badge-os',color:'var(--green)' };
-  if (s>=90)  return {code:'EE',name:'Exceeds Expectations',  cls:'badge-ee',color:'var(--accent)'};
-  if (s>=75)  return {code:'ME',name:'Meets Expectations',    cls:'badge-me',color:'var(--yellow)'};
-  if (s>=60)  return {code:'BE',name:'Below Expectations',    cls:'badge-be',color:'var(--red)'   };
-  return           {code:'DE',name:'Does Not Meet Expectations',cls:'badge-de',color:'#94a3b8'    };
+// ── RATING GUIDE (dynamic per designation) ──
+function renderRatingGuide() {
+  const tmpl = TEMPLATES[TEMPLATE_MAP[PROFILE?.designation]] || TEMPLATES.pa;
+  document.getElementById('rating-guide-content').innerHTML = tmpl.ratingGuide.map(r =>
+    `<div class="guide-item"><div class="g-badge" style="color:${r.color}">${r.code}</div><div class="g-num" style="color:${r.color}">${r.num}</div><div class="g-desc">${r.desc}</div></div>`
+  ).join('');
+}
+
+// ── GET TEMPLATE FOR A PROFILE ──
+function getTmpl(designation) {
+  return TEMPLATES[TEMPLATE_MAP[designation]] || TEMPLATES.pa;
+}
+
+// ── ALL SCORE IDs for a template (for DB save/load) ──
+function getAllScoreIds(tmpl) {
+  return tmpl.sections.flatMap(s => s.params.map(p => p.id));
 }
 
 // ── DASHBOARD ──
@@ -685,16 +702,20 @@ async function renderDashboard() {
   if (!scs||scs.length===0) {
     tbody.innerHTML=`<tr><td colspan="7"><div class="empty-state"><div class="icon">📊</div><p>No scorecards yet.</p></div></td></tr>`;
     ['dash-score','dash-rating','dash-rname','dash-avg'].forEach(id=>document.getElementById(id).textContent='—');
+    document.getElementById('dash-score-max').textContent='—';
     return;
   }
-  const latest=scs[scs.length-1]; const r=getRating(latest.total_score);
-  document.getElementById('dash-score').textContent  = latest.total_score;
-  document.getElementById('dash-rating').textContent = r.code;
-  document.getElementById('dash-rname').textContent  = r.name;
-  document.getElementById('dash-avg').textContent    = Math.round(scs.reduce((a,x)=>a+x.total_score,0)/scs.length);
+  const tmpl  = getTmpl(PROFILE.designation);
+  const latest= scs[scs.length-1];
+  const r     = tmpl.getRating(latest.total_score);
+  document.getElementById('dash-score').textContent     = latest.total_score;
+  document.getElementById('dash-score-max').textContent = `out of ${tmpl.maxScore}`;
+  document.getElementById('dash-rating').textContent    = r.code;
+  document.getElementById('dash-rname').textContent     = r.name;
+  document.getElementById('dash-avg').textContent       = Math.round(scs.reduce((a,x)=>a+x.total_score,0)/scs.length);
   tbody.innerHTML = scs.map(sc=>{
-    const r=getRating(sc.total_score);
-    return `<tr><td>${sc.month}</td><td>${sc.year}</td><td><b style="font-family:'DM Mono'">${sc.total_score}</b></td><td>110</td><td>${Math.round(sc.total_score/110*100)}%</td><td><span class="badge ${r.cls}">${r.code}</span></td><td style="font-size:11px;color:var(--text2)">${sc.entered_by_role||'—'}</td></tr>`;
+    const r=tmpl.getRating(sc.total_score);
+    return `<tr><td>${sc.month}</td><td>${sc.year}</td><td><b style="font-family:'DM Mono'">${sc.total_score}</b></td><td>${sc.max_score||tmpl.maxScore}</td><td>${Math.round(sc.total_score/(sc.max_score||tmpl.maxScore)*100)}%</td><td><span class="badge ${r.cls}">${r.code}</span></td><td style="font-size:11px;color:var(--text2)">${sc.entered_by_name||'—'}</td></tr>`;
   }).join('');
 }
 
@@ -702,7 +723,7 @@ async function renderDashboard() {
 async function renderScorecardPage() {
   const { data: scs } = await sb.from('scorecards').select('*').eq('member_id',ME.id).order('year').order('month');
   const tabsEl = document.getElementById('sc-months'); tabsEl.innerHTML='';
-  if (!scs||scs.length===0) { document.getElementById('sc-detail').innerHTML=`<div class="empty-state"><div class="icon">📋</div><p>Your manager or TL will enter your scores.</p></div>`; return; }
+  if (!scs||scs.length===0) { document.getElementById('sc-detail').innerHTML=`<div class="empty-state"><div class="icon">📋</div><p>Your supervisor will enter your scores.</p></div>`; return; }
   scs.forEach((sc,i)=>{
     const btn=document.createElement('button'); btn.className='month-tab'+(i===scs.length-1?' active':'');
     btn.textContent=`${sc.month} ${sc.year}`;
@@ -713,80 +734,149 @@ async function renderScorecardPage() {
 }
 
 function renderSCDetail(sc) {
-  const r=getRating(sc.total_score); const pct=Math.round(sc.total_score/110*100);
-  const params=[{n:'Productivity',k:'score_productivity',m:25,s:'BO'},{n:'Email Responsiveness',k:'score_email',m:5,s:'BO'},{n:'QA / Quality Score',k:'score_quality',m:25,s:'BO'},{n:'Task Completion',k:'score_task',m:10,s:'BO'},{n:'PKT Score',k:'score_pkt',m:10,s:'BO'},{n:'Org Ethics & Conduct',k:'score_ethics',m:5,s:'PH'},{n:'FactoHR Time Booking',k:'score_factohr',m:5,s:'PH'},{n:'Shift Adherence',k:'score_shift',m:5,s:'PH'},{n:'Unplanned Leaves / LWP',k:'score_leaves',m:10,s:'PH'},{n:'Training & Mentoring',k:'score_training',m:5,s:'PD'},{n:'Process Initiatives',k:'score_initiatives',m:5,s:'PD'},{n:'Communication Skills',k:'score_comms',m:3,s:'PD'}];
-  const secs={BO:'🔵 Business Operator (75%)',PH:'🟢 Professional Hygiene (25%)',PD:'⭐ Bonus'};
-  let cur='';
-  let h=`<div class="result-box"><div><div class="rl">${sc.month} ${sc.year}</div><div><span class="result-score">${sc.total_score}</span><span class="result-max"> / 110</span></div></div><div style="text-align:center"><div class="rl">Final Rating</div><div class="rv" style="color:${r.color}">${r.code}</div><div class="rn">${r.name}</div></div><div class="result-bar-wrap"><div class="bar-info"><span>Achievement</span><span>${pct}%</span></div><div class="progress"><div class="progress-fill" style="width:${pct}%"></div></div></div></div><div style="padding:0 20px 20px"><table style="width:100%;border-collapse:collapse"><thead><tr><th style="text-align:left;font-size:10px;font-weight:700;color:var(--text3);padding:8px 0;border-bottom:1px solid var(--border)">Parameter</th><th style="text-align:center;font-size:10px;font-weight:700;color:var(--text3);padding:8px 0;border-bottom:1px solid var(--border)">Score</th><th style="text-align:center;font-size:10px;font-weight:700;color:var(--text3);padding:8px 0;border-bottom:1px solid var(--border)">Max</th><th style="font-size:10px;font-weight:700;color:var(--text3);padding:8px 0;border-bottom:1px solid var(--border)">Progress</th></tr></thead><tbody>`;
-  params.forEach(p=>{
-    if(p.s!==cur){cur=p.s;h+=`<tr><td colspan="4" style="padding:11px 0 4px;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text3)">${secs[p.s]}</td></tr>`;}
-    const v=sc[p.k]??0; const bp=Math.round(v/p.m*100); const c=bp===100?'var(--green)':bp>=60?'var(--accent)':'var(--red)';
-    h+=`<tr><td style="padding:8px 0;border-bottom:1px solid rgba(42,47,69,.4);font-size:13px">${p.n}</td><td style="padding:8px 0;border-bottom:1px solid rgba(42,47,69,.4);text-align:center;font-family:'DM Mono';font-weight:600">${v}</td><td style="padding:8px 0;border-bottom:1px solid rgba(42,47,69,.4);text-align:center;color:var(--text3);font-family:'DM Mono'">${p.m}</td><td style="padding:8px 0 8px 12px;border-bottom:1px solid rgba(42,47,69,.4)"><div style="height:6px;background:var(--surface3);border-radius:3px;width:110px"><div style="height:100%;width:${bp}%;background:${c};border-radius:3px"></div></div></td></tr>`;
+  const tmpl = getTmpl(PROFILE.designation);
+  const r    = tmpl.getRating(sc.total_score);
+  const max  = sc.max_score || tmpl.maxScore;
+  const pct  = Math.round(sc.total_score/max*100);
+
+  let h = `<div class="result-box">
+    <div><div class="rl">${sc.month} ${sc.year}</div><div><span class="result-score">${sc.total_score}</span><span class="result-max"> / ${max}</span></div></div>
+    <div style="text-align:center"><div class="rl">Final Rating</div><div class="rv" style="color:${r.color}">${r.code}</div><div class="rn">${r.name}</div></div>
+    <div class="result-bar-wrap"><div class="bar-info"><span>Achievement</span><span>${pct}%</span></div><div class="progress"><div class="progress-fill" style="width:${pct}%"></div></div></div>
+  </div>
+  <div style="padding:0 20px 20px">
+  <table style="width:100%;border-collapse:collapse">
+  <thead><tr>
+    <th style="text-align:left;font-size:10px;font-weight:700;color:var(--text3);padding:8px 0;border-bottom:1px solid var(--border)">Parameter</th>
+    <th style="text-align:center;font-size:10px;font-weight:700;color:var(--text3);padding:8px 0;border-bottom:1px solid var(--border)">Score</th>
+    <th style="text-align:center;font-size:10px;font-weight:700;color:var(--text3);padding:8px 0;border-bottom:1px solid var(--border)">Max</th>
+    <th style="font-size:10px;font-weight:700;color:var(--text3);padding:8px 0;border-bottom:1px solid var(--border)">Progress</th>
+  </tr></thead><tbody>`;
+
+  tmpl.sections.forEach(sec => {
+    h += `<tr><td colspan="4" style="padding:11px 0 4px;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text3)">${sec.label}</td></tr>`;
+    sec.params.forEach(p => {
+      const v  = sc.scores?.[p.id] ?? 0;
+      const bp = Math.round(v/p.max*100);
+      const c  = bp===100?'var(--green)':bp>=60?'var(--accent)':'var(--red)';
+      h += `<tr>
+        <td style="padding:8px 0;border-bottom:1px solid rgba(42,47,69,.4);font-size:13px">${p.name}</td>
+        <td style="padding:8px 0;border-bottom:1px solid rgba(42,47,69,.4);text-align:center;font-family:'DM Mono';font-weight:600">${v}</td>
+        <td style="padding:8px 0;border-bottom:1px solid rgba(42,47,69,.4);text-align:center;color:var(--text3);font-family:'DM Mono'">${p.max}</td>
+        <td style="padding:8px 0 8px 12px;border-bottom:1px solid rgba(42,47,69,.4)"><div style="height:6px;background:var(--surface3);border-radius:3px;width:110px"><div style="height:100%;width:${bp}%;background:${c};border-radius:3px"></div></div></td>
+      </tr>`;
+    });
   });
-  h+=`</tbody></table>`;
-  if(sc.comments) h+=`<div style="margin-top:14px;padding:11px 13px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm)"><div style="font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text3);margin-bottom:5px">Comments</div><div style="font-size:13px;color:var(--text2);line-height:1.6">${sc.comments}</div></div>`;
-  if(sc.entered_by_role) h+=`<div style="margin-top:10px;font-size:11px;color:var(--text3)">Scored by: ${sc.supervisor_name||sc.manager_name||'—'} (${sc.entered_by_role})</div>`;
-  h+=`</div>`;
-  document.getElementById('sc-detail').innerHTML=h;
+
+  h += `</tbody></table>`;
+  if (sc.comments) h += `<div style="margin-top:14px;padding:11px 13px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm)"><div style="font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text3);margin-bottom:5px">Comments</div><div style="font-size:13px;color:var(--text2);line-height:1.6">${sc.comments}</div></div>`;
+  if (sc.entered_by_name) h += `<div style="margin-top:8px;font-size:11px;color:var(--text3)">Scored by: ${sc.entered_by_name} (${sc.entered_by_desig||''})</div>`;
+  h += `</div>`;
+  document.getElementById('sc-detail').innerHTML = h;
 }
 
-// ── LOAD REPORTEES FOR SCORING ──
+// ── LOAD REPORTEES ──
 async function loadMyReportees() {
-  const scorableRoles = CAN_SCORE[PROFILE.role] || [];
-  if (scorableRoles.length === 0) return;
+  // Find designations this person can score
+  const scorable = Object.entries(RATED_BY)
+    .filter(([desig, raters]) => raters.includes(PROFILE.designation))
+    .map(([desig]) => desig);
 
-  let query = sb.from('profiles').select('*').in('role', scorableRoles).order('full_name');
+  if (scorable.length === 0) return;
 
-  if (PROFILE.role === 'tl') {
-    // TL sees members/SME assigned to them
-    query = query.eq('supervisor_id', ME.id);
-  } else if (PROFILE.role === 'manager') {
-    // Manager sees TL + SME + members under them (includes those with no TL)
-    query = query.eq('manager_id', ME.id);
-  }
-  // director sees all managers
-
-  const { data } = await query;
+  const { data } = await sb.from('profiles')
+    .select('*')
+    .in('designation', scorable)
+    .eq('supervisor_id', ME.id)
+    .order('full_name');
   myReportees = data || [];
 
   const sel = document.getElementById('es-member');
   sel.innerHTML = '<option value="">— Select person —</option>';
   myReportees.forEach(p => {
-    const rm = ROLE_META[p.role]||ROLE_META.member;
     const o = document.createElement('option');
     o.value = p.id;
-    o.textContent = `${p.full_name} · ${rm.label}`;
+    o.textContent = `${p.full_name} · ${p.designation}`;
+    o.dataset.designation = p.designation;
     sel.appendChild(o);
   });
 }
 
-// ── SCORE FORM ──
+// ── SCORE FORM (dynamic per designation) ──
 async function loadScoreForm() {
   const memberId = document.getElementById('es-member').value;
   const month    = document.getElementById('es-month').value;
   const year     = parseInt(document.getElementById('es-year').value);
   const formEl   = document.getElementById('es-form');
   const emptyEl  = document.getElementById('es-empty');
+
   if (!memberId||!month) { formEl.style.display='none'; emptyEl.style.display='block'; return; }
-  formEl.style.display='block'; emptyEl.style.display='none';
-  document.getElementById('saved-ok').style.display='none';
-  const { data: ex } = await sb.from('scorecards').select('*').eq('member_id',memberId).eq('month',month).eq('year',year).single();
-  ['productivity','email','quality','task','pkt','ethics','factohr','shift','leaves','training','initiatives','comms']
-    .forEach(f=>{ document.getElementById('s-'+f).value = ex?(ex['score_'+f]??''):''; });
-  document.getElementById('es-comments').value = ex?.comments??'';
-  recalc();
+
+  const member = myReportees.find(p=>p.id===memberId);
+  const tmpl   = getTmpl(member?.designation);
+  const ids    = getAllScoreIds(tmpl);
+
+  const { data: ex } = await sb.from('scorecards')
+    .select('*').eq('member_id',memberId).eq('month',month).eq('year',year).single();
+
+  // Build dynamic form HTML
+  let formHtml = '';
+  tmpl.sections.forEach(sec => {
+    formHtml += `<div class="sep" style="margin-top:4px"></div><div class="sec-lbl">${sec.label}</div><div class="score-grid">`;
+    sec.params.forEach(p => {
+      const val = ex?.scores?.[p.id] ?? '';
+      formHtml += `<div class="score-row">
+        <div><div class="score-name">${p.name}</div><div class="score-target">${p.target}</div></div>
+        <div class="score-input-wrap">
+          <input class="score-input" type="number" id="sf-${p.id}" min="0" max="${p.max}" value="${val}" oninput="recalcForm('${member.designation}')">
+          <span class="score-max-label">/${p.max}</span>
+        </div>
+      </div>`;
+    });
+    formHtml += `</div>`;
+  });
+
+  formHtml += `
+    <div class="result-box">
+      <div><div class="rl">Total Score</div><div><span class="result-score" id="rf-total">0</span><span class="result-max"> / ${tmpl.maxScore}</span></div></div>
+      <div style="text-align:center"><div class="rl">Rating</div><div class="rv" id="rf-code" style="color:var(--text2)">—</div><div class="rn" id="rf-name">Enter scores</div></div>
+      <div class="result-bar-wrap"><div class="bar-info"><span>Progress</span><span id="rf-pct">0%</span></div><div class="progress"><div class="progress-fill" id="rf-bar" style="width:0%"></div></div></div>
+    </div>
+    <div style="padding:0 20px 13px">
+      <label class="field-label" style="font-size:10px;margin-bottom:6px;display:block">Comments & Feedback</label>
+      <textarea class="comments-area" id="sf-comments">${ex?.comments||''}</textarea>
+    </div>
+    <div class="form-footer">
+      <div class="saved-ok" id="saved-ok">✅ Saved!</div>
+      <button class="btn btn-outline" onclick="resetScoreForm('${member.designation}')">Reset</button>
+      <button class="btn btn-blue" id="save-btn" onclick="saveScores()">Save Scorecard</button>
+    </div>`;
+
+  formEl.innerHTML = formHtml;
+  formEl.style.display = 'block';
+  emptyEl.style.display = 'none';
+  recalcForm(member.designation);
 }
 
-function recalc() {
-  const g=id=>+document.getElementById('s-'+id).value||0;
-  const t=g('productivity')+g('email')+g('quality')+g('task')+g('pkt')+g('ethics')+g('factohr')+g('shift')+g('leaves')+g('training')+g('initiatives')+g('comms');
-  const pct=Math.round(t/110*100); const r=getRating(t);
-  document.getElementById('r-total').textContent=t;
-  document.getElementById('r-pct').textContent=pct+'%';
-  document.getElementById('r-bar').style.width=pct+'%';
-  document.getElementById('r-code').textContent=r.code;
-  document.getElementById('r-code').style.color=r.color;
-  document.getElementById('r-name').textContent=r.name;
+function recalcForm(designation) {
+  const tmpl  = getTmpl(designation);
+  const ids   = getAllScoreIds(tmpl);
+  const total = ids.reduce((a,id) => { const el=document.getElementById('sf-'+id); return a+(el?+el.value||0:0); }, 0);
+  const pct   = Math.round(total/tmpl.maxScore*100);
+  const r     = tmpl.getRating(total);
+  const el_t  = document.getElementById('rf-total'); if(el_t) el_t.textContent=total;
+  const el_p  = document.getElementById('rf-pct');   if(el_p) el_p.textContent=pct+'%';
+  const el_b  = document.getElementById('rf-bar');   if(el_b) el_b.style.width=pct+'%';
+  const el_c  = document.getElementById('rf-code');  if(el_c){ el_c.textContent=r.code; el_c.style.color=r.color; }
+  const el_n  = document.getElementById('rf-name');  if(el_n) el_n.textContent=r.name;
+}
+
+function resetScoreForm(designation) {
+  const tmpl = getTmpl(designation);
+  getAllScoreIds(tmpl).forEach(id => { const el=document.getElementById('sf-'+id); if(el) el.value=''; });
+  const cm = document.getElementById('sf-comments'); if(cm) cm.value='';
+  const so = document.getElementById('saved-ok');    if(so) so.style.display='none';
+  recalcForm(designation);
 }
 
 async function saveScores() {
@@ -796,39 +886,34 @@ async function saveScores() {
   if (!memberId||!month) return;
 
   const member = myReportees.find(p=>p.id===memberId);
-  const g = id=>+document.getElementById('s-'+id).value||0;
-  const scores = {score_productivity:g('productivity'),score_email:g('email'),score_quality:g('quality'),score_task:g('task'),score_pkt:g('pkt'),score_ethics:g('ethics'),score_factohr:g('factohr'),score_shift:g('shift'),score_leaves:g('leaves'),score_training:g('training'),score_initiatives:g('initiatives'),score_comms:g('comms')};
+  const tmpl   = getTmpl(member.designation);
+  const ids    = getAllScoreIds(tmpl);
+
+  const scores = {};
+  ids.forEach(id => { const el=document.getElementById('sf-'+id); scores[id]=el?+el.value||0:0; });
   const total = Object.values(scores).reduce((a,b)=>a+b,0);
-  const r = getRating(total);
-  const rm = ROLE_META[PROFILE.role]||ROLE_META.member;
+  const r     = tmpl.getRating(total);
 
   const payload = {
     member_id: memberId, member_email: member.email, member_name: member.full_name,
-    supervisor_id:   PROFILE.role==='tl'      ? ME.id : (member.supervisor_id||null),
-    supervisor_name: PROFILE.role==='tl'      ? PROFILE.full_name : (member.supervisor_name||null),
-    manager_id:      PROFILE.role==='manager' ? ME.id : (member.manager_id||null),
-    manager_name:    PROFILE.role==='manager' ? PROFILE.full_name : (member.manager_name||null),
-    month, year, ...scores,
-    total_score: total, rating_code: r.code, rating_name: r.name,
-    comments: document.getElementById('es-comments').value.trim(),
-    entered_by: ME.id, entered_by_role: rm.label,
+    member_designation: member.designation,
+    supervisor_id: ME.id, supervisor_name: PROFILE.full_name,
+    month, year,
+    scores,
+    total_score: total, max_score: tmpl.maxScore,
+    rating_code: r.code, rating_name: r.name,
+    comments: (document.getElementById('sf-comments')?.value||'').trim(),
+    entered_by: ME.id, entered_by_name: PROFILE.full_name, entered_by_desig: PROFILE.designation,
   };
 
-  const btn=document.getElementById('save-btn');
+  const btn = document.getElementById('save-btn');
   btn.disabled=true; btn.textContent='Saving…';
-  const { error } = await sb.from('scorecards').upsert(payload,{onConflict:'member_id,month,year'});
+  const { error } = await sb.from('scorecards').upsert(payload, {onConflict:'member_id,month,year'});
   btn.disabled=false; btn.textContent='Save Scorecard';
-  if (error) { toast('❌ '+error.message,4000,true); return; }
-  document.getElementById('saved-ok').style.display='flex';
+  if (error) { toast('❌ '+error.message, 4000, true); return; }
+  const so = document.getElementById('saved-ok'); if(so) so.style.display='flex';
   toast('✅ Scorecard saved!');
-  sendScorecardNotification(member.email, member.full_name, month, year, total, r.code);
-}
-
-function resetForm() {
-  ['productivity','email','quality','task','pkt','ethics','factohr','shift','leaves','training','initiatives','comms'].forEach(f=>document.getElementById('s-'+f).value='');
-  document.getElementById('es-comments').value='';
-  document.getElementById('saved-ok').style.display='none';
-  recalc();
+  sendScorecardNotification(member.email, member.full_name, month, year, total, r.code, tmpl.maxScore);
 }
 
 // ── MY TEAM TABLE ──
@@ -836,101 +921,216 @@ async function renderMyTeam() {
   const monthF  = document.getElementById('mt-month').value;
   const ratingF = document.getElementById('mt-rating').value;
   const tbody   = document.getElementById('mt-tbody');
-  tbody.innerHTML=`<tr><td colspan="8"><div class="empty-state"><div class="spinner" style="margin:0 auto"></div></div></td></tr>`;
+  tbody.innerHTML=`<tr><td colspan="9"><div class="empty-state"><div class="spinner" style="margin:0 auto"></div></div></td></tr>`;
 
-  let query = sb.from('scorecards').select('*').order('member_name').order('year').order('month');
-  if (PROFILE.role==='tl')      query = query.eq('supervisor_id', ME.id);
-  else if (PROFILE.role==='manager') query = query.eq('manager_id', ME.id);
-  if (monthF)  query = query.eq('month',monthF);
-  if (ratingF) query = query.eq('rating_code',ratingF);
+  let query = sb.from('scorecards').select('*').eq('supervisor_id',ME.id).order('member_name').order('year').order('month');
+  if (monthF)  query = query.eq('month', monthF);
+  if (ratingF) query = query.eq('rating_code', ratingF);
 
   const { data: rows } = await query;
   if (!rows||rows.length===0) { tbody.innerHTML=`<tr><td colspan="9"><div class="empty-state"><div class="icon">👥</div><p>No scorecards yet.</p></div></td></tr>`; return; }
-  tbody.innerHTML=rows.map(row=>{
-    const r=getRating(row.total_score);
+
+  tbody.innerHTML = rows.map(row => {
+    const tmpl = getTmpl(row.member_designation);
+    const r    = tmpl.getRating(row.total_score);
+    const max  = row.max_score || tmpl.maxScore;
     return `<tr>
       <td><div style="font-weight:600">${row.member_name}</div><div style="font-size:11px;color:var(--text3)">${row.member_email}</div></td>
-      <td style="font-size:11px;color:var(--text2)">${row.entered_by_role||'—'}</td>
+      <td style="font-size:11px;color:var(--text2)">${row.member_designation||'—'}</td>
       <td>${row.month}</td><td>${row.year}</td>
-      <td><b style="font-family:'DM Mono'">${row.total_score}</b><span style="color:var(--text3);font-size:11px"> /110</span></td>
-      <td>${Math.round(row.total_score/110*100)}%</td>
+      <td><b style="font-family:'DM Mono'">${row.total_score}</b><span style="color:var(--text3);font-size:11px"> /${max}</span></td>
+      <td>${Math.round(row.total_score/max*100)}%</td>
       <td><span class="badge ${r.cls}">${r.code}</span></td>
-      <td style="font-size:11px;color:var(--text2)">${row.entered_by_role||'—'}</td>
-      <td><button class="btn btn-red" style="padding:4px 10px;font-size:11px" onclick="promptDelete('${row.id}','${row.member_name}','${row.month} ${row.year}')">🗑</button></td>
+      <td style="font-size:11px;color:var(--text2)">${row.entered_by_name||'—'}</td>
+      <td><button class="btn btn-red" style="padding:3px 9px;font-size:11px" onclick="promptDelete('${row.id}','${row.member_name}','${row.month} ${row.year}')">🗑</button></td>
     </tr>`;
   }).join('');
 }
 
-// ── ORG VIEW (DIRECTOR) ──
+// ── ORG VIEW ──
 async function loadOrgFilters() {
-  const { data } = await sb.from('profiles').select('id,full_name').eq('role','manager').order('full_name');
-  const sel = document.getElementById('org-manager');
-  sel.innerHTML='<option value="">All Managers</option>';
-  (data||[]).forEach(m=>{ const o=document.createElement('option'); o.value=m.id; o.textContent=m.full_name; sel.appendChild(o);});
+  const { data } = await sb.from('profiles').select('id,full_name,designation').in('designation',['Ops Manager','Assistant Ops Manager','Director']).order('full_name');
+  const sel = document.getElementById('org-supervisor');
+  sel.innerHTML = '<option value="">All Supervisors</option>';
+  (data||[]).forEach(p=>{ const o=document.createElement('option'); o.value=p.id; o.textContent=`${p.full_name} (${p.designation})`; sel.appendChild(o); });
 }
 
 async function renderOrgTable() {
-  const manF   = document.getElementById('org-manager').value;
-  const monthF = document.getElementById('org-month').value;
-  const ratingF= document.getElementById('org-rating').value;
-  const tbody  = document.getElementById('org-tbody');
+  const supF    = document.getElementById('org-supervisor').value;
+  const monthF  = document.getElementById('org-month').value;
+  const ratingF = document.getElementById('org-rating').value;
+  const tbody   = document.getElementById('org-tbody');
   tbody.innerHTML=`<tr><td colspan="8"><div class="empty-state"><div class="spinner" style="margin:0 auto"></div></div></td></tr>`;
 
-  let query = sb.from('scorecards').select('*').order('manager_name').order('supervisor_name').order('member_name').order('year').order('month');
-  if (manF)    query = query.eq('manager_id',manF);
-  if (monthF)  query = query.eq('month',monthF);
-  if (ratingF) query = query.eq('rating_code',ratingF);
+  let query = sb.from('scorecards').select('*').order('supervisor_name').order('member_name').order('year').order('month');
+  if (supF)    query = query.eq('supervisor_id', supF);
+  if (monthF)  query = query.eq('month', monthF);
+  if (ratingF) query = query.eq('rating_code', ratingF);
   const { data: rows } = await query;
 
   if (!rows||rows.length===0) { tbody.innerHTML=`<tr><td colspan="8"><div class="empty-state"><div class="icon">🏢</div><p>No scorecards yet.</p></div></td></tr>`; return; }
 
-  // Group by manager → TL
   const groups = {};
-  rows.forEach(row=>{
-    const mgr = row.manager_name||'Unassigned';
-    if (!groups[mgr]) groups[mgr]={};
-    const tl = row.supervisor_name||'Direct Report';
-    if (!groups[mgr][tl]) groups[mgr][tl]=[];
-    groups[mgr][tl].push(row);
+  rows.forEach(row => {
+    const sup = row.supervisor_name||'Unassigned';
+    if (!groups[sup]) groups[sup]=[];
+    groups[sup].push(row);
   });
 
   let html='';
-  Object.entries(groups).forEach(([mgr,tls])=>{
-    const total = Object.values(tls).reduce((a,b)=>a+b.length,0);
-    html+=`<tr class="group-header"><td colspan="8">💼 ${mgr}'s Team — ${total} record(s)</td></tr>`;
-    Object.entries(tls).forEach(([tl,trows])=>{
-      if (tl!=='Direct Report') html+=`<tr><td colspan="8" style="padding:7px 20px 4px;font-size:11px;font-weight:600;color:var(--text3);background:rgba(255,255,255,.01)">⭐ Under TL: ${tl}</td></tr>`;
-      html+=trows.map(row=>{
-        const r=getRating(row.total_score);
-        return `<tr><td><div style="font-weight:600">${row.member_name}</div><div style="font-size:11px;color:var(--text3)">${row.member_email}</div></td><td style="font-size:11px;color:var(--text2)">${row.entered_by_role||'—'}</td><td style="font-size:12px;color:var(--text2)">${row.manager_name||'—'}</td><td>${row.month}</td><td>${row.year}</td><td><b style="font-family:'DM Mono'">${row.total_score}</b><span style="color:var(--text3);font-size:11px"> /110</span></td><td>${Math.round(row.total_score/110*100)}%</td><td><span class="badge ${r.cls}">${r.code}</span></td></tr>`;
-      }).join('');
-    });
+  Object.entries(groups).forEach(([sup,gRows])=>{
+    html+=`<tr class="group-header"><td colspan="8">👤 ${sup}'s Team — ${gRows.length} record(s)</td></tr>`;
+    html+=gRows.map(row=>{
+      const tmpl=getTmpl(row.member_designation);
+      const r=tmpl.getRating(row.total_score);
+      const max=row.max_score||tmpl.maxScore;
+      return `<tr>
+        <td><div style="font-weight:600">${row.member_name}</div><div style="font-size:11px;color:var(--text3)">${row.member_email}</div></td>
+        <td style="font-size:11px;color:var(--text2)">${row.member_designation||'—'}</td>
+        <td style="font-size:12px;color:var(--text2)">${row.supervisor_name||'—'}</td>
+        <td>${row.month}</td><td>${row.year}</td>
+        <td><b style="font-family:'DM Mono'">${row.total_score}</b><span style="color:var(--text3);font-size:11px"> /${max}</span></td>
+        <td>${Math.round(row.total_score/max*100)}%</td>
+        <td><span class="badge ${r.cls}">${r.code}</span></td>
+      </tr>`;
+    }).join('');
   });
-  tbody.innerHTML = html;
+  tbody.innerHTML=html;
 }
 
 async function renderOrgTree() {
-  const { data: profiles } = await sb.from('profiles').select('*').order('role').order('full_name');
+  const { data: profiles } = await sb.from('profiles').select('*').order('designation').order('full_name');
   if (!profiles) return;
-  const byRole = r => profiles.filter(p=>p.role===r);
+  const byDesig = d => profiles.filter(p=>p.designation===d);
+  const HIERARCHY = ['General Manager','Director','Ops Manager','Assistant Ops Manager','Team Lead','SME','QA','Process Associate','Admin Manager','Assistant Admin Manager','HR'];
+  const indent = {'General Manager':0,'Director':1,'Admin Manager':1,'Assistant Admin Manager':1,'HR':1,'Ops Manager':2,'Assistant Ops Manager':2,'Team Lead':3,'SME':4,'QA':4,'Process Associate':4};
   let h='';
-  byRole('director').forEach(d=>{
-    const rm=ROLE_META.director;
-    h+=`<div class="org-row"><span class="org-tree-line">${rm.icon}</span><span class="org-name">${d.full_name}</span><span class="role-pill pill-director" style="font-size:10px;padding:1px 7px">${rm.label}</span><span class="org-desig" style="margin-left:8px">${d.designation||''}</span></div>`;
-    byRole('manager').filter(m=>m.supervisor_id===d.id||m.manager_id===d.id).forEach(m=>{
-      h+=`<div class="org-row org-indent-1"><span class="org-tree-line">└─</span><span class="org-name">${m.full_name}</span><span class="role-pill pill-manager" style="font-size:10px;padding:1px 7px">Manager</span><span class="org-desig" style="margin-left:8px">${m.designation||''}</span></div>`;
-      byRole('tl').filter(t=>t.manager_id===m.id).forEach(tl=>{
-        h+=`<div class="org-row org-indent-2"><span class="org-tree-line">└─</span><span class="org-name">${tl.full_name}</span><span class="role-pill pill-tl" style="font-size:10px;padding:1px 7px">TL</span><span class="org-desig" style="margin-left:8px">${tl.designation||''}</span></div>`;
-        byRole('member').filter(mb=>mb.supervisor_id===tl.id).forEach(mb=>{
-          h+=`<div class="org-row org-indent-3"><span class="org-tree-line">└─</span><span class="org-name">${mb.full_name}</span><span class="role-pill pill-member" style="font-size:10px;padding:1px 7px">Member</span></div>`;
-        });
-        byRole('sme').filter(s=>s.supervisor_id===tl.id).forEach(s=>{
-          h+=`<div class="org-row org-indent-3"><span class="org-tree-line">└─</span><span class="org-name">${s.full_name}</span><span class="role-pill pill-sme" style="font-size:10px;padding:1px 7px">SME</span></div>`;
-        });
-      });
+  HIERARCHY.forEach(desig => {
+    byDesig(desig).forEach(p => {
+      const pad = (indent[desig]||0)*32+20;
+      const prefix = indent[desig]>0 ? '└─ ' : '';
+      h+=`<div style="display:flex;align-items:center;gap:8px;padding:9px ${pad}px 9px 20px;border-bottom:1px solid rgba(42,47,69,.4);padding-left:${pad}px">
+        <span style="color:var(--text3);font-family:'DM Mono';font-size:12px">${prefix}</span>
+        <span style="font-size:13px;font-weight:600;flex:1">${p.full_name}</span>
+        <span style="font-size:10px;background:rgba(91,138,245,.1);color:var(--accent);padding:2px 8px;border-radius:8px;font-weight:600">${p.designation}</span>
+        <span style="font-size:11px;color:var(--text3)">${p.email}</span>
+      </div>`;
     });
   });
-  document.getElementById('org-tree-body').innerHTML = h||`<div class="empty-state"><div class="icon">🌳</div><p>Register team members to see the org chart.</p></div>`;
+  document.getElementById('org-tree-body').innerHTML = h||`<div class="empty-state"><div class="icon">🌳</div><p>No team members registered yet.</p></div>`;
+}
+
+// ── REASSIGN ──
+async function loadReassignPage() {
+  const { data: members } = await sb.from('profiles').select('*').not('designation','eq','General Manager').order('full_name');
+  const sel = document.getElementById('reassign-member');
+  sel.innerHTML = '<option value="">— Select person —</option>';
+  (members||[]).forEach(m=>{ const o=document.createElement('option'); o.value=m.id; o.textContent=`${m.full_name} (${m.designation})`; o.dataset.profile=JSON.stringify(m); sel.appendChild(o); });
+}
+
+async function loadReassignForm() {
+  const sel = document.getElementById('reassign-member');
+  const opt = sel.options[sel.selectedIndex];
+  if (!opt?.dataset?.profile) { document.getElementById('reassign-form').style.display='none'; return; }
+  const p = JSON.parse(opt.dataset.profile);
+  document.getElementById('reassign-form').style.display='block';
+  document.getElementById('reassign-current').innerHTML=`<b>Current supervisor:</b> ${p.supervisor_name||'None'}`;
+
+  const raterDesigs = RATED_BY[p.designation]||[];
+  const { data: supervisors } = await sb.from('profiles').select('id,full_name,designation').in('designation',raterDesigs).order('full_name');
+  const supSel = document.getElementById('reassign-supervisor');
+  supSel.innerHTML = '<option value="">— Select new supervisor —</option>';
+  (supervisors||[]).forEach(s=>{ const o=document.createElement('option'); o.value=s.id; o.textContent=`${s.full_name} (${s.designation})`; sel.appendChild(o); supSel.appendChild(o); });
+}
+
+async function doReassign() {
+  const memberId = document.getElementById('reassign-member').value;
+  const supSel   = document.getElementById('reassign-supervisor');
+  const supId    = supSel.value;
+  const supName  = supId ? supSel.options[supSel.selectedIndex].text : null;
+  if (!memberId||!supId) { toast('Please select both a person and new supervisor.', 2500, true); return; }
+  const { error } = await sb.from('profiles').update({ supervisor_id: supId, supervisor_name: supName }).eq('id', memberId);
+  if (error) { toast('❌ '+error.message, 4000, true); return; }
+  toast('✅ Reassigned successfully!');
+  loadReassignPage();
+  document.getElementById('reassign-form').style.display='none';
+}
+
+// ── DELETE ──
+let pendingDeleteId = null;
+function promptDelete(id, name, period) {
+  pendingDeleteId=id;
+  document.getElementById('delete-modal-sub').textContent=`Delete scorecard for ${name} — ${period}? This cannot be undone.`;
+  document.getElementById('delete-modal').classList.add('open');
+}
+async function confirmDelete() {
+  if (!pendingDeleteId) return;
+  const btn=document.getElementById('delete-confirm-btn');
+  btn.disabled=true; btn.textContent='Deleting…';
+  const { error } = await sb.from('scorecards').delete().eq('id',pendingDeleteId);
+  btn.disabled=false; btn.textContent='Yes, Delete';
+  closeModal('delete-modal');
+  pendingDeleteId=null;
+  if (error) { toast('❌ '+error.message,4000,true); return; }
+  toast('✅ Scorecard deleted.');
+  renderMyTeam();
+}
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+// ── FORGOT PASSWORD ──
+function doForgotPassword() {
+  document.getElementById('forgot-email').value = document.getElementById('login-email').value||'';
+  document.getElementById('forgot-err').style.display='none';
+  document.getElementById('forgot-modal').classList.add('open');
+}
+async function sendResetEmail() {
+  const email=document.getElementById('forgot-email').value.trim().toLowerCase();
+  const btn=document.getElementById('forgot-btn');
+  if (!email.endsWith('@'+DOMAIN)) { ve('forgot-err','Only @'+DOMAIN+' emails allowed.'); return; }
+  btn.disabled=true; btn.textContent='Sending…';
+  const { error } = await sb.auth.resetPasswordForEmail(email,{redirectTo:window.location.href});
+  btn.disabled=false; btn.textContent='Send Reset Link →';
+  if (error) { ve('forgot-err',error.message); return; }
+  closeModal('forgot-modal');
+  toast('✅ Reset link sent! Check your inbox.',5000);
+}
+
+// ── EXPORT EXCEL ──
+async function exportToExcel() {
+  toast('⏳ Preparing Excel file…',3000);
+  const { data: rows } = await sb.from('scorecards').select('*').eq('supervisor_id',ME.id).order('member_name').order('year').order('month');
+  if (!rows||rows.length===0) { toast('No data to export.',2500,true); return; }
+  const exportData = rows.map(r=>({
+    'Member':       r.member_name,
+    'Email':        r.member_email,
+    'Designation':  r.member_designation||'',
+    'Supervisor':   r.supervisor_name||'',
+    'Month':        r.month,
+    'Year':         r.year,
+    'Total Score':  r.total_score,
+    'Max Score':    r.max_score||110,
+    '%':            Math.round(r.total_score/(r.max_score||110)*100),
+    'Rating':       r.rating_code,
+    'Rating Name':  r.rating_name,
+    'Comments':     r.comments||'',
+    'Scored By':    r.entered_by_name||'',
+    ...Object.entries(r.scores||{}).reduce((a,[k,v])=>({...a,[k]:v}),{}),
+  }));
+  const ws=XLSX.utils.json_to_sheet(exportData);
+  const wb=XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb,ws,'Scorecards');
+  XLSX.writeFile(wb,`PerfTrack_${new Date().toLocaleString('default',{month:'short'})}_${new Date().getFullYear()}.xlsx`);
+  toast('✅ Excel downloaded!');
+}
+
+// ── EMAIL NOTIFICATION ──
+async function sendScorecardNotification(memberEmail, memberName, month, year, total, ratingCode, maxScore) {
+  try {
+    await sb.functions.invoke('scorecard-notify', {
+      body: { memberEmail, memberName, month, year, total, ratingCode, maxScore,
+              enteredBy: PROFILE.full_name, enteredByRole: PROFILE.designation }
+    });
+  } catch(e) { console.log('Notification skipped:', e.message); }
 }
 
 // ── NAV ──
@@ -947,185 +1147,13 @@ function goPage(p) {
   if(p==='reassign')     loadReassignPage();
 }
 
-// ── 1. FORGOT PASSWORD ──
-function doForgotPassword() {
-  document.getElementById('forgot-email').value = document.getElementById('login-email').value || '';
-  document.getElementById('forgot-err').style.display = 'none';
-  document.getElementById('forgot-modal').classList.add('open');
-}
-
-async function sendResetEmail() {
-  const email = document.getElementById('forgot-email').value.trim().toLowerCase();
-  const btn   = document.getElementById('forgot-btn');
-  if (!email.endsWith('@'+DOMAIN)) { const e=document.getElementById('forgot-err'); e.textContent='Only @'+DOMAIN+' emails allowed.'; e.style.display='block'; return; }
-  btn.disabled=true; btn.textContent='Sending…';
-  const { error } = await sb.auth.resetPasswordForEmail(email, {
-    redirectTo: window.location.href
-  });
-  btn.disabled=false; btn.textContent='Send Reset Link';
-  if (error) { const e=document.getElementById('forgot-err'); e.textContent=error.message; e.style.display='block'; return; }
-  closeModal('forgot-modal');
-  toast('✅ Reset link sent! Check your @lumelight.com inbox.', 5000);
-}
-
-// ── 2. EXPORT TO EXCEL ──
-async function exportToExcel(source) {
-  toast('⏳ Preparing Excel file…', 3000);
-  let query = sb.from('scorecards').select('*').order('manager_name').order('member_name').order('year').order('month');
-  if (source==='my-team') {
-    if (PROFILE.role==='tl')      query = query.eq('supervisor_id', ME.id);
-    else if (PROFILE.role==='manager') query = query.eq('manager_id', ME.id);
-  }
-  const { data: rows } = await query;
-  if (!rows||rows.length===0) { toast('No data to export.', 2500, true); return; }
-
-  const exportData = rows.map(r => ({
-    'Member Name':      r.member_name,
-    'Member Email':     r.member_email,
-    'Manager':          r.manager_name||'—',
-    'TL/Supervisor':    r.supervisor_name||'—',
-    'Month':            r.month,
-    'Year':             r.year,
-    'Productivity':     r.score_productivity,
-    'Email':            r.score_email,
-    'Quality':          r.score_quality,
-    'Task Completion':  r.score_task,
-    'PKT Score':        r.score_pkt,
-    'Ethics':           r.score_ethics,
-    'FactoHR':          r.score_factohr,
-    'Shift':            r.score_shift,
-    'Leaves/LWP':       r.score_leaves,
-    'Training':         r.score_training,
-    'Initiatives':      r.score_initiatives,
-    'Communication':    r.score_comms,
-    'Total Score':      r.total_score,
-    'Rating':           r.rating_code,
-    'Rating Name':      r.rating_name,
-    'Comments':         r.comments||'',
-    'Scored By':        r.entered_by_role||'',
-  }));
-
-  const ws   = XLSX.utils.json_to_sheet(exportData);
-  const wb   = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb, ws, 'Scorecards');
-  const month = new Date().toLocaleString('default',{month:'short'});
-  XLSX.writeFile(wb, `PerfTrack_Scorecards_${month}_${new Date().getFullYear()}.xlsx`);
-  toast('✅ Excel file downloaded!');
-}
-
-// ── 3. DELETE SCORECARD ──
-let pendingDeleteId = null;
-
-function promptDelete(id, name, period) {
-  pendingDeleteId = id;
-  document.getElementById('delete-modal-sub').textContent = `Delete scorecard for ${name} — ${period}? This cannot be undone.`;
-  document.getElementById('delete-modal').classList.add('open');
-}
-
-async function confirmDelete() {
-  if (!pendingDeleteId) return;
-  const btn = document.getElementById('delete-confirm-btn');
-  btn.disabled=true; btn.textContent='Deleting…';
-  const { error } = await sb.from('scorecards').delete().eq('id', pendingDeleteId);
-  btn.disabled=false; btn.textContent='Delete';
-  closeModal('delete-modal');
-  pendingDeleteId = null;
-  if (error) { toast('❌ '+error.message, 4000, true); return; }
-  toast('✅ Scorecard deleted.');
-  renderMyTeam();
-}
-
-function closeModal(id) {
-  document.getElementById(id).classList.remove('open');
-}
-
-// ── 4. REASSIGN MEMBER ──
-async function loadReassignPage() {
-  const { data: members } = await sb.from('profiles')
-    .select('*').in('role',['member','sme','tl']).order('full_name');
-  const { data: managers } = await sb.from('profiles')
-    .select('id,full_name').eq('role','manager').order('full_name');
-  const { data: tls } = await sb.from('profiles')
-    .select('id,full_name').eq('role','tl').order('full_name');
-
-  const mSel = document.getElementById('reassign-member');
-  mSel.innerHTML = '<option value="">— Select Member —</option>';
-  (members||[]).forEach(m=>{ const o=document.createElement('option'); o.value=m.id; o.textContent=`${m.full_name} (${ROLE_META[m.role]?.label||m.role})`; o.dataset.profile=JSON.stringify(m); mSel.appendChild(o);});
-
-  const mgSel = document.getElementById('reassign-manager');
-  mgSel.innerHTML = '<option value="">— Keep current —</option>';
-  (managers||[]).forEach(m=>{ const o=document.createElement('option'); o.value=m.id; o.textContent=m.full_name; mgSel.appendChild(o);});
-
-  const tlSel = document.getElementById('reassign-tl');
-  tlSel.innerHTML = '<option value="">— Keep current / None —</option>';
-  (tls||[]).forEach(t=>{ const o=document.createElement('option'); o.value=t.id; o.textContent=t.full_name; tlSel.appendChild(o);});
-}
-
-function loadReassignForm() {
-  const sel = document.getElementById('reassign-member');
-  const opt = sel.options[sel.selectedIndex];
-  if (!opt||!opt.dataset.profile) { document.getElementById('reassign-form').style.display='none'; return; }
-  const p = JSON.parse(opt.dataset.profile);
-  document.getElementById('reassign-form').style.display = 'block';
-  document.getElementById('reassign-current').innerHTML =
-    `<b>Current assignment:</b> Manager: <b>${p.manager_name||'None'}</b> &nbsp;·&nbsp; TL: <b>${p.supervisor_name||'None'}</b>`;
-}
-
-async function doReassign() {
-  const memberId  = document.getElementById('reassign-member').value;
-  const mgSel     = document.getElementById('reassign-manager');
-  const tlSel     = document.getElementById('reassign-tl');
-  const newMgId   = mgSel.value;
-  const newMgName = newMgId ? mgSel.options[mgSel.selectedIndex].text : null;
-  const newTlId   = tlSel.value;
-  const newTlName = newTlId ? tlSel.options[tlSel.selectedIndex].text : null;
-
-  if (!memberId) { toast('Please select a member first.', 2500, true); return; }
-
-  const updates = {};
-  if (newMgId)   { updates.manager_id = newMgId;   updates.manager_name = newMgName; }
-  if (newTlId)   { updates.supervisor_id = newTlId; updates.supervisor_name = newTlName; }
-  if (tlSel.value === '' && tlSel.selectedIndex === 0) {
-    // "Keep current" selected — don't change TL
-  }
-
-  if (Object.keys(updates).length === 0) { toast('No changes selected.', 2500, true); return; }
-
-  const { error } = await sb.from('profiles').update(updates).eq('id', memberId);
-  if (error) { toast('❌ '+error.message, 4000, true); return; }
-  toast('✅ Member reassigned successfully!');
-  loadReassignPage();
-  document.getElementById('reassign-member').value = '';
-  document.getElementById('reassign-form').style.display = 'none';
-}
-
-// ── 5. EMAIL NOTIFICATION (via Supabase Edge Function) ──
-// Called automatically after saveScores()
-async function sendScorecardNotification(memberEmail, memberName, month, year, total, ratingCode) {
-  // Uses Supabase's built-in email — no extra setup needed
-  // This is a best-effort notification; failures are silent to not disrupt saving
-  try {
-    await sb.functions.invoke('scorecard-notify', {
-      body: { memberEmail, memberName, month, year, total, ratingCode,
-              enteredBy: PROFILE.full_name, enteredByRole: ROLE_META[PROFILE.role]?.label }
-    });
-  } catch(e) {
-    // Silent fail — notification is non-critical
-    console.log('Notification skipped:', e.message);
-  }
-}
-
 function toast(msg,dur=2500,err=false) {
   const t=document.getElementById('toast');
   t.textContent=msg; t.style.borderColor=err?'var(--red)':'var(--green)'; t.style.color=err?'var(--red)':'var(--green)';
   t.style.display='block'; setTimeout(()=>t.style.display='none',dur);
 }
 
-// Close modals on overlay click
-document.querySelectorAll('.modal-overlay').forEach(el=>{
-  el.addEventListener('click', e=>{ if(e.target===el) el.classList.remove('open'); });
-});
-
+document.querySelectorAll('.modal-overlay').forEach(el=>el.addEventListener('click',e=>{if(e.target===el)el.classList.remove('open');}));
 document.getElementById('login-pass').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
 window.addEventListener('load',initApp);
 </script>
