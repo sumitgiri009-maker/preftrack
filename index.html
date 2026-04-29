@@ -4,33 +4,33 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>PerfTrack — Lumelight Operations</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Rethink+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <style>
-  :root{--bg:#0d0f14;--surface:#151820;--surface2:#1c2030;--surface3:#242840;--border:#2a2f45;--accent:#5b8af5;--accent2:#7c5cbf;--green:#34d399;--yellow:#fbbf24;--red:#f87171;--orange:#fb923c;--purple:#a78bfa;--text:#e8eaf0;--text2:#8b90a8;--text3:#5a5f78;--radius:12px;--radius-sm:8px;}
+  :root{--bg:#d4f5ff;--surface:#ffffff;--surface2:#f2fbff;--surface3:#e0f7ff;--border:rgba(0,60,85,.14);--accent:#00cfff;--accent2:#6b78f7;--green:#06bfb2;--yellow:#99ff9e;--red:#e15b64;--orange:#00cfff;--purple:#6b78f7;--text:#0b1a3d;--text2:#003c55;--text3:#4b6b7f;--radius:14px;--radius-sm:10px;--brand-navy:#003c55;--brand-cyan:#00cfff;--brand-ice:#d4f5ff;--brand-teal:#06bfb2;--brand-lime:#99ff9e;--brand-indigo:#6b78f7;}
   *{margin:0;padding:0;box-sizing:border-box;}
-  body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:14px;}
+  body{font-family:'Rethink Sans',sans-serif;background:radial-gradient(circle at top left,rgba(0,207,255,.18),transparent 28%),linear-gradient(180deg,#effcff 0%,#d4f5ff 46%,#c9f0ff 100%);color:var(--text);min-height:100vh;font-size:14px;}
   #loading-overlay{position:fixed;inset:0;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;gap:16px;}
   .spinner{width:40px;height:40px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite;}
   @keyframes spin{to{transform:rotate(360deg);}}
   .loading-text{font-size:14px;color:var(--text2);}
-  #auth-screen{min-height:100vh;display:none;align-items:center;justify-content:center;background:radial-gradient(ellipse at 30% 20%,rgba(91,138,245,.12) 0%,transparent 60%),radial-gradient(ellipse at 80% 80%,rgba(124,92,191,.10) 0%,transparent 55%),var(--bg);padding:20px;}
-  .auth-card{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:40px;width:100%;max-width:480px;box-shadow:0 40px 80px rgba(0,0,0,.5);}
+  #auth-screen{min-height:100vh;display:none;align-items:center;justify-content:center;background:radial-gradient(ellipse at 20% 15%,rgba(0,207,255,.25) 0%,transparent 50%),radial-gradient(ellipse at 85% 75%,rgba(107,120,247,.18) 0%,transparent 50%),linear-gradient(180deg,#f7feff 0%,#d4f5ff 100%);padding:20px;}
+  .auth-card{background:linear-gradient(180deg,rgba(255,255,255,.78),rgba(255,255,255,.62));border:1px solid rgba(255,255,255,.42);border-radius:24px;padding:40px;width:100%;max-width:480px;box-shadow:0 32px 70px rgba(0,60,85,.12);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);}
   .auth-logo{display:flex;align-items:center;gap:10px;margin-bottom:28px;}
-  .logo-icon{width:40px;height:40px;background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;}
-  .logo-text{font-size:20px;font-weight:700;letter-spacing:-.5px;}
-  .logo-sub{font-size:11px;color:var(--text2);letter-spacing:1.5px;text-transform:uppercase;margin-top:1px;}
-  .tab-row{display:flex;background:var(--surface2);border-radius:var(--radius-sm);padding:4px;margin-bottom:22px;}
-  .tab-btn{flex:1;padding:9px;border:none;background:none;border-radius:6px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;color:var(--text2);transition:all .2s;}
-  .tab-btn.active{background:var(--surface3);color:var(--text);}
+  .logo-icon{width:40px;height:40px;background:linear-gradient(135deg,var(--brand-navy),var(--brand-cyan));border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:18px;color:#fff;box-shadow:0 14px 24px rgba(0,60,85,.16);}
+  .logo-text{font-size:20px;font-weight:700;letter-spacing:.01em;}
+  .logo-sub{font-size:11px;color:var(--text2);letter-spacing:.18em;text-transform:uppercase;margin-top:1px;}
+  .tab-row{display:flex;background:rgba(0,60,85,.06);border-radius:var(--radius-sm);padding:4px;margin-bottom:22px;}
+  .tab-btn{flex:1;padding:9px;border:none;background:none;border-radius:8px;cursor:pointer;font-family:'Rethink Sans',sans-serif;font-size:13px;font-weight:600;color:var(--text2);transition:all .2s;}
+  .tab-btn.active{background:#fff;color:var(--brand-navy);box-shadow:0 8px 18px rgba(0,60,85,.08);}
   .field-group{margin-bottom:13px;}
-  .field-label{font-size:11px;font-weight:600;color:var(--text2);letter-spacing:.5px;text-transform:uppercase;margin-bottom:6px;display:block;}
-  .field-input{width:100%;padding:10px 13px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;outline:none;transition:border-color .2s;}
-  .field-input:focus{border-color:var(--accent);}
+  .field-label{font-size:11px;font-weight:600;color:var(--text2);letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px;display:block;}
+  .field-input{width:100%;padding:10px 13px;background:#fff;border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-family:'Rethink Sans',sans-serif;font-size:14px;outline:none;transition:border-color .2s, box-shadow .2s;}
+  .field-input:focus{border-color:var(--brand-cyan);box-shadow:0 0 0 4px rgba(0,207,255,.14);}
   .field-input::placeholder{color:var(--text3);}
   select.field-input{appearance:none;cursor:pointer;}
-  .btn-primary{width:100%;padding:12px;background:linear-gradient(135deg,var(--accent),var(--accent2));border:none;border-radius:var(--radius-sm);color:#fff;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:600;cursor:pointer;transition:opacity .2s;margin-top:4px;}
+  .btn-primary{width:100%;padding:12px;background:linear-gradient(135deg,var(--brand-navy),var(--brand-cyan));border:none;border-radius:var(--radius-sm);color:#fff;font-family:'Rethink Sans',sans-serif;font-size:15px;font-weight:700;cursor:pointer;transition:opacity .2s, transform .2s;margin-top:4px;box-shadow:0 14px 26px rgba(0,60,85,.18);}
   .btn-primary:hover{opacity:.9;}
   .btn-primary:disabled{opacity:.5;cursor:not-allowed;}
   .hint{font-size:12px;color:var(--text3);margin-top:14px;text-align:center;line-height:1.6;}
@@ -38,46 +38,46 @@
   .err-msg{font-size:13px;color:var(--red);margin-top:10px;padding:10px 14px;background:rgba(248,113,113,.08);border-radius:var(--radius-sm);border:1px solid rgba(248,113,113,.2);display:none;}
   .form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
   #app-screen{display:none;min-height:100vh;}
-  .sidebar{position:fixed;top:0;left:0;width:244px;height:100vh;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;z-index:100;}
+  .sidebar{position:fixed;top:0;left:0;width:244px;height:100vh;background:linear-gradient(180deg,#003c55 0%,#0b1a3d 100%);border-right:1px solid rgba(255,255,255,.08);display:flex;flex-direction:column;z-index:100;box-shadow:22px 0 42px rgba(11,26,61,.12);}
   .sidebar-header{padding:20px 18px 16px;border-bottom:1px solid var(--border);}
   .sidebar-logo{display:flex;align-items:center;gap:10px;}
   .sidebar-logo .logo-icon{width:30px;height:30px;font-size:13px;}
-  .sidebar-logo .logo-text{font-size:15px;font-weight:700;}
+  .sidebar-logo .logo-text{font-size:15px;font-weight:700;letter-spacing:.03em;color:#fff;}
   .sidebar-nav{flex:1;padding:12px 10px;display:flex;flex-direction:column;gap:2px;overflow-y:auto;}
-  .nav-item{display:flex;align-items:center;gap:10px;padding:9px 11px;border-radius:var(--radius-sm);cursor:pointer;color:var(--text2);font-size:13px;font-weight:500;transition:all .15s;border:none;background:none;width:100%;text-align:left;font-family:'DM Sans',sans-serif;}
-  .nav-item:hover{background:var(--surface2);color:var(--text);}
-  .nav-item.active{background:rgba(91,138,245,.12);color:var(--accent);}
+  .nav-item{display:flex;align-items:center;gap:10px;padding:9px 11px;border-radius:var(--radius-sm);cursor:pointer;color:rgba(212,245,255,.78);font-size:13px;font-weight:600;letter-spacing:.02em;transition:all .15s;border:none;background:none;width:100%;text-align:left;font-family:'Rethink Sans',sans-serif;}
+  .nav-item:hover{background:rgba(255,255,255,.08);color:#fff;}
+  .nav-item.active{background:linear-gradient(135deg,rgba(0,207,255,.18),rgba(107,120,247,.18));color:#fff;border:1px solid rgba(0,207,255,.18);}
   .nav-icon{width:16px;text-align:center;font-size:14px;flex-shrink:0;}
-  .nav-section-label{font-size:10px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);padding:12px 11px 4px;}
+  .nav-section-label{font-size:10px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:rgba(212,245,255,.5);padding:12px 11px 4px;}
   .sidebar-footer{padding:12px;border-top:1px solid var(--border);}
-  .user-card{display:flex;align-items:center;gap:9px;padding:9px 11px;background:var(--surface2);border-radius:var(--radius-sm);margin-bottom:7px;}
-  .user-avatar{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;flex-shrink:0;}
-  .user-name{font-size:13px;font-weight:600;line-height:1.3;}
-  .user-desig{font-size:11px;color:var(--text2);}
-  .desig-pill{display:inline-block;padding:2px 8px;border-radius:8px;font-size:10px;font-weight:700;letter-spacing:.3px;text-transform:uppercase;margin-top:2px;background:rgba(91,138,245,.15);color:var(--accent);}
-  .logout-btn{width:100%;padding:8px;background:none;border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text2);font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;transition:all .15s;}
-  .logout-btn:hover{background:var(--surface2);color:var(--text);}
+  .user-card{display:flex;align-items:center;gap:9px;padding:9px 11px;background:rgba(255,255,255,.08);border-radius:var(--radius-sm);margin-bottom:7px;border:1px solid rgba(255,255,255,.08);}
+  .user-avatar{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--brand-cyan),var(--brand-lime));display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:var(--brand-navy);flex-shrink:0;}
+  .user-name{font-size:13px;font-weight:700;line-height:1.3;color:#fff;}
+  .user-desig{font-size:11px;color:rgba(212,245,255,.75);}
+  .desig-pill{display:inline-block;padding:2px 8px;border-radius:8px;font-size:10px;font-weight:700;letter-spacing:.3px;text-transform:uppercase;margin-top:2px;background:rgba(153,255,158,.14);color:var(--brand-lime);}
+  .logout-btn{width:100%;padding:8px;background:none;border:1px solid rgba(255,255,255,.14);border-radius:var(--radius-sm);color:rgba(212,245,255,.82);font-family:'Rethink Sans',sans-serif;font-size:13px;cursor:pointer;transition:all .15s;}
+  .logout-btn:hover{background:rgba(255,255,255,.08);color:#fff;}
   .main-content{margin-left:244px;padding:28px;min-height:100vh;}
   .page{display:none;}
   .page.active{display:block;}
   .page-header{margin-bottom:22px;}
-  .page-title{font-size:22px;font-weight:700;letter-spacing:-.5px;}
-  .page-subtitle{color:var(--text2);font-size:13px;margin-top:4px;}
+  .page-title{font-size:22px;font-weight:800;letter-spacing:.02em;color:var(--brand-navy);}
+  .page-subtitle{color:var(--text2);font-size:13px;letter-spacing:.01em;margin-top:4px;}
   .stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:12px;margin-bottom:20px;}
-  .stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;}
-  .stat-label{font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text3);margin-bottom:7px;}
-  .stat-value{font-size:24px;font-weight:700;letter-spacing:-1px;}
-  .stat-sub{font-size:11px;color:var(--text2);margin-top:2px;}
-  .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:16px;}
-  .card-header{padding:15px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;}
-  .card-title{font-size:15px;font-weight:600;}
+  .stat-card{background:linear-gradient(180deg,rgba(255,255,255,.62),rgba(242,251,255,.46));border:1px solid rgba(255,255,255,.5);border-radius:var(--radius);padding:16px;box-shadow:0 18px 34px rgba(0,60,85,.08), inset 0 1px 0 rgba(255,255,255,.45);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);}
+  .stat-label{font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--text3);margin-bottom:7px;}
+  .stat-value{font-size:24px;font-weight:700;letter-spacing:-.03em;}
+  .stat-sub{font-size:11px;color:var(--text2);letter-spacing:.02em;margin-top:2px;}
+  .card{background:linear-gradient(180deg,rgba(255,255,255,.58),rgba(255,255,255,.42));border:1px solid rgba(255,255,255,.5);border-radius:var(--radius);overflow:hidden;margin-bottom:16px;box-shadow:0 22px 44px rgba(0,60,85,.08), inset 0 1px 0 rgba(255,255,255,.45);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);}
+  .card-header{padding:15px 20px;border-bottom:1px solid rgba(255,255,255,.42);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;background:linear-gradient(180deg,rgba(255,255,255,.22),rgba(255,255,255,.08));}
+  .card-title{font-size:15px;font-weight:700;letter-spacing:.04em;color:var(--brand-navy);}
   table{width:100%;border-collapse:collapse;}
   th{text-align:left;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text3);padding:10px 20px;border-bottom:1px solid var(--border);}
   td{padding:12px 20px;border-bottom:1px solid rgba(42,47,69,.5);font-size:13px;}
   tr:last-child td{border-bottom:none;}
-  tr:hover td{background:rgba(255,255,255,.015);}
-  .group-header td{background:var(--surface2)!important;font-size:11px;font-weight:700;color:var(--text2);padding:9px 20px;border-top:2px solid var(--border);}
-  .badge{display:inline-flex;align-items:center;padding:2px 9px;border-radius:20px;font-size:11px;font-weight:700;font-family:'DM Mono',monospace;}
+  tr:hover td{background:rgba(0,207,255,.05);}
+  .group-header td{background:rgba(212,245,255,.65)!important;font-size:11px;font-weight:700;color:var(--brand-navy);padding:9px 20px;border-top:2px solid rgba(0,60,85,.12);}
+  .badge{display:inline-flex;align-items:center;padding:2px 9px;border-radius:20px;font-size:11px;font-weight:800;letter-spacing:.06em;font-family:'Rethink Sans',sans-serif;}
   .badge-os{background:rgba(52,211,153,.15);color:var(--green);border:1px solid rgba(52,211,153,.3);}
   .badge-ee{background:rgba(91,138,245,.15);color:var(--accent);border:1px solid rgba(91,138,245,.3);}
   .badge-me{background:rgba(251,191,36,.15);color:var(--yellow);border:1px solid rgba(251,191,36,.3);}
@@ -86,55 +86,60 @@
   .score-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:16px 20px;}
   .score-row{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px 14px;display:flex;align-items:center;justify-content:space-between;gap:12px;}
   .score-name{font-size:13px;font-weight:600;}
-  .score-target{font-size:10px;color:var(--text3);margin-top:3px;font-family:'DM Mono',monospace;}
+  .score-target{font-size:10px;color:var(--text3);margin-top:3px;font-family:'Rethink Sans',sans-serif;}
   .score-input-wrap{display:flex;align-items:center;gap:6px;flex-shrink:0;}
-  .score-input{width:58px;padding:7px 8px;background:var(--surface3);border:1px solid var(--border);border-radius:6px;color:var(--text);font-family:'DM Mono',monospace;font-size:14px;font-weight:500;text-align:center;outline:none;transition:border-color .2s;}
+  .score-input{width:58px;padding:7px 8px;background:#fff;border:1px solid var(--border);border-radius:6px;color:var(--text);font-family:'Rethink Sans',sans-serif;font-size:14px;font-weight:700;text-align:center;outline:none;transition:border-color .2s, box-shadow .2s;}
   .score-input:focus{border-color:var(--accent);}
   .score-max-label{font-size:11px;color:var(--text3);}
-  .result-box{margin:0 20px 20px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px;}
-  .result-score{font-size:38px;font-weight:700;font-family:'DM Mono',monospace;letter-spacing:-2px;}
-  .result-max{font-size:15px;color:var(--text3);font-family:'DM Mono',monospace;}
-  .rl{font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text3);margin-bottom:5px;}
-  .rv{font-size:32px;font-weight:800;font-family:'DM Mono',monospace;}
+  .result-box{margin:0 20px 20px;background:linear-gradient(180deg,rgba(255,255,255,.52),rgba(242,251,255,.42));border:1px solid rgba(255,255,255,.46);border-radius:var(--radius);padding:20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);}
+  .result-score{font-size:38px;font-weight:800;font-family:'Rethink Sans',sans-serif;letter-spacing:-2px;color:var(--brand-navy);}
+  .result-max{font-size:15px;color:var(--text3);font-family:'Rethink Sans',sans-serif;}
+  .rl{font-size:10px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--text3);margin-bottom:5px;}
+  .rv{font-size:32px;font-weight:800;font-family:'Rethink Sans',sans-serif;}
   .rn{font-size:12px;color:var(--text2);margin-top:2px;font-weight:500;}
   .result-bar-wrap{flex:1;min-width:160px;}
   .bar-info{display:flex;justify-content:space-between;margin-bottom:5px;font-size:12px;color:var(--text2);}
-  .progress{height:6px;background:var(--surface3);border-radius:3px;overflow:hidden;}
-  .progress-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width .5s ease;}
-  .btn{padding:8px 15px;border-radius:var(--radius-sm);font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer;border:none;transition:all .15s;}
-  .btn-blue{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;}
+  .progress{height:6px;background:rgba(0,60,85,.08);border-radius:3px;overflow:hidden;}
+  .progress-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--brand-cyan),var(--brand-teal));transition:width .5s ease;}
+  .btn{padding:8px 15px;border-radius:var(--radius-sm);font-family:'Rethink Sans',sans-serif;font-size:13px;font-weight:700;letter-spacing:.03em;cursor:pointer;border:none;transition:all .15s;}
+  .btn-blue{background:linear-gradient(135deg,var(--brand-navy),var(--brand-cyan));color:#fff;box-shadow:0 10px 22px rgba(0,60,85,.12);}
   .btn-blue:hover{opacity:.9;}
   .btn-blue:disabled{opacity:.5;cursor:not-allowed;}
-  .btn-outline{background:none;border:1px solid var(--border);color:var(--text);}
+  .btn-outline{background:#fff;border:1px solid rgba(0,60,85,.14);color:var(--brand-navy);}
   .btn-outline:hover{background:var(--surface2);}
   .btn-red{background:rgba(248,113,113,.15);color:var(--red);border:1px solid rgba(248,113,113,.3);}
   .btn-red:hover{background:rgba(248,113,113,.25);}
   .filters{display:flex;gap:7px;flex-wrap:wrap;}
-  .filter-select{padding:7px 11px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-family:'DM Sans',sans-serif;font-size:13px;outline:none;cursor:pointer;}
+  .filter-select{padding:7px 11px;background:#fff;border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-family:'Rethink Sans',sans-serif;font-size:13px;outline:none;cursor:pointer;}
   .month-tabs{display:flex;gap:5px;flex-wrap:wrap;padding:13px 20px;border-bottom:1px solid var(--border);}
-  .month-tab{padding:5px 12px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;border:1px solid var(--border);background:none;color:var(--text2);font-family:'DM Sans',sans-serif;transition:all .15s;}
+  .month-tab{padding:5px 12px;border-radius:20px;font-size:12px;font-weight:700;letter-spacing:.03em;cursor:pointer;border:1px solid var(--border);background:none;color:var(--text2);font-family:'Rethink Sans',sans-serif;transition:all .15s;}
   .month-tab:hover{background:var(--surface2);color:var(--text);}
-  .month-tab.active{background:rgba(91,138,245,.15);color:var(--accent);border-color:rgba(91,138,245,.3);}
+  .month-tab.active{background:rgba(0,207,255,.16);color:var(--brand-navy);border-color:rgba(0,207,255,.28);}
   .sep{height:1px;background:var(--border);margin:0 20px 14px;}
   .sec-lbl{font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--text3);padding:14px 20px 8px;}
-  .comments-area{width:100%;padding:10px 13px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-family:'DM Sans',sans-serif;font-size:13px;resize:vertical;min-height:65px;outline:none;}
+  .comments-area{width:100%;padding:10px 13px;background:#fff;border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-family:'Rethink Sans',sans-serif;font-size:13px;resize:vertical;min-height:65px;outline:none;}
   .comments-area:focus{border-color:var(--accent);}
   .form-footer{padding:13px 20px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:9px;align-items:center;}
   .saved-ok{display:none;align-items:center;gap:5px;font-size:13px;color:var(--green);font-weight:500;}
   .guide-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:9px;padding:14px 20px;}
-  .guide-item{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px;text-align:center;}
-  .g-badge{font-size:18px;font-weight:800;font-family:'DM Mono',monospace;margin-bottom:4px;}
+  .guide-item{background:linear-gradient(180deg,rgba(255,255,255,.68),rgba(242,251,255,.46));border:1px solid rgba(255,255,255,.42);border-radius:var(--radius-sm);padding:12px;text-align:center;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);}
+  .g-badge{font-size:18px;font-weight:800;font-family:'Rethink Sans',sans-serif;margin-bottom:4px;}
   .g-num{font-size:20px;font-weight:700;}
   .g-desc{font-size:10px;color:var(--text2);margin-top:3px;line-height:1.4;}
   .empty-state{padding:40px 20px;text-align:center;color:var(--text3);}
   .empty-state .icon{font-size:28px;margin-bottom:9px;}
-  .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:10000;display:none;align-items:center;justify-content:center;padding:20px;}
+  .modal-overlay{position:fixed;inset:0;background:rgba(11,26,61,.35);z-index:10000;display:none;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(8px);}
   .modal-overlay.open{display:flex;}
-  .modal{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:28px;max-width:420px;width:100%;box-shadow:0 40px 80px rgba(0,0,0,.5);}
+  .modal{background:linear-gradient(180deg,rgba(255,255,255,.78),rgba(255,255,255,.64));border:1px solid rgba(255,255,255,.5);border-radius:18px;padding:28px;max-width:420px;width:100%;box-shadow:0 32px 70px rgba(0,60,85,.14);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);}
   .modal-title{font-size:17px;font-weight:700;margin-bottom:7px;}
   .modal-sub{font-size:13px;color:var(--text2);margin-bottom:20px;line-height:1.6;}
   .modal-footer{display:flex;justify-content:flex-end;gap:9px;margin-top:20px;}
-  .toast{position:fixed;bottom:22px;right:22px;background:var(--surface);border:1px solid var(--green);border-radius:var(--radius-sm);padding:10px 17px;color:var(--green);font-size:13px;font-weight:600;z-index:9999;display:none;box-shadow:0 8px 24px rgba(0,0,0,.4);}
+  .toast{position:fixed;bottom:22px;right:22px;background:#fff;border:1px solid var(--green);border-radius:var(--radius-sm);padding:10px 17px;color:var(--brand-navy);font-size:13px;font-weight:700;z-index:9999;display:none;box-shadow:0 18px 36px rgba(0,60,85,.14);}
+  .bell-curve-chart{position:relative;}
+  .bell-curve-hotspot{cursor:pointer;}
+  .bell-curve-tooltip{position:absolute;min-width:180px;max-width:220px;padding:10px 12px;background:rgba(11,26,61,.96);border:1px solid rgba(0,207,255,.28);border-radius:10px;color:#fff;font-size:12px;line-height:1.5;pointer-events:none;opacity:0;transform:translate(-50%,-110%);transition:opacity .12s ease;box-shadow:0 18px 32px rgba(11,26,61,.28);z-index:5;}
+  .bell-curve-tooltip.show{opacity:1;}
+  .bell-curve-tooltip b{display:block;font-size:12px;margin-bottom:4px;}
   @media(max-width:900px){.sidebar{width:100%;height:auto;position:relative;}.main-content{margin-left:0;}.score-grid{grid-template-columns:1fr;}}
 </style>
 </head>
@@ -160,7 +165,7 @@
       <div class="field-group"><label class="field-label">Password</label><input class="field-input" id="login-pass" type="password" placeholder="••••••••"></div>
       <div class="err-msg" id="login-err"></div>
       <button class="btn-primary" id="login-btn" onclick="doLogin()">Sign In →</button>
-      <p style="text-align:center;margin-top:12px"><button onclick="doForgotPassword()" style="background:none;border:none;color:var(--accent);font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;text-decoration:underline">Forgot password?</button></p>
+      <p style="text-align:center;margin-top:12px"><button onclick="doForgotPassword()" style="background:none;border:none;color:var(--accent);font-family:'Rethink Sans',sans-serif;font-size:13px;cursor:pointer;text-decoration:underline">Forgot password?</button></p>
       <p class="hint">Use your <b>@lumelight.com</b> email.</p>
     </div>
 
@@ -219,6 +224,7 @@
       <div id="nav-sec-scoring" class="nav-section-label" style="display:none">My Team</div>
       <button class="nav-item" onclick="goPage('enter-scores')" id="nav-enter-scores" style="display:none"><span class="nav-icon">✏️</span>Enter Scores</button>
       <button class="nav-item" onclick="goPage('my-team')" id="nav-my-team" style="display:none"><span class="nav-icon">👥</span>My Team</button>
+      <button class="nav-item" onclick="goPage('bell-curve')" id="nav-bell-curve" style="display:none"><span class="nav-icon">📈</span>Bell Curve</button>
       <div id="nav-sec-org" class="nav-section-label" style="display:none">Organisation</div>
       <button class="nav-item" onclick="goPage('org-view')" id="nav-org-view" style="display:none"><span class="nav-icon">🏢</span>Full Org View</button>
       <button class="nav-item" onclick="goPage('reassign')" id="nav-reassign" style="display:none"><span class="nav-icon">🔄</span>Reassign Member</button>
@@ -305,6 +311,26 @@
       </div>
     </div>
 
+    <!-- BELL CURVE -->
+    <div class="page" id="page-bell-curve">
+      <div class="page-header"><div class="page-title">Bell Curve</div><div class="page-subtitle">Monthly team distribution guidance for completed scorecards</div></div>
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Team Bell Curve View</div>
+          <div class="filters">
+            <select class="filter-select" id="bc-month" onchange="renderBellCurveView()"><option>January</option><option>February</option><option>March</option><option>April</option><option>May</option><option>June</option><option>July</option><option>August</option><option>September</option><option>October</option><option>November</option><option>December</option></select>
+            <select class="filter-select" id="bc-year" onchange="renderBellCurveView()"><option>2025</option><option selected>2026</option><option>2027</option></select>
+          </div>
+        </div>
+        <div id="bc-summary" style="padding:20px"></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><div class="card-title">Team Members In Scope</div></div>
+        <table><thead><tr><th>Person</th><th>Designation</th><th>Month</th><th>Year</th><th>Score</th><th>%</th><th>Rating</th></tr></thead>
+        <tbody id="bc-tbody"><tr><td colspan="7"><div class="empty-state"><div class="icon">📈</div><p>Select a month to view the team distribution.</p></div></td></tr></tbody></table>
+      </div>
+    </div>
+
     <!-- FULL ORG VIEW -->
     <div class="page" id="page-org-view">
       <div class="page-header"><div class="page-title">Full Org View</div><div class="page-subtitle">All teams across the organisation</div></div>
@@ -379,6 +405,9 @@ const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFz
 // ════════════════════════════════════════════════════
 
 const DOMAIN = 'lumelight.com';
+const BELL_CURVE_TARGET = { OS: 5, EE: 15, ME: 60, BE: 15, NI: 5 };
+const BELL_CURVE_ORDER = ['OS','EE','ME','BE','NI'];
+const BELL_CURVE_MIN_TEAM_SIZE = 10;
 
 // ── DESIGNATION CONFIG ──
 // who rates whom
@@ -660,6 +689,7 @@ async function launch() {
   document.getElementById('nav-sec-scoring').style.display  = canScore   ? '' : 'none';
   document.getElementById('nav-enter-scores').style.display = canScore   ? '' : 'none';
   document.getElementById('nav-my-team').style.display      = canScore   ? '' : 'none';
+  document.getElementById('nav-bell-curve').style.display   = canScore   ? '' : 'none';
   document.getElementById('nav-sec-org').style.display      = canSeeAll  ? '' : 'none';
   document.getElementById('nav-org-view').style.display     = canSeeAll  ? '' : 'none';
   document.getElementById('nav-reassign').style.display     = canSeeAll  ? '' : 'none';
@@ -669,6 +699,7 @@ async function launch() {
 
   if (canScore)  await loadMyReportees();
   if (canSeeAll) await loadOrgFilters();
+  initializeBellCurveFilters();
 
   renderRatingGuide();
   await renderDashboard();
@@ -693,6 +724,303 @@ function getAllScoreIds(tmpl) {
   return tmpl.sections.flatMap(s => s.params.map(p => p.id));
 }
 
+function initializeBellCurveFilters() {
+  const monthEl = document.getElementById('bc-month');
+  const yearEl = document.getElementById('bc-year');
+  if (!monthEl || !yearEl) return;
+  const now = new Date();
+  monthEl.selectedIndex = now.getMonth();
+  yearEl.value = String(now.getFullYear());
+}
+
+function buildBellCurveAnalysis(rows) {
+  const teamSize = rows.length;
+  const counts = Object.fromEntries(BELL_CURVE_ORDER.map(code => [code, 0]));
+  rows.forEach(row => { counts[row.rating_code] = (counts[row.rating_code] || 0) + 1; });
+
+  const buckets = BELL_CURVE_ORDER.map(code => {
+    const targetPct = BELL_CURVE_TARGET[code];
+    const expectedRaw = teamSize * targetPct / 100;
+    const minCount = Math.floor(expectedRaw);
+    const maxCount = Math.ceil(expectedRaw);
+    const actualCount = counts[code] || 0;
+    const inRange = actualCount >= minCount && actualCount <= maxCount;
+    return {
+      code,
+      targetPct,
+      actualCount,
+      actualPct: teamSize ? Math.round(actualCount / teamSize * 100) : 0,
+      minCount,
+      maxCount,
+      inRange,
+    };
+  });
+
+  const applicable = teamSize >= BELL_CURVE_MIN_TEAM_SIZE;
+  const outliers = applicable ? buckets.filter(bucket => !bucket.inRange) : [];
+
+  return {
+    applicable,
+    teamSize,
+    buckets,
+    outliers,
+    isAligned: applicable && outliers.length === 0,
+  };
+}
+
+function buildSmoothPath(points) {
+  if (!points.length) return '';
+  if (points.length === 1) return `M ${points[0].x},${points[0].y}`;
+  let path = `M ${points[0].x},${points[0].y}`;
+  for (let i = 0; i < points.length - 1; i += 1) {
+    const current = points[i];
+    const next = points[i + 1];
+    const controlX = (current.x + next.x) / 2;
+    path += ` C ${controlX},${current.y} ${controlX},${next.y} ${next.x},${next.y}`;
+  }
+  return path;
+}
+
+function attachBellCurveTooltips(targetEl) {
+  const chart = targetEl.querySelector('.bell-curve-chart');
+  const tooltip = targetEl.querySelector('.bell-curve-tooltip');
+  if (!chart || !tooltip) return;
+
+  const moveTooltip = event => {
+    const hotspot = event.currentTarget;
+    const chartBox = chart.getBoundingClientRect();
+    const pointBox = hotspot.getBoundingClientRect();
+    const centerX = pointBox.left - chartBox.left + pointBox.width / 2;
+    const topY = pointBox.top - chartBox.top;
+    tooltip.innerHTML = `
+      <b>${hotspot.dataset.label}</b>
+      <div>Target: ${hotspot.dataset.targetpct}%</div>
+      <div>Actual: ${hotspot.dataset.actualpct}% (${hotspot.dataset.actualcount})</div>
+      <div>Suggested count: ${hotspot.dataset.suggested}</div>
+      <div>Status: ${hotspot.dataset.status}</div>`;
+    tooltip.style.left = `${centerX}px`;
+    tooltip.style.top = `${topY - 8}px`;
+    tooltip.classList.add('show');
+  };
+
+  chart.querySelectorAll('.bell-curve-hotspot').forEach(hotspot => {
+    hotspot.addEventListener('mouseenter', moveTooltip);
+    hotspot.addEventListener('mousemove', moveTooltip);
+    hotspot.addEventListener('mouseleave', () => tooltip.classList.remove('show'));
+  });
+}
+
+async function fetchBellCurveRows(month, year) {
+  const { data, error } = await sb.from('scorecards')
+    .select('*')
+    .eq('supervisor_id', ME.id)
+    .eq('month', month)
+    .eq('year', year)
+    .order('member_name');
+  if (error) throw error;
+  return data || [];
+}
+
+function renderBellCurveSummary(targetEl, analysis, month, year) {
+  if (!analysis.applicable) {
+    targetEl.innerHTML = `
+      <div class="empty-state">
+        <div class="icon">ℹ️</div>
+        <p>Not applicable for ${month} ${year}. Bell curve guidance starts at ${BELL_CURVE_MIN_TEAM_SIZE} completed scorecards, and this team has ${analysis.teamSize}.</p>
+      </div>`;
+    return;
+  }
+
+  const statusTone = analysis.isAligned ? 'var(--green)' : 'var(--orange)';
+  const statusText = analysis.isAligned
+    ? 'Team distribution is within the suggested bell-curve range.'
+    : 'Warning: team distribution is outside the suggested bell-curve range.';
+  const maxPct = Math.max(...analysis.buckets.map(bucket => Math.max(bucket.actualPct, bucket.targetPct)), 1);
+  const yMax = Math.max(20, Math.ceil(maxPct / 10) * 10);
+  const curveWidth = 560;
+  const curveHeight = 188;
+  const paddingX = 34;
+  const baselineY = curveHeight - 30;
+  const topY = 18;
+  const xStep = (curveWidth - paddingX * 2) / (analysis.buckets.length - 1);
+  const toY = pct => baselineY - (pct / yMax) * (baselineY - topY);
+  const curvePoints = analysis.buckets.map((bucket, index) => {
+    const x = paddingX + index * xStep;
+    const y = toY(bucket.targetPct);
+    return { x, y, code: bucket.code };
+  });
+  const actualPoints = analysis.buckets.map((bucket, index) => {
+    const x = paddingX + index * xStep;
+    const y = toY(bucket.actualPct);
+    return { x, y, code: bucket.code };
+  });
+  const targetLine = buildSmoothPath(curvePoints);
+  const actualLine = buildSmoothPath(actualPoints);
+  const targetArea = `${targetLine} L ${curvePoints[curvePoints.length - 1].x},${baselineY} L ${curvePoints[0].x},${baselineY} Z`;
+  const curveLabels = curvePoints.map((point, index) => `
+    <text x="${point.x}" y="${curveHeight - 6}" text-anchor="middle" fill="var(--text2)" font-size="11" font-weight="700">${analysis.buckets[index].code}</text>
+  `).join('');
+  const guideSteps = Array.from({ length: 4 }, (_, index) => Math.round((yMax / 3) * index)).concat(yMax);
+  const guideLines = [...new Set(guideSteps)].map(step => {
+    const y = toY(step);
+    return `
+      <line x1="${paddingX}" y1="${y}" x2="${curveWidth - paddingX}" y2="${y}" stroke="rgba(0,60,85,.12)" stroke-width="1" stroke-dasharray="4 6"></line>
+      <text x="${paddingX - 10}" y="${y + 4}" text-anchor="end" fill="var(--text3)" font-size="10">${step}%</text>`;
+  }).join('');
+  const curveDots = curvePoints.map(point => `<circle cx="${point.x}" cy="${point.y}" r="4.5" fill="var(--accent)" stroke="rgba(13,15,20,.9)" stroke-width="2"></circle>`).join('');
+  const actualDots = actualPoints.map((point, index) => {
+    const bucket = analysis.buckets[index];
+    const suggested = `${bucket.minCount}${bucket.minCount === bucket.maxCount ? '' : `-${bucket.maxCount}`}`;
+    return `
+      <g class="bell-curve-hotspot"
+         data-label="${bucket.code}"
+         data-targetpct="${bucket.targetPct}"
+         data-actualpct="${bucket.actualPct}"
+         data-actualcount="${bucket.actualCount}"
+         data-suggested="${suggested}"
+         data-status="${bucket.inRange ? 'Within Range' : 'Warning'}">
+        <circle cx="${point.x}" cy="${point.y}" r="5" fill="${bucket.inRange ? 'var(--green)' : 'var(--orange)'}" stroke="rgba(13,15,20,.9)" stroke-width="2"></circle>
+        <circle cx="${point.x}" cy="${point.y}" r="14" fill="transparent"></circle>
+      </g>`;
+  }).join('');
+  const deviationBands = actualPoints.map((point, index) => `
+    <line x1="${point.x}" y1="${curvePoints[index].y}" x2="${point.x}" y2="${point.y}" stroke="${analysis.buckets[index].inRange ? 'rgba(52,211,153,.55)' : 'rgba(251,146,60,.7)'}" stroke-width="2" stroke-dasharray="4 4"></line>
+  `).join('');
+  const bucketHtml = analysis.buckets.map(bucket => `
+    <div style="background:var(--surface2);border:1px solid ${bucket.inRange ? 'rgba(52,211,153,.25)' : 'rgba(251,146,60,.25)'};border-radius:var(--radius-sm);padding:14px">
+      <div style="display:flex;justify-content:space-between;gap:12px;align-items:flex-start">
+        <div>
+          <div style="font-size:11px;color:var(--text3);letter-spacing:1px;text-transform:uppercase">${bucket.code}</div>
+          <div style="font-size:22px;font-weight:700;margin-top:4px">${bucket.actualCount}</div>
+        </div>
+        <div style="font-size:11px;color:${bucket.inRange ? 'var(--green)' : 'var(--orange)'};font-weight:700">${bucket.inRange ? 'Within Range' : 'Warning'}</div>
+      </div>
+      <div style="font-size:12px;color:var(--text2);margin-top:8px">Actual ${bucket.actualPct}%</div>
+      <div style="font-size:12px;color:var(--text2);margin-top:4px">Target ${bucket.targetPct}%</div>
+      <div style="font-size:12px;color:var(--text2);margin-top:4px">Suggested count ${bucket.minCount}${bucket.minCount === bucket.maxCount ? '' : `-${bucket.maxCount}`}</div>
+      <div style="margin-top:10px">
+        <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text3);margin-bottom:5px"><span>Actual</span><span>${bucket.actualPct}%</span></div>
+        <div style="height:8px;background:var(--surface3);border-radius:999px;overflow:hidden"><div style="height:100%;width:${bucket.actualPct}%;background:${bucket.inRange ? 'linear-gradient(90deg,var(--green),var(--accent))' : 'linear-gradient(90deg,var(--orange),var(--red))'}"></div></div>
+      </div>
+      <div style="margin-top:8px">
+        <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text3);margin-bottom:5px"><span>Target</span><span>${bucket.targetPct}%</span></div>
+        <div style="height:8px;background:var(--surface3);border-radius:999px;overflow:hidden"><div style="height:100%;width:${bucket.targetPct}%;background:linear-gradient(90deg,var(--accent),var(--accent2))"></div></div>
+      </div>
+    </div>`).join('');
+
+  const detailText = analysis.outliers.length
+    ? `Adjustments may be needed in ${analysis.outliers.map(bucket => bucket.code).join(', ')}. Ties are not auto-resolved; this is guidance only.`
+    : 'No manager action is required right now.';
+
+  targetEl.innerHTML = `
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:16px">
+      <div>
+        <div style="font-size:12px;letter-spacing:1px;text-transform:uppercase;color:var(--text3)">Completed Scorecards</div>
+        <div style="font-size:28px;font-weight:700;margin-top:4px">${analysis.teamSize}</div>
+      </div>
+      <div style="flex:1;min-width:240px;padding:14px 16px;background:var(--surface2);border:1px solid ${statusTone};border-radius:var(--radius-sm);color:${statusTone}">
+        <div style="font-size:13px;font-weight:700">${statusText}</div>
+        <div style="font-size:12px;color:var(--text2);margin-top:6px">${detailText}</div>
+      </div>
+    </div>
+    <div class="bell-curve-chart" style="background:linear-gradient(180deg,rgba(255,255,255,.55),rgba(242,251,255,.34));border:1px solid rgba(255,255,255,.45);border-radius:var(--radius);padding:16px 16px 12px;margin-bottom:16px;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)">
+      <div style="display:flex;justify-content:space-between;gap:12px;align-items:flex-start;flex-wrap:wrap;margin-bottom:8px">
+        <div>
+          <div style="font-size:13px;font-weight:800;letter-spacing:.03em;color:var(--brand-navy)">Bell Curve Shape</div>
+          <div style="font-size:11px;color:var(--text3);margin-top:4px">Target mix vs actual rating mix for this month.</div>
+        </div>
+        <div style="display:flex;gap:14px;flex-wrap:wrap;font-size:11px;color:var(--text2);padding-top:2px">
+          <span><span style="display:inline-block;width:14px;height:3px;border-radius:999px;background:linear-gradient(90deg,var(--accent),var(--accent2));margin-right:6px;vertical-align:middle"></span>Target</span>
+          <span><span style="display:inline-block;width:14px;height:3px;border-radius:999px;background:linear-gradient(90deg,var(--green),var(--orange));margin-right:6px;vertical-align:middle"></span>Actual</span>
+          <span><span style="display:inline-block;width:12px;height:12px;border-radius:999px;background:rgba(91,138,245,.12);border:1px solid rgba(91,138,245,.18);margin-right:6px;vertical-align:-2px"></span>Target area</span>
+        </div>
+      </div>
+      <svg viewBox="0 0 ${curveWidth} ${curveHeight}" style="width:100%;height:auto;display:block">
+        <defs>
+          <linearGradient id="curveTarget" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="var(--accent)" />
+            <stop offset="100%" stop-color="var(--accent2)" />
+          </linearGradient>
+          <linearGradient id="curveActual" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="var(--green)" />
+            <stop offset="55%" stop-color="var(--accent)" />
+            <stop offset="100%" stop-color="var(--orange)" />
+          </linearGradient>
+          <linearGradient id="curveArea" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="rgba(91,138,245,.18)" />
+            <stop offset="100%" stop-color="rgba(91,138,245,.02)" />
+          </linearGradient>
+        </defs>
+        ${guideLines}
+        <line x1="${paddingX}" y1="${baselineY}" x2="${curveWidth - paddingX}" y2="${baselineY}" stroke="rgba(0,60,85,.18)" stroke-width="1.2"></line>
+        <path d="${targetArea}" fill="url(#curveArea)"></path>
+        <path d="${targetLine}" fill="none" stroke="url(#curveTarget)" stroke-width="3.5" stroke-linecap="round"></path>
+        <path d="${actualLine}" fill="none" stroke="url(#curveActual)" stroke-width="3.5" stroke-linecap="round" stroke-dasharray="${analysis.isAligned ? '0' : '7 7'}"></path>
+        ${deviationBands}
+        ${curveDots}
+        ${actualDots}
+        ${curveLabels}
+      </svg>
+      <div class="bell-curve-tooltip"></div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px">${bucketHtml}</div>`;
+  attachBellCurveTooltips(targetEl);
+}
+
+function renderBellCurveTableRows(tbody, rows) {
+  if (!rows.length) {
+    tbody.innerHTML = `<tr><td colspan="7"><div class="empty-state"><div class="icon">📈</div><p>No completed scorecards found for this month.</p></div></td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = rows.map(row => {
+    const tmpl = getTmpl(row.member_designation);
+    const max = row.max_score || tmpl.maxScore;
+    return `<tr>
+      <td><div style="font-weight:600">${row.member_name}</div><div style="font-size:11px;color:var(--text3)">${row.member_email}</div></td>
+      <td style="font-size:11px;color:var(--text2)">${row.member_designation || '—'}</td>
+      <td>${row.month}</td>
+      <td>${row.year}</td>
+      <td><b style="font-family:'Rethink Sans'">${row.total_score}</b><span style="color:var(--text3);font-size:11px"> /${max}</span></td>
+      <td>${Math.round(row.total_score / max * 100)}%</td>
+      <td><span class="badge ${tmpl.getRating(row.total_score).cls}">${row.rating_code}</span></td>
+    </tr>`;
+  }).join('');
+}
+
+async function renderBellCurveView() {
+  const month = document.getElementById('bc-month').value;
+  const year = parseInt(document.getElementById('bc-year').value);
+  const summary = document.getElementById('bc-summary');
+  const tbody = document.getElementById('bc-tbody');
+  summary.innerHTML = `<div class="empty-state"><div class="spinner" style="margin:0 auto"></div></div>`;
+  tbody.innerHTML = `<tr><td colspan="7"><div class="empty-state"><div class="spinner" style="margin:0 auto"></div></div></td></tr>`;
+
+  try {
+    const rows = await fetchBellCurveRows(month, year);
+    const analysis = buildBellCurveAnalysis(rows);
+    renderBellCurveSummary(summary, analysis, month, year);
+    renderBellCurveTableRows(tbody, rows);
+  } catch (error) {
+    summary.innerHTML = `<div class="empty-state"><div class="icon">⚠️</div><p>${error.message}</p></div>`;
+    tbody.innerHTML = `<tr><td colspan="7"><div class="empty-state"><div class="icon">⚠️</div><p>Could not load team distribution.</p></div></td></tr>`;
+  }
+}
+
+async function showBellCurveWarning(month, year) {
+  const rows = await fetchBellCurveRows(month, year);
+  const analysis = buildBellCurveAnalysis(rows);
+  if (!analysis.applicable) {
+    toast(`Bell curve not applicable yet for ${month} ${year}: ${analysis.teamSize}/${BELL_CURVE_MIN_TEAM_SIZE} completed scorecards.`, 4500);
+    return;
+  }
+  if (analysis.isAligned) {
+    toast(`Scorecard saved. ${month} ${year} team distribution is within the bell-curve guidance.`, 4500);
+    return;
+  }
+  toast(`Scorecard saved. Warning: ${month} ${year} team distribution is off for ${analysis.outliers.map(bucket => bucket.code).join(', ')}.`, 5500, true);
+}
+
 // ── DASHBOARD ──
 async function renderDashboard() {
   const MONTHS=['January','February','March','April','May','June','July','August','September','October','November','December'];
@@ -715,7 +1043,7 @@ async function renderDashboard() {
   document.getElementById('dash-avg').textContent       = Math.round(scs.reduce((a,x)=>a+x.total_score,0)/scs.length);
   tbody.innerHTML = scs.map(sc=>{
     const r=tmpl.getRating(sc.total_score);
-    return `<tr><td>${sc.month}</td><td>${sc.year}</td><td><b style="font-family:'DM Mono'">${sc.total_score}</b></td><td>${sc.max_score||tmpl.maxScore}</td><td>${Math.round(sc.total_score/(sc.max_score||tmpl.maxScore)*100)}%</td><td><span class="badge ${r.cls}">${r.code}</span></td><td style="font-size:11px;color:var(--text2)">${sc.entered_by_name||'—'}</td></tr>`;
+    return `<tr><td>${sc.month}</td><td>${sc.year}</td><td><b style="font-family:'Rethink Sans'">${sc.total_score}</b></td><td>${sc.max_score||tmpl.maxScore}</td><td>${Math.round(sc.total_score/(sc.max_score||tmpl.maxScore)*100)}%</td><td><span class="badge ${r.cls}">${r.code}</span></td><td style="font-size:11px;color:var(--text2)">${sc.entered_by_name||'—'}</td></tr>`;
   }).join('');
 }
 
@@ -761,8 +1089,8 @@ function renderSCDetail(sc) {
       const c  = bp===100?'var(--green)':bp>=60?'var(--accent)':'var(--red)';
       h += `<tr>
         <td style="padding:8px 0;border-bottom:1px solid rgba(42,47,69,.4);font-size:13px">${p.name}</td>
-        <td style="padding:8px 0;border-bottom:1px solid rgba(42,47,69,.4);text-align:center;font-family:'DM Mono';font-weight:600">${v}</td>
-        <td style="padding:8px 0;border-bottom:1px solid rgba(42,47,69,.4);text-align:center;color:var(--text3);font-family:'DM Mono'">${p.max}</td>
+        <td style="padding:8px 0;border-bottom:1px solid rgba(42,47,69,.4);text-align:center;font-family:'Rethink Sans';font-weight:700">${v}</td>
+        <td style="padding:8px 0;border-bottom:1px solid rgba(42,47,69,.4);text-align:center;color:var(--text3);font-family:'Rethink Sans'">${p.max}</td>
         <td style="padding:8px 0 8px 12px;border-bottom:1px solid rgba(42,47,69,.4)"><div style="height:6px;background:var(--surface3);border-radius:3px;width:110px"><div style="height:100%;width:${bp}%;background:${c};border-radius:3px"></div></div></td>
       </tr>`;
     });
@@ -912,7 +1240,8 @@ async function saveScores() {
   btn.disabled=false; btn.textContent='Save Scorecard';
   if (error) { toast('❌ '+error.message, 4000, true); return; }
   const so = document.getElementById('saved-ok'); if(so) so.style.display='flex';
-  toast('✅ Scorecard saved!');
+  await showBellCurveWarning(month, year);
+  if (document.getElementById('page-bell-curve').classList.contains('active')) await renderBellCurveView();
   sendScorecardNotification(member.email, member.full_name, month, year, total, r.code, tmpl.maxScore);
 }
 
@@ -938,7 +1267,7 @@ async function renderMyTeam() {
       <td><div style="font-weight:600">${row.member_name}</div><div style="font-size:11px;color:var(--text3)">${row.member_email}</div></td>
       <td style="font-size:11px;color:var(--text2)">${row.member_designation||'—'}</td>
       <td>${row.month}</td><td>${row.year}</td>
-      <td><b style="font-family:'DM Mono'">${row.total_score}</b><span style="color:var(--text3);font-size:11px"> /${max}</span></td>
+      <td><b style="font-family:'Rethink Sans'">${row.total_score}</b><span style="color:var(--text3);font-size:11px"> /${max}</span></td>
       <td>${Math.round(row.total_score/max*100)}%</td>
       <td><span class="badge ${r.cls}">${r.code}</span></td>
       <td style="font-size:11px;color:var(--text2)">${row.entered_by_name||'—'}</td>
@@ -989,7 +1318,7 @@ async function renderOrgTable() {
         <td style="font-size:11px;color:var(--text2)">${row.member_designation||'—'}</td>
         <td style="font-size:12px;color:var(--text2)">${row.supervisor_name||'—'}</td>
         <td>${row.month}</td><td>${row.year}</td>
-        <td><b style="font-family:'DM Mono'">${row.total_score}</b><span style="color:var(--text3);font-size:11px"> /${max}</span></td>
+        <td><b style="font-family:'Rethink Sans'">${row.total_score}</b><span style="color:var(--text3);font-size:11px"> /${max}</span></td>
         <td>${Math.round(row.total_score/max*100)}%</td>
         <td><span class="badge ${r.cls}">${r.code}</span></td>
       </tr>`;
@@ -1010,7 +1339,7 @@ async function renderOrgTree() {
       const pad = (indent[desig]||0)*32+20;
       const prefix = indent[desig]>0 ? '└─ ' : '';
       h+=`<div style="display:flex;align-items:center;gap:8px;padding:9px ${pad}px 9px 20px;border-bottom:1px solid rgba(42,47,69,.4);padding-left:${pad}px">
-        <span style="color:var(--text3);font-family:'DM Mono';font-size:12px">${prefix}</span>
+        <span style="color:var(--text3);font-family:'Rethink Sans';font-size:12px">${prefix}</span>
         <span style="font-size:13px;font-weight:600;flex:1">${p.full_name}</span>
         <span style="font-size:10px;background:rgba(91,138,245,.1);color:var(--accent);padding:2px 8px;border-radius:8px;font-weight:600">${p.designation}</span>
         <span style="font-size:11px;color:var(--text3)">${p.email}</span>
@@ -1141,6 +1470,7 @@ function goPage(p) {
   const nav=document.getElementById('nav-'+p); if(nav) nav.classList.add('active');
   if(p==='scorecard')    renderScorecardPage();
   if(p==='my-team')      renderMyTeam();
+  if(p==='bell-curve')   renderBellCurveView();
   if(p==='org-view')     { renderOrgTree(); renderOrgTable(); }
   if(p==='dashboard')    renderDashboard();
   if(p==='enter-scores') loadMyReportees();
